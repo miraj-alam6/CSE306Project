@@ -7,13 +7,13 @@ import nachos.machine.Machine;
 public class Callout {
     
 //Put the queue  here    
-    
+
     public Callout()
     {
 	Machine.getTimer(0);
     }
     
-    
+//schedule    
     /**
      * Schedule a callout to occur at a specified number of
      * ticks in the future.
