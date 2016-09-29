@@ -59,6 +59,8 @@ public class ProgTest implements Runnable {
     public void run() {
 	OpenFile executable;
 
+	//NOTE: not realistic behavior of an operating system when an
+	//executable is not run
 	if((executable = Nachos.fileSystem.open(execName)) == null) {
 	    Debug.println('+', "Unable to open executable file: " + execName);
 	    Nachos.scheduler.finishThread();
@@ -66,6 +68,7 @@ public class ProgTest implements Runnable {
 	}
 
 	AddrSpace space = ((UserThread)NachosThread.currentThread()).space;
+	//NOTE: once again not realistic
 	if(space.exec(executable) == -1) {
 	    Debug.println('+', "Unable to read executable file: " + execName);
 	    Nachos.scheduler.finishThread();

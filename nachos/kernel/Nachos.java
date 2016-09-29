@@ -104,6 +104,9 @@ public class Nachos implements Runnable {
 	    cpu.setCPUExceptionHandler(new ExceptionHandler());
 	}
 
+	//Initialize Callout facility
+	
+	
 	// Run test/demo programs, according to the supplied options.
 	// These will typically create additional threads to do the actual
 	// work, leaving the first thread free to go on and start the rest.
@@ -143,7 +146,7 @@ public class Nachos implements Runnable {
       Debug.init(args);
       options = new Options(args);
       Debug.println('+', "Entering main");
-      
+      Debug.println('z', "Testing Debugging Message Argument z");
       // Initialize the hardware.
       Machine.init();
       

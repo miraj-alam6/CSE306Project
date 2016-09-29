@@ -129,6 +129,7 @@ public static class AssertException extends RuntimeException {
    * @return true if the flag is enabled, otherwise false.
    */
   public static boolean isEnabled(char flag) {
+      
     return (flag == '+' || enableFlags.indexOf(flag) >= 0 || 
 	    (flag != '@' && enableFlags.indexOf('+') >= 0));
   }
