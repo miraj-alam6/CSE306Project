@@ -6,7 +6,7 @@ import nachos.machine.Machine;
 
 public class Callout {
     
-    
+//Put the queue  here    
     
     public Callout()
     {
