@@ -52,6 +52,7 @@ import nachos.util.Queue;
  */
 public class Scheduler {
 
+    
     /** Queue of threads that are ready to run, but not running. */
     private final Queue<NachosThread> readyList;
 
@@ -71,6 +72,9 @@ public class Scheduler {
      * 
      * @param firstThread  The first NachosThread to run.
      */
+    
+    private Callout callout; // This will hold the list of all scheduled callouts
+    
     public Scheduler(NachosThread firstThread) {
 	readyList = new FIFOQueue<NachosThread>();
 	cpuList = new FIFOQueue<CPU>();
@@ -319,11 +323,16 @@ public class Scheduler {
 	// Control returns here when currentThread is rescheduled.
 	// The caller is responsible for re-enabling interrupts.
     }
+    
+    
 
     /*Implemented for HW 1*/
     public void sleepThread (int ticks) {
-	
-	
+	NachosThread currentThread = NachosThread.currentThread();
+	Debug.ASSERT(CPU.getLevel() == CPU.IntOff);
+	Debug.println('t', "Sleeping thread: " + currentThread.name);
+	//callout.schedule(currentThread, ticks); //currentThread is not a Runnable so what are we supposed to schedule?
+	yieldCPU(NachosThread.BLOCKED, null);
     }
     
     /**
