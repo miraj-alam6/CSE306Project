@@ -40,6 +40,7 @@ import nachos.kernel.threads.test.ThreadTest;
 import nachos.kernel.userprog.test.ProgTest;
 import nachos.kernel.filesys.test.FileSystemTest;
 
+import java.util.*;
 /**
  * The Nachos main class.  Nachos is "booted up" when a Java thread calls the
  * main() method of this class.
@@ -149,7 +150,15 @@ public class Nachos implements Runnable {
       Debug.println('z', "Testing Debugging Message Argument z");
       // Initialize the hardware.
       Machine.init();
+      PriorityQueue<Integer> testIntQueue = new PriorityQueue<Integer>(new ComparatorInt());
+      testIntQueue.add(new Integer(10));
+      testIntQueue.add(new Integer(30));
+      testIntQueue.add(new Integer(5));
       
+      Debug.println('z', ""+testIntQueue.toString());
+      testIntQueue.poll();
+      Debug.println('z', ""+testIntQueue.toString());
+      testIntQueue.poll();
       // The kernel code assumes that it is running in the context of a
       // Nachos thread, but right now we are only in a Java thread.
       // So, we need to create the first Nachos thread and start it running
@@ -160,6 +169,17 @@ public class Nachos implements Runnable {
       // The Nachos thread we just created will begin running in the run()
       // method of this class.  The remainder of the system initialization will
       // be taken care of there, so our responsibility here is finished.
+  }
+ 
+  //Stuff to delete: 
+  private static class ComparatorInt implements Comparator<Integer>{
+
+    @Override
+    public int compare(Integer arg0, Integer arg1) {
+	Debug.println('+', ""+arg0+" vs "+ arg1+" is " +arg0.compareTo(arg1));
+	return arg0.compareTo(arg1);
+    }
+      
   }
 }
 

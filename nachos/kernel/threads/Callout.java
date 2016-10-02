@@ -6,7 +6,9 @@ import nachos.machine.CPU;
 import nachos.machine.InterruptHandler;
 import nachos.machine.Machine;
 import nachos.machine.NachosThread;
+import nachos.machine.Simulation;
 import nachos.machine.Timer;
+
 import java.util.*;
 
 
@@ -16,15 +18,23 @@ import java.util.*;
 public class Callout {
     
     //Put the queue  here    
-    ArrayList<CalloutWithTime> scheduledCallouts;
+    PriorityQueue<CalloutWithTime> scheduledCallouts;
+    long startTime;
+    long elapsedTime;
+    Timer timer;
+    Semaphore s;
     
     public Callout()
     {
-	scheduledCallouts = new ArrayList<CalloutWithTime>();
-	Timer timer = Machine.getTimer(0); //I don't think this would be good place idk
+	startTime = Simulation.currentTime();  //Gets the simulated time
+	elapsedTime = startTime;
+	scheduledCallouts = new PriorityQueue<CalloutWithTime>(new CalloutComparator());
+	s = new Semaphore("calloutSem",1);
+	//timer = Machine.getTimer(0); 
+//	timer.setHandler(new TimerInterruptHandler(timer));
     }
     
-//schedule    
+    
     /**
      * Schedule a callout to occur at a specified number of
      * ticks in the future.
@@ -36,12 +46,15 @@ public class Callout {
      */
     public void schedule(Runnable runnable, int ticksFromNow)
     {
-	//Do semaphore P() here
+	//Do semaphore P() here, stop interrupts.
+	s.P();
 	
+	//Since this is a priority queue, simply adding the callout will lead to
+	//the next callout to be at the front.
 	scheduledCallouts.add(new CalloutWithTime(runnable, ticksFromNow));
-	//Invoke Sort list here
-	
-	//Do semaphore V() here
+
+	//Do semaphore V() here, critical section over
+	s.V();
     }
     
     
@@ -51,8 +64,9 @@ public class Callout {
      * interrupt the CPU periodically (once every Timer.DefaultInterval ticks).
      * The handleInterrupt() method is called with interrupts disabled each
      * time there is a timer interrupt.
+     * Default Interval is 100 already as indicated by the class File for Timer.
      */
-    private static class TimerInterruptHandler implements InterruptHandler {
+    private class CalloutTimerInterruptHandler implements InterruptHandler {
 
 	/** The Timer device this is a handler for. */
 	private final Timer timer;
@@ -62,63 +76,63 @@ public class Callout {
 	 * 
 	 * @param timer  The device this handler is going to handle.
 	 */
-	public TimerInterruptHandler() {
+	public CalloutTimerInterruptHandler() {
 	    this.timer =  Machine.getTimer(0);
-	    
+	   
 	}
 	
-	public TimerInterruptHandler(Timer timer) {
+	public CalloutTimerInterruptHandler(Timer timer) {
 	    this.timer = timer;
 	}
 
 	public void handleInterrupt() {
-	    Debug.println('i', "Timer interrupt: " + timer.name);
-	    // Note that instead of calling yield() directly (which would
-	    // suspend the interrupt handler, not the interrupted thread
-	    // which is what we wanted to context switch), we set a flag
-	    // so that once the interrupt handler is done, it will appear as 
-	    // if the interrupted thread called yield at the point it is 
-	    // was interrupted.
-	    yieldOnReturn();
+	   
+	   elapsedTime = Simulation.currentTime() - elapsedTime;
+	   
+	   //ticksFromNow 20 < elapsedTime = 34
+	   while(scheduledCallouts.peek().getTicksFromNow() <= elapsedTime){
+	      // s
+	       ;
+	   } 
 	}
 
-	/**
-	 * Called to cause a context switch (for example, on a time slice)
-	 * in the interrupted thread when the handler returns.
-	 *
-	 * We can't do the context switch right here, because that would switch
-	 * out the interrupt handler, and we want to switch out the 
-	 * interrupted thread.  Instead, we set a hook to kernel code to be executed
-	 * when the current handler returns.
-	 */
-	private void yieldOnReturn() {
-	    Debug.println('i', "Yield on interrupt return requested");
-	    CPU.setOnInterruptReturn
-	    (new Runnable() {
-		public void run() {
-		    if(NachosThread.currentThread() != null) {
-			Debug.println('t', "Yielding current thread on interrupt return");
-			Nachos.scheduler.yieldThread();
-		    } else {
-			Debug.println('i', "No current thread on interrupt return, skipping yield");
-		    }
-		}
-	    });
-	}
 
     }
 
 
     private static class CalloutWithTime{
-	Runnable actualCallout;
-	int ticksFromNow;
+	private Runnable actualCallout;
+	private int ticksFromNow;
 	
+	public int getTicksFromNow(){
+	    
+	    return ticksFromNow;
+	}
 	public CalloutWithTime(Runnable callout, int ticks){
 	    actualCallout = callout;
 	    ticksFromNow = ticks;
 	    
 	}
 
+
+	
+    }
+    
+    private static class CalloutComparator implements Comparator<CalloutWithTime>{
+
+	@Override
+	public int compare(CalloutWithTime c1, CalloutWithTime c2) {
+	   if(c1.getTicksFromNow() > c2.getTicksFromNow()){
+	       return 1;
+	   }
+	   else if (c1.getTicksFromNow() < c2.getTicksFromNow()){
+	       return -1;
+	   }
+	   else{
+	       return 0;
+	   }
+	}
+	
 	
     }
     
