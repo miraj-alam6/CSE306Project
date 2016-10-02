@@ -87,12 +87,17 @@ public class Callout {
 
 	public void handleInterrupt() {
 	   
-	   elapsedTime = Simulation.currentTime() - elapsedTime;
+	   elapsedTime = Simulation.currentTime() - startTime;
 	   
 	   //ticksFromNow 20 < elapsedTime = 34
-	   while(scheduledCallouts.peek().getTicksFromNow() <= elapsedTime){
-	      // s
-	       ;
+	   //Process all requests that have to be done.
+	   //First check if there are any scheduled callouts with shortcircuiting.
+	   while(scheduledCallouts.peek()!= null && 
+		   scheduledCallouts.peek().getScheduledTimeToCallout() <= elapsedTime){
+	      
+	       break;
+	       //scheduledCallouts.poll().getActualCallout()
+	       //scheduledCallouts.poll().getActualCallout()
 	   } 
 	}
 
@@ -103,14 +108,29 @@ public class Callout {
     private static class CalloutWithTime{
 	private Runnable actualCallout;
 	private int ticksFromNow;
+	private int scheduledTimeToCallout;
 	
+	//comparator does not use this function. 
 	public int getTicksFromNow(){
 	    
 	    return ticksFromNow;
 	}
+	
+	//comparator uses this function
+	public int getScheduledTimeToCallout(){
+	    
+	    return scheduledTimeToCallout;
+	}
+	
+	public Runnable getActualCallout(){
+	    
+	    return actualCallout;
+	}
 	public CalloutWithTime(Runnable callout, int ticks){
 	    actualCallout = callout;
 	    ticksFromNow = ticks;
+	    scheduledTimeToCallout = Simulation.currentTime() + ticks;
+	    
 	    
 	}
 
@@ -122,10 +142,10 @@ public class Callout {
 
 	@Override
 	public int compare(CalloutWithTime c1, CalloutWithTime c2) {
-	   if(c1.getTicksFromNow() > c2.getTicksFromNow()){
+	   if(c1.getScheduledTimeToCallout() > c2.getScheduledTimeToCallout()){
 	       return 1;
 	   }
-	   else if (c1.getTicksFromNow() < c2.getTicksFromNow()){
+	   else if (c1.getScheduledTimeToCallout() < c2.getScheduledTimeToCallout()){
 	       return -1;
 	   }
 	   else{
