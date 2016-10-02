@@ -105,7 +105,6 @@ public class Nachos implements Runnable {
 	    cpu.setCPUExceptionHandler(new ExceptionHandler());
 	}
 
-	//Initialize Callout facility
 	
 	
 	// Run test/demo programs, according to the supplied options.

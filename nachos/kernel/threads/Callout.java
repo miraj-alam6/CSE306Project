@@ -95,7 +95,7 @@ public class Callout {
 	   while(scheduledCallouts.peek()!= null && 
 		   scheduledCallouts.peek().getScheduledTimeToCallout() <= elapsedTime){
 	      
-	       break;
+	       Nachos.scheduler.makeReady(	);
 	       //scheduledCallouts.poll().getActualCallout()
 	       //scheduledCallouts.poll().getActualCallout()
 	   } 
