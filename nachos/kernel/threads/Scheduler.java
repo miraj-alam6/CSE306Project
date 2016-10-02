@@ -320,6 +320,12 @@ public class Scheduler {
 	// The caller is responsible for re-enabling interrupts.
     }
 
+    /*Implemented for HW 1*/
+    public void sleepThread (int ticks) {
+	
+	
+    }
+    
     /**
      * Called by a thread to terminate itself.
      * A thread can't completely destroy itself, because it needs some
