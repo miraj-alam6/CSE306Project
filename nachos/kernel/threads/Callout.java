@@ -25,6 +25,7 @@ public class Callout {
     Semaphore s; // ASK is it okay to have a semaphore here to prevent interrupts when scheduling?
     /** Spin lock for mutually exclusive access to scheduler state. */
     SpinLock sl;
+    
     public Callout()
     {
 	//startTime = Simulation.currentTime();  //Gets the simulated time
@@ -36,6 +37,7 @@ public class Callout {
 	sl = new SpinLock("callout mutex");
 	timer = Machine.getTimer(0); 
 	timer.setHandler(new CalloutTimerInterruptHandler(timer));
+	timer.start();
     }
     
     
@@ -57,8 +59,6 @@ public class Callout {
 	 s.P();    
 	 sl.acquire(); //Want to hold spin lock for as little time as possible
 	
-	
-	
 	//Since this is a priority queue, simply adding the callout will lead to
 	//the next callout to be at the front.
 	scheduledCallouts.add(new CalloutWithTime(runnable, ticksFromNow));
@@ -68,6 +68,7 @@ public class Callout {
 	sl.release(); 
 	s.V();
 	CPU.setLevel(oldLevel);
+	
     }
     
     

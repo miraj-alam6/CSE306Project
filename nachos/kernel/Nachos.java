@@ -153,15 +153,7 @@ public class Nachos implements Runnable {
       Debug.println('z', "Testing Debugging Message Argument z");
       // Initialize the hardware.
       Machine.init();
-      PriorityQueue<Integer> testIntQueue = new PriorityQueue<Integer>(new ComparatorInt());
-      testIntQueue.add(new Integer(10));
-      testIntQueue.add(new Integer(30));
-      testIntQueue.add(new Integer(5));
-      
-      Debug.println('z', ""+testIntQueue.toString());
-      testIntQueue.poll();
-      Debug.println('z', ""+testIntQueue.toString());
-      testIntQueue.poll();
+
       // The kernel code assumes that it is running in the context of a
       // Nachos thread, but right now we are only in a Java thread.
       // So, we need to create the first Nachos thread and start it running
