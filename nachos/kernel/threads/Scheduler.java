@@ -333,6 +333,7 @@ public class Scheduler {
 	Debug.println('t', "Sleeping thread: " + currentThread.name); 
 	//callout.schedule(currentThread, ticks); // Not the right thing to do
 	//yieldCPU(NachosThread.BLOCKED, null); // #ASK I'm pretty sure I don't keept this
+	//#ASK professor, why is final not needed on my computer, but needed for Kwun's
 	Semaphore s = new Semaphore("runnableProcess",0); //Ask should the sempahore be created here?
 	//#ASK: won't different processes have this same name, and thus, where does the actual process actually do
 	//its stuff, in the run? How is s.V() representative of what the process is doing?

@@ -29,12 +29,13 @@ public class Callout {
     {
 	//startTime = Simulation.currentTime();  //Gets the simulated time
 	//elapsedTime = startTime;
+	
 	elapsedTime = startTime = 0;
 	scheduledCallouts = new PriorityQueue<CalloutWithTime>(new CalloutComparator());
 	s = new Semaphore("calloutSem",1);
 	sl = new SpinLock("callout mutex");
-	//timer = Machine.getTimer(0); 
-//	timer.setHandler(new TimerInterruptHandler(timer));
+	timer = Machine.getTimer(0); 
+	timer.setHandler(new CalloutTimerInterruptHandler(timer));
     }
     
     
@@ -88,10 +89,7 @@ public class Callout {
 	 * 
 	 * @param timer  The device this handler is going to handle.
 	 */
-	public CalloutTimerInterruptHandler() {
-	    this.timer =  Machine.getTimer(0);
-	   //set handler here or else will never get interrupts
-	}
+	
 	
 	public CalloutTimerInterruptHandler(Timer timer) {
 	    this.timer = timer;
@@ -102,7 +100,7 @@ public class Callout {
 	   //elapsedTime = Simulation.currentTime() - startTime;
 	   elapsedTime += 100; // Or maybe do elapsedTime += timer.interval;
 	   
-	   //ticksFromNow 20 < elapsedTime = 34
+
 	   //Process all requests that have to be done.
 	   //First check if there are any scheduled callouts with shortcircuiting.
 	   sl.acquire();
@@ -116,9 +114,10 @@ public class Callout {
 	       //critical section should be over by this time.
 	       scheduledCallouts.poll().getActualCallout().run(); // ASK: is this good enough? Should run with
 	       							 //interrupts disabled
-	       
+	       sl.acquire(); //because the loop will check the conditions again.
 	   } 
-	  // sl.release(); //run is called with spinlock held, so not the right place, change it.
+	   sl.release();
+	   //run is called with spinlock held, so not the right place, change it.
 	}
 	
 
