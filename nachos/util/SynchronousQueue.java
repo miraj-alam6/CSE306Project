@@ -25,10 +25,11 @@ import nachos.kernel.threads.*;
  */
 
 public class SynchronousQueue<T> implements Queue<T> {
-    private static final int MAX = 10;
     Semaphore bufferLock;
     Semaphore dataAvail;
     Semaphore spaceAvail;
+    T obj;
+    
     /**
      * Initialize a new SynchronousQueue object.
      */
@@ -36,7 +37,7 @@ public class SynchronousQueue<T> implements Queue<T> {
 	 
 	bufferLock = new Semaphore("bufferLock", 1);
 	dataAvail = new Semaphore("dataAvail",0);
-	spaceAvail = new Semaphore("spaceAvail",MAX);
+	spaceAvail = new Semaphore("spaceAvail",0);
     }
 
     /**
@@ -46,6 +47,9 @@ public class SynchronousQueue<T> implements Queue<T> {
      * @param obj The object to add.
      */
     public boolean put(T obj) { 
+	spaceAvail.P();
+	
+	dataAvail.V();
 	return false;
     }
 
@@ -56,7 +60,11 @@ public class SynchronousQueue<T> implements Queue<T> {
      * @return the head of this queue.
      */
     public T take() {
-	return null;
+	dataAvail.P();
+	
+	spaceAvail.V();
+	
+	return obj;
     }
 
     /**
