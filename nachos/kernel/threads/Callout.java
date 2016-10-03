@@ -19,8 +19,8 @@ public class Callout {
     
     //Put the queue  here    
     PriorityQueue<CalloutWithTime> scheduledCallouts;
-    long startTime;
-    long elapsedTime;
+    int startTime;
+    int elapsedTime;
     Timer timer;
     Semaphore s; // ASK is it okay to have a semaphore here to prevent interrupts when scheduling?
     /** Spin lock for mutually exclusive access to scheduler state. */
@@ -125,7 +125,7 @@ public class Callout {
     }
 
 
-    private static class CalloutWithTime{
+    private class CalloutWithTime{
 	private Runnable actualCallout;
 	private int ticksFromNow;
 	private int scheduledTimeToCallout;
@@ -149,7 +149,8 @@ public class Callout {
 	public CalloutWithTime(Runnable callout, int ticks){
 	    actualCallout = callout;
 	    ticksFromNow = ticks;
-	    scheduledTimeToCallout = Simulation.currentTime() + ticks;
+	    
+	    scheduledTimeToCallout = elapsedTime + ticks;
 	    
 	    
 	}
