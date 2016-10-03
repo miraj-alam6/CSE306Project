@@ -32,6 +32,7 @@ import nachos.kernel.devices.SerialDriver;
 import nachos.kernel.devices.test.ConsoleTest;
 import nachos.kernel.devices.test.NetworkTest;
 import nachos.kernel.devices.test.SerialTest;
+import nachos.kernel.threads.test.CalloutTest; // #MIRAJ:  added this
 import nachos.kernel.threads.Scheduler;
 import nachos.kernel.userprog.ExceptionHandler;
 import nachos.kernel.filesys.FileSystem;
@@ -124,6 +125,9 @@ public class Nachos implements Runnable {
 	    NetworkTest.start();
 	if(options.CONSOLE_TEST)
 	    ConsoleTest.start();
+	//#MIRAJ  Added this
+	if(options.CALLOUT_TEST)
+	    CalloutTest.start();
 	
 	// Terminate the first thread, its job is done.
 	// Alternatively, you could give this thread the responsibility
@@ -175,7 +179,7 @@ public class Nachos implements Runnable {
 
     @Override
     public int compare(Integer arg0, Integer arg1) {
-	Debug.println('+', ""+arg0+" vs "+ arg1+" is " +arg0.compareTo(arg1));
+	Debug.println('z', ""+arg0+" vs "+ arg1+" is " +arg0.compareTo(arg1));
 	return arg0.compareTo(arg1);
     }
       

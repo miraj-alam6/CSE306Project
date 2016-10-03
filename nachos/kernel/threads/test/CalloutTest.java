@@ -9,28 +9,32 @@ public class CalloutTest implements Runnable{
 
  /** Integer identifier that indicates which thread we are. */
  private int which;
-
+ private int numTicks;
  /**
   * Initialize an instance of ThreadTest and start a new thread running
   * on it.
   *
   * @param w  An integer identifying this instance of ThreadTest.
   */
- public CalloutTest(int w) {
+ public CalloutTest(int w, int numTicks) {
 	which = w;
+	this.numTicks = numTicks;
 	NachosThread t = new NachosThread("Test thread " + w, this);
 	Nachos.scheduler.readyToRun(t);
  }
 
  /**
-  * Loop 5 times, yielding the CPU to another ready thread 
-  * each iteration.
+  * Schedule many callouts that will wake up your threads after they go to sleep.
+  *
   */
  public void run() {
-	for (int num = 0; num < 5; num++) {
-	    Debug.println('+', "*** thread " + which + " looped " + num + " times");
-	    Nachos.scheduler.yieldThread();
+	for (int i = 1; i <= 10; i++) {
+	    Debug.println('+', "*** thread " + which + " will go to sleep now. Will wake up in " + numTicks + " ticks from now.");
+	    Debug.println('+', "" + Nachos.scheduler);
+	    Nachos.scheduler.sleepThread(i * numTicks);
+	    Debug.println('+', "*** thread " + which + "has woken up.");
 	}
+	
 	Nachos.scheduler.finishThread();
  }
  
@@ -38,9 +42,9 @@ public class CalloutTest implements Runnable{
   * Entry point for the test.
   */
  public static void start() {
-	Debug.println('+', "Entering ThreadTest");
-	new ThreadTest(1);
-	new ThreadTest(2);
+	Debug.println('+', "Entering CalloutTest");
+	new CalloutTest(1, 28);
+	new CalloutTest(2, 40);
  }
 
 }
