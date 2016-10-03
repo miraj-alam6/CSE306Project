@@ -21,6 +21,7 @@ public class CalloutTest implements Runnable{
 	this.numTicks = numTicks;
 	NachosThread t = new NachosThread("Test thread " + w, this);
 	Nachos.scheduler.readyToRun(t);
+
  }
 
  /**
@@ -29,7 +30,7 @@ public class CalloutTest implements Runnable{
   */
  public void run() {
 	for (int i = 1; i <= 10; i++) {
-	    Debug.println('+', "*** thread " + which + " will go to sleep now. Will wake up in " + numTicks + " ticks from now.");
+	    Debug.println('+', "*** thread " + which + " will go to sleep now. Will wake up in " + numTicks + " from now.");
 	    Debug.println('+', "" + Nachos.scheduler);
 	    Nachos.scheduler.sleepThread(i * numTicks);
 	    Debug.println('+', "*** thread " + which + "has woken up.");

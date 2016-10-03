@@ -115,7 +115,6 @@ public class Callout {
 	       
 	       scheduledCallouts.poll().getActualCallout().run(); // ASK: is this good enough? Should run with
 	       							 //interrupts disabled
-	       
 	       Debug.println('+', "*** at ticks " + elapsedTime + ", a callout has occured.");
 	       sl.acquire(); //because the loop will check the conditions again.
 	   } 

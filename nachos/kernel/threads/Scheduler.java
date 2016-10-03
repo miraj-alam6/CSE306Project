@@ -78,7 +78,7 @@ public class Scheduler {
     public Scheduler(NachosThread firstThread) {
 	readyList = new FIFOQueue<NachosThread>();
 	cpuList = new FIFOQueue<CPU>();
-
+	callout = new Callout();
 	Debug.println('t', "Initializing scheduler");
 
 	// Add all the CPUs to the idle CPU list, and start their time-slice timers,
@@ -346,8 +346,8 @@ public class Scheduler {
 	};
 
 	callout.schedule(scheduledCallout, ticks); //Put the callout into the scheduled list of callouts
-	s.P(); //put the thread to sleeep by doing s.P(), 
 	
+	s.P(); //put the thread to sleeep by doing s.P(), 
     }
     
     /**
