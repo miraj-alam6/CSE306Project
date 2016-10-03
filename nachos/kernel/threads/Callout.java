@@ -112,8 +112,11 @@ public class Callout {
 	       						 	   //what I should do instead
 	       sl.release(); //I think this will be a good place to release the spinlock because it is before run()
 	       //critical section should be over by this time.
+	       
 	       scheduledCallouts.poll().getActualCallout().run(); // ASK: is this good enough? Should run with
 	       							 //interrupts disabled
+	       
+	       Debug.println('+', "*** at ticks " + elapsedTime + ", a callout has occured.");
 	       sl.acquire(); //because the loop will check the conditions again.
 	   } 
 	   sl.release();

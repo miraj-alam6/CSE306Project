@@ -329,14 +329,11 @@ public class Scheduler {
     /*Implemented for HW 1*/
     public void sleepThread (int ticks) {
 	NachosThread currentThread = NachosThread.currentThread(); // #ASK should I keep this still
-	//Debug.ASSERT(CPU.getLevel() == CPU.IntOff); // #ASK should I keep this still
 	Debug.println('t', "Sleeping thread: " + currentThread.name); 
-	//callout.schedule(currentThread, ticks); // Not the right thing to do
-	//yieldCPU(NachosThread.BLOCKED, null); // #ASK I'm pretty sure I don't keept this
+		
 	//#ASK professor, why is final not needed on my computer, but needed for Kwun's
-	Semaphore s = new Semaphore("runnableProcess",0); //Ask should the sempahore be created here?
-	//#ASK: won't different processes have this same name, and thus, where does the actual process actually do
-	//its stuff, in the run? How is s.V() representative of what the process is doing?
+	final  Semaphore s = new Semaphore("runnableProcess",0); //Ask should the sempahore be created here?
+	
 	Runnable scheduledCallout = new Runnable(){
 	   // public Semaphore s = new Semaphore("runnableProcess",0);  // #ASK should the semaphore be created here?
 	    @Override
@@ -347,10 +344,9 @@ public class Scheduler {
 	    
 	    
 	};
+
 	callout.schedule(scheduledCallout, ticks); //Put the callout into the scheduled list of callouts
-	s.P(); //put the thread to sleeep by doing s.P(), #ASK: why doesn't this work
-	// #ASK: I don't understand how this actually puts a thread to sleep, it looks vastly different from 
-	//the code of the other sleepThread function
+	s.P(); //put the thread to sleeep by doing s.P(), 
 	
     }
     
