@@ -154,6 +154,7 @@ public class Nachos implements Runnable {
       // Initialize the hardware.
       Machine.init();
 
+      
       // The kernel code assumes that it is running in the context of a
       // Nachos thread, but right now we are only in a Java thread.
       // So, we need to create the first Nachos thread and start it running
