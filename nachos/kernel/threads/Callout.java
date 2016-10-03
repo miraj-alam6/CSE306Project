@@ -22,14 +22,17 @@ public class Callout {
     long startTime;
     long elapsedTime;
     Timer timer;
-    Semaphore s;
-    
+    Semaphore s; // ASK is it okay to have a semaphore here to prevent interrupts when scheduling?
+    /** Spin lock for mutually exclusive access to scheduler state. */
+    SpinLock sl;
     public Callout()
     {
-	startTime = Simulation.currentTime();  //Gets the simulated time
-	elapsedTime = startTime;
+	//startTime = Simulation.currentTime();  //Gets the simulated time
+	//elapsedTime = startTime;
+	elapsedTime = startTime = 0;
 	scheduledCallouts = new PriorityQueue<CalloutWithTime>(new CalloutComparator());
 	s = new Semaphore("calloutSem",1);
+	sl = new SpinLock("callout mutex");
 	//timer = Machine.getTimer(0); 
 //	timer.setHandler(new TimerInterruptHandler(timer));
     }
@@ -46,15 +49,24 @@ public class Callout {
      */
     public void schedule(Runnable runnable, int ticksFromNow)
     {
+	
 	//Do semaphore P() here, stop interrupts.
-	s.P();
+	int oldLevel = CPU.setLevel(CPU.IntOff);
+	 
+	 s.P();    
+	 sl.acquire(); //Want to hold spin lock for as little time as possible
+	
+	
 	
 	//Since this is a priority queue, simply adding the callout will lead to
 	//the next callout to be at the front.
 	scheduledCallouts.add(new CalloutWithTime(runnable, ticksFromNow));
 
 	//Do semaphore V() here, critical section over
+	
+	sl.release(); 
 	s.V();
+	CPU.setLevel(oldLevel);
     }
     
     
@@ -78,7 +90,7 @@ public class Callout {
 	 */
 	public CalloutTimerInterruptHandler() {
 	    this.timer =  Machine.getTimer(0);
-	   
+	   //set handler here or else will never get interrupts
 	}
 	
 	public CalloutTimerInterruptHandler(Timer timer) {
@@ -87,20 +99,28 @@ public class Callout {
 
 	public void handleInterrupt() {
 	   
-	   elapsedTime = Simulation.currentTime() - startTime;
+	   //elapsedTime = Simulation.currentTime() - startTime;
+	   elapsedTime += 100; // Or maybe do elapsedTime += timer.interval;
 	   
 	   //ticksFromNow 20 < elapsedTime = 34
 	   //Process all requests that have to be done.
 	   //First check if there are any scheduled callouts with shortcircuiting.
+	   sl.acquire();
 	   while(scheduledCallouts.peek()!= null && 
 		   scheduledCallouts.peek().getScheduledTimeToCallout() <= elapsedTime){
-	      
+	       
 	       //Nachos.scheduler.makeReady(	);nachos thread please
-	       //scheduledCallouts.poll().getActualCallout()
-	       //scheduledCallouts.poll().getActualCallout()
+	       //scheduledCallouts.poll().getActualCallout().start(); // #ASK: why doesn't this work, is next line
+	       						 	   //what I should do instead
+	       sl.release(); //I think this will be a good place to release the spinlock because it is before run()
+	       //critical section should be over by this time.
+	       scheduledCallouts.poll().getActualCallout().run(); // ASK: is this good enough? Should run with
+	       							 //interrupts disabled
+	       
 	   } 
+	  // sl.release(); //run is called with spinlock held, so not the right place, change it.
 	}
-
+	
 
     }
 

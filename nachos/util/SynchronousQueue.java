@@ -1,5 +1,6 @@
 package nachos.util;
 
+import nachos.kernel.threads.*;
 /**
  * This class is patterned after the SynchronousQueue class
  * in the java.util.concurrent package.
@@ -24,11 +25,19 @@ package nachos.util;
  */
 
 public class SynchronousQueue<T> implements Queue<T> {
-
+    private static final int MAX = 10;
+    Semaphore bufferLock;
+    Semaphore dataAvail;
+    Semaphore spaceAvail;
     /**
      * Initialize a new SynchronousQueue object.
      */
-    public SynchronousQueue() { }
+    public SynchronousQueue() {
+	 
+	bufferLock = new Semaphore("bufferLock", 1);
+	dataAvail = new Semaphore("dataAvail",0);
+	spaceAvail = new Semaphore("spaceAvail",MAX);
+    }
 
     /**
      * Adds the specified object to this queue,
