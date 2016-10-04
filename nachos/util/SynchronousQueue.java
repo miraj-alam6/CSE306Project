@@ -25,19 +25,19 @@ import nachos.kernel.threads.*;
  */
 
 public class SynchronousQueue<T> implements Queue<T> {
-    Semaphore bufferLock;
+    Semaphore objectLock;
     Semaphore dataAvail;
-    Semaphore spaceAvail;
-    T obj;
-    
+    Semaphore consumeAvail;
+    T object;
+    SpinLock sl;
     /**
      * Initialize a new SynchronousQueue object.
      */
     public SynchronousQueue() {
-	 
-	bufferLock = new Semaphore("bufferLock", 1);
+	sl = new SpinLock("SynchronousQueue mutex"); 
+	objectLock = new Semaphore("objectLock", 1);
 	dataAvail = new Semaphore("dataAvail",0);
-	spaceAvail = new Semaphore("spaceAvail",0);
+	consumeAvail = new Semaphore("consumeAvail",0);
     }
 
     /**
@@ -47,10 +47,14 @@ public class SynchronousQueue<T> implements Queue<T> {
      * @param obj The object to add.
      */
     public boolean put(T obj) { 
-	spaceAvail.P();
-	
+	objectLock.P();
 	dataAvail.V();
-	return false;
+	sl.acquire();
+	object = obj;
+	sl.release();
+	objectLock.V();
+	consumeAvail.P();
+	return true;
     }
 
     /**
@@ -61,10 +65,14 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     public T take() {
 	dataAvail.P();
-	
-	spaceAvail.V();
-	
-	return obj;
+	objectLock.P();
+	sl.acquire();
+	T returnObj = object;
+	object = null;	
+	sl.release();
+	objectLock.V();
+	consumeAvail.V();	
+	return returnObj;
     }
 
     /**
@@ -76,7 +84,8 @@ public class SynchronousQueue<T> implements Queue<T> {
      * was not added.
      */
     @Override
-    public boolean offer(T e) { 
+    public boolean offer(T e) {
+	
 	return false;
     }
     
