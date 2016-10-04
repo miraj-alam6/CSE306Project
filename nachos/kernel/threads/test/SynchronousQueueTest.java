@@ -33,7 +33,7 @@ public class SynchronousQueueTest implements Runnable{
 	{
 	    Debug.println('+', "*** thread " + threadNum + " will call take");
 	    Integer s = Nachos.scheduler.getSyncQ().take();
-	    Debug.println('+', "*** thread retrieved" + s);
+	    Debug.println('+', "*** thread " + threadNum + " retrieved" + s);
 	}
 	
 	
@@ -48,8 +48,8 @@ public class SynchronousQueueTest implements Runnable{
    	Debug.println('+', "Entering SynchronousQueueTest");
    	new SynchronousQueueTest(1, 1);
    	new SynchronousQueueTest(2, 1);
-   	new SynchronousQueueTest(3, 2);
    	new SynchronousQueueTest(4, 1);
+	new SynchronousQueueTest(3, 2);
    	new SynchronousQueueTest(5, 2);
    	new SynchronousQueueTest(6, 2);
     }

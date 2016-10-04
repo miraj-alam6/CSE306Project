@@ -25,9 +25,12 @@ import nachos.kernel.threads.*;
  */
 
 public class SynchronousQueue<T> implements Queue<T> {
+    
     Semaphore objectLock;
     Semaphore dataAvail;
     Semaphore consumeAvail;
+    Semaphore producerLock;
+    Semaphore consumerLock;
     boolean tryingToPut = true;
     boolean tryingToTake = true;
     T object;
@@ -36,10 +39,13 @@ public class SynchronousQueue<T> implements Queue<T> {
      * Initialize a new SynchronousQueue object.
      */
     public SynchronousQueue() {
-	sl = new SpinLock("SynchronousQueue mutex"); 
+	sl = new SpinLock("SynchronousQueue mutex");
+	
 	objectLock = new Semaphore("objectLock", 1);
 	dataAvail = new Semaphore("dataAvail",0);
 	consumeAvail = new Semaphore("consumeAvail",0);
+	producerLock = new Semaphore("producerLock", 1);
+	consumerLock = new Semaphore("producerLock", 1);
     }
 
     /**
@@ -49,15 +55,17 @@ public class SynchronousQueue<T> implements Queue<T> {
      * @param obj The object to add.
      */
     public boolean put(T obj) { 
+	producerLock.P();
 	objectLock.P();
 	dataAvail.V();
-	sl.acquire();
 	tryingToPut = true;
+	consumeAvail.P();
+	sl.acquire();
 	object = obj;
 	sl.release();
-	objectLock.V();
-	consumeAvail.P();
 	tryingToPut = false;
+	objectLock.V();
+	producerLock.V();
 	return true;
     }
 
@@ -68,16 +76,18 @@ public class SynchronousQueue<T> implements Queue<T> {
      * @return the head of this queue.
      */
     public T take() {
+	consumerLock.P();
+	consumeAvail.V();
+	tryingToTake = true;
 	dataAvail.P();
 	objectLock.P();
-	sl.acquire();
-	tryingToTake = true;
+	//sl.acquire();
 	T returnObj = object;
 	object = null;	
-	sl.release();
+	//sl.release();
 	objectLock.V();
-	consumeAvail.V();
 	tryingToTake = false;
+	consumerLock.V();
 	return returnObj;
     }
 
