@@ -121,6 +121,9 @@ public class Callout {
 	   } 
 	   sl.release();
 	   //run is called with spinlock held, so not the right place, change it.
+	   if(scheduledCallouts.peek() == null){
+	       timer.stop();
+	   }
 	}
 	
 
