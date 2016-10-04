@@ -23,6 +23,7 @@ import nachos.machine.Timer;
 import nachos.machine.InterruptHandler;
 import nachos.util.FIFOQueue;
 import nachos.util.Queue;
+import nachos.util.SynchronousQueue;
 
 /**
  * The scheduler is responsible for maintaining a list of threads that
@@ -74,11 +75,14 @@ public class Scheduler {
      */
     
     private Callout callout; // This will hold the list of all scheduled callouts
+    private SynchronousQueue<Integer> syncQ; // To test the synchronous queue
     
     public Scheduler(NachosThread firstThread) {
 	readyList = new FIFOQueue<NachosThread>();
 	cpuList = new FIFOQueue<CPU>();
 	callout = new Callout();
+	syncQ = new SynchronousQueue<Integer>();
+	
 	Debug.println('t', "Initializing scheduler");
 
 	// Add all the CPUs to the idle CPU list, and start their time-slice timers,
@@ -99,7 +103,12 @@ public class Scheduler {
 	CPU firstCPU = cpuList.poll();
 	firstCPU.dispatch(firstThread);
     };
-
+    
+    
+    public SynchronousQueue<Integer> getSyncQ()
+    {
+	return this.syncQ;
+    }
     /**
      * Stop the timers on all CPUs, in preparation for shutdown.
      */

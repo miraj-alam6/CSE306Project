@@ -1,5 +1,6 @@
 package nachos.util;
 
+import nachos.Debug;
 import nachos.kernel.threads.*;
 /**
  * This class is patterned after the SynchronousQueue class
@@ -51,6 +52,7 @@ public class SynchronousQueue<T> implements Queue<T> {
 	dataAvail.V();
 	sl.acquire();
 	object = obj;
+	Debug.println('+', "object added" + obj);
 	sl.release();
 	objectLock.V();
 	consumeAvail.P();
@@ -69,6 +71,7 @@ public class SynchronousQueue<T> implements Queue<T> {
 	sl.acquire();
 	T returnObj = object;
 	object = null;	
+	Debug.println('+', "object retrieved" + returnObj);
 	sl.release();
 	objectLock.V();
 	consumeAvail.V();	

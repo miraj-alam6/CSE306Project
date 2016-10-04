@@ -11,10 +11,10 @@ public class CalloutTest implements Runnable{
  private int which;
  private int numTicks;
  /**
-  * Initialize an instance of ThreadTest and start a new thread running
+  * Initialize an instance of CalloutTest and start a new thread running
   * on it.
   *
-  * @param w  An integer identifying this instance of ThreadTest.
+  * @param w  An integer identifying this instance of CalloutTest.
   */
  public CalloutTest(int w, int numTicks) {
 	which = w;
