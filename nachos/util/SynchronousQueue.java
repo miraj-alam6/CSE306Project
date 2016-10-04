@@ -1,6 +1,5 @@
 package nachos.util;
 
-import nachos.Debug;
 import nachos.kernel.threads.*;
 /**
  * This class is patterned after the SynchronousQueue class
@@ -29,6 +28,8 @@ public class SynchronousQueue<T> implements Queue<T> {
     Semaphore objectLock;
     Semaphore dataAvail;
     Semaphore consumeAvail;
+    boolean tryingToPut = true;
+    boolean tryingToTake = true;
     T object;
     SpinLock sl;
     /**
@@ -51,11 +52,12 @@ public class SynchronousQueue<T> implements Queue<T> {
 	objectLock.P();
 	dataAvail.V();
 	sl.acquire();
+	tryingToPut = true;
 	object = obj;
-	Debug.println('+', "object added" + obj);
 	sl.release();
 	objectLock.V();
 	consumeAvail.P();
+	tryingToPut = false;
 	return true;
     }
 
@@ -69,12 +71,13 @@ public class SynchronousQueue<T> implements Queue<T> {
 	dataAvail.P();
 	objectLock.P();
 	sl.acquire();
+	tryingToTake = true;
 	T returnObj = object;
 	object = null;	
-	Debug.println('+', "object retrieved" + returnObj);
 	sl.release();
 	objectLock.V();
-	consumeAvail.V();	
+	consumeAvail.V();
+	tryingToTake = false;
 	return returnObj;
     }
 
@@ -89,6 +92,11 @@ public class SynchronousQueue<T> implements Queue<T> {
     @Override
     public boolean offer(T e) {
 	
+	if(tryingToTake){
+	    object = e;
+	    dataAvail.V();
+	    return true;
+	}
 	return false;
     }
     
@@ -100,6 +108,11 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     @Override
     public T poll() { 
+	if(tryingToPut){
+
+	    consumeAvail.V();
+	    return object;
+	}
 	return null;
     }
     
