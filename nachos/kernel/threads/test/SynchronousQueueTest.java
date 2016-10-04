@@ -46,11 +46,14 @@ public class SynchronousQueueTest implements Runnable{
      */
     public static void start() {
    	Debug.println('+', "Entering SynchronousQueueTest");
+   	
+   	new SynchronousQueueTest(3, 2);
    	new SynchronousQueueTest(1, 1);
-   	new SynchronousQueueTest(2, 1);
-   	new SynchronousQueueTest(4, 1);
-	new SynchronousQueueTest(3, 2);
+   	   	
    	new SynchronousQueueTest(5, 2);
    	new SynchronousQueueTest(6, 2);
+   	new SynchronousQueueTest(2, 1);
+   	new SynchronousQueueTest(4, 1);
+
     }
 }

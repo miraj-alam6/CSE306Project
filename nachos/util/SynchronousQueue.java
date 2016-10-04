@@ -45,7 +45,7 @@ public class SynchronousQueue<T> implements Queue<T> {
 	dataAvail = new Semaphore("dataAvail",0);
 	consumeAvail = new Semaphore("consumeAvail",0);
 	producerLock = new Semaphore("producerLock", 1);
-	consumerLock = new Semaphore("producerLock", 1);
+	consumerLock = new Semaphore("consumerLock", 1);
     }
 
     /**
@@ -56,15 +56,18 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     public boolean put(T obj) { 
 	producerLock.P();
-	objectLock.P();
-	dataAvail.V();
-	tryingToPut = true;
+	
+	//objectLock.P();
+	//dataAvail.V();
+	//tryingToPut = true;
+	//consumeAvail.P();
+	//sl.acquire();
 	consumeAvail.P();
-	sl.acquire();
 	object = obj;
-	sl.release();
-	tryingToPut = false;
-	objectLock.V();
+	dataAvail.V();
+	//sl.release();
+	//tryingToPut = false;
+	//objectLock.V();
 	producerLock.V();
 	return true;
     }
@@ -77,16 +80,18 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     public T take() {
 	consumerLock.P();
-	consumeAvail.V();
-	tryingToTake = true;
-	dataAvail.P();
-	objectLock.P();
+	//consumeAvail.V();
+	//tryingToTake = true;
+	//dataAvail.P();
+	//objectLock.P();
 	//sl.acquire();
+	consumeAvail.V();
+	dataAvail.P();
 	T returnObj = object;
 	object = null;	
 	//sl.release();
-	objectLock.V();
-	tryingToTake = false;
+	//objectLock.V();
+//	tryingToTake = false;
 	consumerLock.V();
 	return returnObj;
     }

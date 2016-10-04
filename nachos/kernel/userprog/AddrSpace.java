@@ -111,6 +111,8 @@ public class AddrSpace {
     
     // Zero out the entire address space, to zero the uninitialized data 
     // segment and the stack segment.
+    // #NOTE HW 1: YOU NEED TO CHANGE THIS PART, THIS IS COMPLETELY WRONG AS SOON AS
+    //TWO PROCESSESS BEGIN TO RUN.
     for(int i = 0; i < size; i++)
 	Machine.mainMemory[i] = (byte)0;
 
