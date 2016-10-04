@@ -161,7 +161,7 @@ public class Options {
     // Test/demo configuration options.
 
     /** Should we run the thread test? */
-    public boolean THREAD_TEST = false;  // Traditional Nachos behavior is true, I made it
+    public boolean THREAD_TEST = true;  // Traditional Nachos behavior is true, I made it
     					//false for now to test HW #1 without clutter.
     
     // #MIRAJ added an option for CALLOUT_TEST

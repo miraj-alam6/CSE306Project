@@ -29,14 +29,16 @@ public class CalloutTest implements Runnable{
   *
   */
  public void run() {
-	for (int i = 1; i <= 2; i++) {
+	for (int i = 1; i <= 5; i++) {
 	    Debug.println('+', "*** thread " + which + " will go to sleep now. Will wake up in " + i * numTicks + " from now.");
 	    //Debug.println('+', "" + Nachos.scheduler);
 	    Nachos.scheduler.sleepThread(i * numTicks);
 	    Debug.println('+', "*** thread " + which + "has woken up.");
 	}
-
+	
+	//Nachos.scheduler.stopCalloutClock();
 	Nachos.scheduler.finishThread();
+	
  }
  
  /**
@@ -46,6 +48,7 @@ public class CalloutTest implements Runnable{
 	Debug.println('+', "Entering CalloutTest");
 	new CalloutTest(1, 28);
 	new CalloutTest(2, 40);
+
  }
 
 }

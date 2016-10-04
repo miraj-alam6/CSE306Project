@@ -71,7 +71,10 @@ public class Callout {
 	
     }
     
-    
+    public void stopCalloutClock(){
+	timer.stop();
+	
+    }
     
     /**
      * Interrupt handler for the time-slice timer.  A timer is set up to
@@ -97,7 +100,9 @@ public class Callout {
 	}
 
 	public void handleInterrupt() {
-	   
+	    if(scheduledCallouts.peek() == null){
+		       timer.stop();
+		   }
 	   //elapsedTime = Simulation.currentTime() - startTime;
 	   elapsedTime += 100; // Or maybe do elapsedTime += timer.interval;
 	   
@@ -121,9 +126,7 @@ public class Callout {
 	   } 
 	   sl.release();
 	   //run is called with spinlock held, so not the right place, change it.
-	   if(scheduledCallouts.peek() == null){
-	       timer.stop();
-	   }
+	   
 	}
 	
 

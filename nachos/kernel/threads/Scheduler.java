@@ -110,6 +110,7 @@ public class Scheduler {
 	}
     }
 
+    
     /**
      * Mark a thread as ready, but not running, and put it on the ready list
      * for later scheduling onto a CPU.
@@ -131,7 +132,12 @@ public class Scheduler {
 	mutex.release();
 	CPU.setLevel(oldLevel);
     }
-
+    public void stopCalloutClock(){
+	
+	callout.stopCalloutClock();
+	
+    }
+    
     /**
      * Mark a thread as ready, but not running, and put it on the ready list
      * for later scheduling onto a CPU.
@@ -376,9 +382,11 @@ public class Scheduler {
 	    threadToBeDestroyed = null;
 	}
 	threadToBeDestroyed = currentThread;
+	
 	mutex.release();
 
 	yieldCPU(NachosThread.FINISHED, null);
+	
 	// not reached
 
 	// Interrupts will be re-enabled when the next thread runs or the
