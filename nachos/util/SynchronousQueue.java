@@ -1,6 +1,7 @@
 package nachos.util;
 
 import nachos.kernel.threads.*;
+import nachos.Debug;
 /**
  * This class is patterned after the SynchronousQueue class
  * in the java.util.concurrent package.
@@ -31,8 +32,11 @@ public class SynchronousQueue<T> implements Queue<T> {
     Semaphore consumeAvail;
     Semaphore producerLock;
     Semaphore consumerLock;
-    boolean tryingToPut = true;
-    boolean tryingToTake = true;
+    Semaphore offerLock;
+    Semaphore pollLock;
+    boolean tryingToPut = false;
+    boolean tryingToTake = false;
+//    boolean gaveDataThruOffer = false; //If you give data through offer, do not
     T object;
     SpinLock sl;
     /**
@@ -46,6 +50,8 @@ public class SynchronousQueue<T> implements Queue<T> {
 	consumeAvail = new Semaphore("consumeAvail",0);
 	producerLock = new Semaphore("producerLock", 1);
 	consumerLock = new Semaphore("consumerLock", 1);
+	offerLock = new Semaphore("offerLock", 1);
+	pollLock = new Semaphore("pollLock", 1);
     }
 
     /**
@@ -59,7 +65,7 @@ public class SynchronousQueue<T> implements Queue<T> {
 	
 	//objectLock.P();
 	//dataAvail.V();
-	//tryingToPut = true;
+	tryingToPut = true;
 	//consumeAvail.P();
 	//sl.acquire();
 	consumeAvail.P();
@@ -81,11 +87,13 @@ public class SynchronousQueue<T> implements Queue<T> {
     public T take() {
 	consumerLock.P();
 	//consumeAvail.V();
-	//tryingToTake = true;
 	//dataAvail.P();
 	//objectLock.P();
 	//sl.acquire();
+	Debug.println('+',"set trying to take to true");
+	tryingToTake = true;
 	consumeAvail.V();
+	
 	dataAvail.P();
 	T returnObj = object;
 	object = null;	
@@ -106,12 +114,20 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     @Override
     public boolean offer(T e) {
-	
+	offerLock.P(); //to prevent concurrency messing with shared data
+	Debug.println('+',"Reached here offer");
 	if(tryingToTake){
+	  //  Debug.println('+',"Reached here1");
 	    object = e;
+	    consumeAvail.P(); //there will be no waiting here because, only way you got in here is if
+	    //the semaphore already has a value of 1
 	    dataAvail.V();
+	    offerLock.V(); //to prevent concurrency messing with shared data
+	    tryingToTake = false;
 	    return true;
 	}
+	//Debug.println('+',"Reached here2");
+	offerLock.V(); //to prevent concurrency messing with shared data
 	return false;
     }
     
@@ -123,11 +139,20 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     @Override
     public T poll() { 
+	pollLock.P();
+	Debug.println('+', "trying" + tryingToPut);
 	if(tryingToPut){
-
+	    
 	    consumeAvail.V();
+	    dataAvail.P();//there is effectively no waiting here because, only way we got here is if  consumeAvail.P()
+	    //was waiting in the put function, and just as .P() ends in the put function it will carry out
+	    //dataAvail.V() thus, even though I wrote dataAvail.P() here, there is never any chance that we will
+	    //idly waiting for it, thus it is a poll function, and not a take function
+	    tryingToPut = false;
+	    pollLock.V();
 	    return object;
 	}
+	pollLock.V();
 	return null;
     }
     
