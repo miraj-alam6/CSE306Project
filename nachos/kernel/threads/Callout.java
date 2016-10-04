@@ -71,10 +71,7 @@ public class Callout {
 	
     }
     
-    public void stopCalloutClock(){
-	timer.stop();
-	
-    }
+   
     
     /**
      * Interrupt handler for the time-slice timer.  A timer is set up to

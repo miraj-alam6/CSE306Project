@@ -141,11 +141,7 @@ public class Scheduler {
 	mutex.release();
 	CPU.setLevel(oldLevel);
     }
-    public void stopCalloutClock(){
-	
-	callout.stopCalloutClock();
-	
-    }
+    
     
     /**
      * Mark a thread as ready, but not running, and put it on the ready list
