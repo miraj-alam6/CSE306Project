@@ -4,11 +4,16 @@ import nachos.Debug;
 import nachos.kernel.Nachos;
 import nachos.machine.NachosThread;
 
+
+
+/*
+ * To test if put and take works properly
+ */
 public class SynchronousQueueTest implements Runnable{
     
     //Current thread we are in
     private int threadNum;
-    //producer or consumer thread -- 1 for producer --- 2 for consumer, 3 for a thread 
+    //producer or consumer thread -- 1 for producer --- 2 for consumer
     private int threadType;
     
     public SynchronousQueueTest(int th_num, int pc)
@@ -25,29 +30,31 @@ public class SynchronousQueueTest implements Runnable{
 	if(threadType == 1)
 	{
 	    Integer s = new Integer(threadNum + 5);
-	    Debug.println('+', "*** thread " + threadNum + " will call put and add" + s);
+	    Debug.println('z', "*** thread " + threadNum + " will call put and add" + s);
 	    Nachos.scheduler.getSyncQ().put(s);
 	}
 	//if thread is consumer
 	else if(threadType == 2)
 	{
-	    Debug.println('+', "*** thread " + threadNum + " will call take");
+	    Debug.println('z', "*** thread " + threadNum + " will call take");
 	    Integer s = Nachos.scheduler.getSyncQ().take();
-	    Debug.println('+', "*** thread " + threadNum + " retrieved" + s);
+	    Debug.println('z', "*** thread " + threadNum + " retrieved" + s);
 	}
 	
+
+	/*
 	//This is an offer
 	else if (threadType == 3){
 	   
 	    Integer s = new Integer(threadNum + 5);
-	    Debug.println('+', "*** thread " + threadNum + " will offer the Integer "+s);
+	    Debug.println('z', "*** thread " + threadNum + " will offer the Integer "+s);
 	    if(Nachos.scheduler.getSyncQ().offer(s)){
 		
-		Debug.println('+', "A thread was trying to take the object, so thread " +threadNum
+		Debug.println('z', "A thread was trying to take the object, so thread " +threadNum
 			+ " gave Integer " + s + " to it");
 	    }
 	    else{
-		Debug.println('+', "No thread trying to take the object, so thread " +threadNum
+		Debug.println('z', "No thread trying to take the object, so thread " +threadNum
 			+ " did not give Integer " + s + " to anything");
 	    }
 	}
@@ -55,18 +62,18 @@ public class SynchronousQueueTest implements Runnable{
 	//This is a poll
 		else if (threadType == 4){
 		    
-		    Debug.println('+', "*** thread " + threadNum + " will poll for an object(an Integer in this test).");
+		    Debug.println('z', "*** thread " + threadNum + " will poll for an object(an Integer in this test).");
 		    Integer s = Nachos.scheduler.getSyncQ().poll();
 		    if(s != null){
 			
-			Debug.println('+', "A thread was trying to put Integer " + s  + 
+			Debug.println('z', "A thread was trying to put Integer " + s  + 
 				"so thread " + threadNum + " took it with poll function.");
 		    }
 		    else{
-			Debug.println('+', "No thread trying to put an object so poll did not get anything.");
+			Debug.println('z', "No thread trying to put an object so poll did not get anything.");
 		    }
-		}
-	Debug.println('+', "wat");
+		}*/
+	Debug.println('m', "wat");
 	Nachos.scheduler.finishThread();
     }
 

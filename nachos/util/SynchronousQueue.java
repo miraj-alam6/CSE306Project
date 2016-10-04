@@ -1,5 +1,6 @@
 package nachos.util;
 
+import nachos.kernel.Nachos;
 import nachos.kernel.threads.*;
 import nachos.Debug;
 /**
@@ -62,18 +63,10 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     public boolean put(T obj) { 
 	producerLock.P();
-	
-	//objectLock.P();
-	//dataAvail.V();
 	tryingToPut = true;
-	//consumeAvail.P();
-	//sl.acquire();
 	consumeAvail.P();
 	object = obj;
 	dataAvail.V();
-	//sl.release();
-	//tryingToPut = false;
-	//objectLock.V();
 	producerLock.V();
 	return true;
     }
@@ -86,20 +79,12 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     public T take() {
 	consumerLock.P();
-	//consumeAvail.V();
-	//dataAvail.P();
-	//objectLock.P();
-	//sl.acquire();
 	Debug.println('+',"set trying to take to true");
 	tryingToTake = true;
 	consumeAvail.V();
-	
 	dataAvail.P();
 	T returnObj = object;
 	object = null;	
-	//sl.release();
-	//objectLock.V();
-//	tryingToTake = false;
 	consumerLock.V();
 	return returnObj;
     }
@@ -115,7 +100,7 @@ public class SynchronousQueue<T> implements Queue<T> {
     @Override
     public boolean offer(T e) {
 	offerLock.P(); //to prevent concurrency messing with shared data
-	Debug.println('+',"Reached here offer");
+	Debug.println('m',"Reached here offer");
 	if(tryingToTake){
 	  //  Debug.println('+',"Reached here1");
 	    object = e;
@@ -140,7 +125,7 @@ public class SynchronousQueue<T> implements Queue<T> {
     @Override
     public T poll() { 
 	pollLock.P();
-	Debug.println('+', "trying" + tryingToPut);
+	Debug.println('m', "trying" + tryingToPut);
 	if(tryingToPut){
 	    
 	    consumeAvail.V();
@@ -186,8 +171,29 @@ public class SynchronousQueue<T> implements Queue<T> {
      * @return  true if the element was successfully added, false if the element
      * was not added.
      */
-    public boolean offer(T e, int timeout) {
-	return false;
+    public boolean offer(T e, int timeout) 
+    {
+	
+	boolean offered;
+	
+	Runnable scheduledCallout = new Runnable(){
+		    @Override
+		    public void run() {
+			producerLock.V();
+			return;
+		    }
+	};
+	
+	Nachos.scheduler.getCalloutF().schedule(scheduledCallout, timeout);
+	
+	producerLock.P();
+	tryingToPut = true;
+	consumeAvail.P();
+	object = e;
+	offered = true;
+	dataAvail.V();
+	producerLock.V();
+	return offered;
     }
     
     /**
@@ -199,8 +205,27 @@ public class SynchronousQueue<T> implements Queue<T> {
      * true.
      * @return  the head of this queue, or null if no element is available.
      */
-    public T poll(int timeout) {
-	return null;
+    public T poll(int timeout) 
+    {
+	
+	Runnable scheduledCallout = new Runnable(){
+		    @Override
+		    public void run() {
+			consumerLock.V();
+			return;
+		    }
+	};
+    
+    Nachos.scheduler.getCalloutF().schedule(scheduledCallout, timeout);
+    consumerLock.P();
+    Debug.println('m',"set trying to take to true");
+    tryingToTake = true;
+    consumeAvail.V();
+    dataAvail.P();
+    T returnObj = object;
+    object = null;	
+    consumerLock.V();
+    return returnObj;
     }
     
     

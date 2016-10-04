@@ -10,6 +10,7 @@ public class CalloutTest implements Runnable{
  /** Integer identifier that indicates which thread we are. */
  private int which;
  private int numTicks;
+ 
  /**
   * Initialize an instance of CalloutTest and start a new thread running
   * on it.
@@ -29,14 +30,13 @@ public class CalloutTest implements Runnable{
   *
   */
  public void run() {
-	for (int i = 1; i <= 5; i++) {
-	    Debug.println('+', "*** thread " + which + " will go to sleep now. Will wake up in " + i * numTicks + " from now.");
-	    //Debug.println('+', "" + Nachos.scheduler);
+	for (int i = 1; i <= 4; i++) {
+	    Debug.println('z', "*** thread " + which + " will go to sleep now. Will wake up in " + i * numTicks + " from now.");
 	    Nachos.scheduler.sleepThread(i * numTicks);
-	    Debug.println('+', "*** thread " + which + "has woken up.");
+	    Debug.println('z', "*** thread " + which + "has woken up.");
 	}
 	
-	//Nachos.scheduler.stopCalloutClock();
+	//End the thread
 	Nachos.scheduler.finishThread();
 	
  }
@@ -47,7 +47,9 @@ public class CalloutTest implements Runnable{
  public static void start() {
 	Debug.println('+', "Entering CalloutTest");
 	new CalloutTest(1, 28);
-	new CalloutTest(2, 40);
+	new CalloutTest(2, 63);
+	new CalloutTest(3, 129);
+	new CalloutTest(4, 250);
 
  }
 

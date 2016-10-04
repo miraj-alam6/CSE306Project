@@ -104,11 +104,22 @@ public class Scheduler {
 	firstCPU.dispatch(firstThread);
     };
     
-    
+    /*
+     * Return the synchronousqueue set here
+     */
     public SynchronousQueue<Integer> getSyncQ()
     {
 	return this.syncQ;
     }
+    
+    /*
+     * Return the Callout facility.
+     */
+    public Callout getCalloutF()
+    {
+	return this.callout;
+    }
+    
     /**
      * Stop the timers on all CPUs, in preparation for shutdown.
      */

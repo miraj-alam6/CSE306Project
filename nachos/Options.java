@@ -172,6 +172,9 @@ public class Options {
     
     public boolean SYNCQUEUE_TEST = true;
     
+    //Syncqueue with callout test???
+    
+    
     /** Should we run the multiprocessor scheduling test? */
     public boolean SMP_TEST = false;
 

@@ -17,21 +17,25 @@ import java.util.*;
 
 public class Callout {
     
-    //Put the queue  here    
+    //PriorityQueue of callouts with the priority being on which callout should be made first
     PriorityQueue<CalloutWithTime> scheduledCallouts;
+    //startTime of the machine
     int startTime;
+    //total elapsed time of the machine
     int elapsedTime;
+    //the timer to handle the interrupts for callout
     Timer timer;
-    Semaphore s; // ASK is it okay to have a semaphore here to prevent interrupts when scheduling?
+    Semaphore s; 
     /** Spin lock for mutually exclusive access to scheduler state. */
     SpinLock sl;
     
+    /*
+     * Initialize everything here and start the timer when callout is created
+     */
     public Callout()
     {
-	//startTime = Simulation.currentTime();  //Gets the simulated time
-	//elapsedTime = startTime;
-	
 	elapsedTime = startTime = 0;
+	//Create the priorityqueue with a comparator that compares the number of ticksFromNow between callouts being added
 	scheduledCallouts = new PriorityQueue<CalloutWithTime>(new CalloutComparator());
 	s = new Semaphore("calloutSem",1);
 	sl = new SpinLock("callout mutex");
@@ -100,8 +104,9 @@ public class Callout {
 	    if(scheduledCallouts.peek() == null){
 		       timer.stop();
 		   }
-	   //elapsedTime = Simulation.currentTime() - startTime;
-	   elapsedTime += 100; // Or maybe do elapsedTime += timer.interval;
+	    
+	    //add 100 to elapsed time because timer calls handleinterrupt in intervals of 100 ticks
+	   elapsedTime += 100; 
 	   
 
 	   //Process all requests that have to be done.
@@ -110,36 +115,25 @@ public class Callout {
 	   while(scheduledCallouts.peek()!= null && 
 		   scheduledCallouts.peek().getScheduledTimeToCallout() <= elapsedTime){
 	       
-	       //Nachos.scheduler.makeReady(	);nachos thread please
-	       //scheduledCallouts.poll().getActualCallout().start(); // #ASK: why doesn't this work, is next line
-	       						 	   //what I should do instead
 	       sl.release(); //I think this will be a good place to release the spinlock because it is before run()
 	       //critical section should be over by this time.
 	       
-	       scheduledCallouts.poll().getActualCallout().run(); // ASK: is this good enough? Should run with
-	       							 //interrupts disabled
-	       Debug.println('+', "*** at ticks " + elapsedTime + ", a callout has occured.");
+	       scheduledCallouts.poll().getActualCallout().run();
+	       
+	       Debug.println('z', "*** at ticks " + elapsedTime + ", a callout has occured.");
 	       sl.acquire(); //because the loop will check the conditions again.
 	   } 
-	   sl.release();
-	   //run is called with spinlock held, so not the right place, change it.
-	   
+	   sl.release();	   
 	}
 	
-
     }
 
-
+    /*
+     * Callout class
+     */
     private class CalloutWithTime{
 	private Runnable actualCallout;
-	private int ticksFromNow;
 	private int scheduledTimeToCallout;
-	
-	//comparator does not use this function. 
-	public int getTicksFromNow(){
-	    
-	    return ticksFromNow;
-	}
 	
 	//comparator uses this function
 	public int getScheduledTimeToCallout(){
@@ -151,19 +145,18 @@ public class Callout {
 	    
 	    return actualCallout;
 	}
+	
 	public CalloutWithTime(Runnable callout, int ticks){
 	    actualCallout = callout;
-	    ticksFromNow = ticks;
-	    
 	    scheduledTimeToCallout = elapsedTime + ticks;
-	    
-	    
-	}
-
-
-	
+	        
+	}	
     }
     
+    /*
+     * Comparator for priorityqueue
+     * Checks the difference in ticksFromNow of each Callout
+     */
     private static class CalloutComparator implements Comparator<CalloutWithTime>{
 
 	@Override
