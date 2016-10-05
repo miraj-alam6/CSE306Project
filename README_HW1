@@ -20,7 +20,9 @@ We made three different test drivers. One is CalloutTest.java, one is Synchronou
 offer and poll with timeout while SynchronousQueueTest tests the put and take methods of a SynchronousQueue. CalloutTest tests the sleepthread method that we had to create for exercise 1.
 To test these classes, we made in scheduler a Callout and a SynchronousQueue of integers when the scheduler is initialized. In order to have print statements for the code we wrote, use the argument 
 z when compiling and running. In order to switch between the tests, you just have to set the value of each respective option in Options.java which is in the nachos package to true and 
-set the others to false.
+set the others to false. 
+
+Currently the option for callout_test is set to true.
 
 
 We assume that the machine would be restarted between tests and we assume that scheduler would always be used. 
