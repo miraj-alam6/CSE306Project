@@ -179,6 +179,7 @@ public class SynchronousQueue<T> implements Queue<T> {
     {
 	
 	producerLock.P();
+	tryingToPut = true;
 //	offerCalloutLock.P(); //probably delete this
 
 	//Can't simply use booleans for this next part because things need to be effectively final,
@@ -205,7 +206,10 @@ public class SynchronousQueue<T> implements Queue<T> {
 	};
 	
 	Nachos.scheduler.getCalloutF().schedule(scheduledCallout, timeout);
-	dataAvail.V();
+	if(tryingToTake)
+	{
+	    dataAvail.V();
+	}
 	consumeAvail.P();
 	//You get here, either if a consumerdoes V() or if the callout is executed.
 	//If the callout is executed, then offerFailed will have been set to true,
@@ -216,12 +220,14 @@ public class SynchronousQueue<T> implements Queue<T> {
 	//if(offerFailed){ //can't use offerFailed because its effectively final property does not let it be changed in run
 	if(offerFailedObject.b){
 //	    offerCalloutLock.V(); //get rid of this
+	    tryingToPut = false;
 	    producerLock.V();
 	    return false;
 	}
 	else{
 	    offerSucceededObject.b = true;
 	    object = e; 
+	    tryingToPut = false;
 	    dataAvail.V();
 //	    offerCalloutLock.V(); //get rid of this
 	    producerLock.V();
@@ -243,6 +249,7 @@ public class SynchronousQueue<T> implements Queue<T> {
 
 	//pollCalloutLock.P(); 
 	consumerLock.P();
+	tryingToTake = true;
 	final BooleanHolder pollSucceededObject = new BooleanHolder();
 	final BooleanHolder pollFailedObject = new BooleanHolder();
 	
@@ -262,16 +269,21 @@ public class SynchronousQueue<T> implements Queue<T> {
     
     Nachos.scheduler.getCalloutF().schedule(scheduledCallout, timeout);
     //Debug.println('m',"set trying to take to true");
-    consumeAvail.V();
+    if(tryingToPut)
+    {
+	consumeAvail.V();
+    }
     dataAvail.P(); //will get this marble back either from the callout thus indicating failure or get it
     	 	   //from put, indicating  success
     T returnObj = object;
     if(pollFailedObject.b){
 	//    offerCalloutLock.V();
+	tryingToTake = false;
 	consumerLock.V();
 	return null;
 	}
     else{
+	    tryingToTake = false;
 	    consumeAvail.V();
 	  //  offerCalloutLock.V();
 	    consumerLock.V();

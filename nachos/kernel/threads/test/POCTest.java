@@ -33,7 +33,8 @@ public class POCTest implements Runnable{
 	{
 	    Integer s = new Integer(threadNum + 5);
 	    Debug.println('z', "*** thread " + threadNum + " will call put and add" + s);
-	    Nachos.scheduler.getSyncQ().put(s);
+	    boolean success = Nachos.scheduler.getSyncQ().put(s);
+	    Debug.println('z',  "*** thread " + threadNum + " Successfully called put and added = " + success);
 	}
 	//if thread is consumer
 	else if(threadType == 2)
@@ -49,13 +50,13 @@ public class POCTest implements Runnable{
 	    Debug.println('z', "*** thread " + threadNum + " will offer the Integer "+s);
 	    boolean success = Nachos.scheduler.getSyncQ().offer(s,timeoutT);
 	    if(success){
-		Debug.println('z',  "*** thread " + threadNum + "Successfully called put and added = " + success);
-		Debug.println('z', "A thread was trying to take the object, so thread " +threadNum
+		Debug.println('z',  "*** thread " + threadNum + " Successfully called put and added = " + success);
+		Debug.println('m', "A thread was trying to take the object, so thread " +threadNum
 			+ " gave Integer " + s + " to it");
 	    }
 	    else{
-		Debug.println('z',  "*** thread " + threadNum + "Successfully called put and added = " + success);
-		Debug.println('z', "No thread trying to take the object, so thread " +threadNum
+		Debug.println('z',  "*** thread " + threadNum + " Successfully called put and added = " + success);
+		Debug.println('m', "No thread trying to take the object, so thread " +threadNum
 			+ " did not give Integer " + s + " to anything");
 	    }
 	}
@@ -66,12 +67,13 @@ public class POCTest implements Runnable{
 		    Debug.println('z', "*** thread " + threadNum + " will poll for an object(an Integer in this test).");
 		    Integer s = Nachos.scheduler.getSyncQ().poll(timeoutT);
 		    if(s != null){
-			
-			Debug.println('z', "A thread was trying to put Integer " + s  + 
+			Debug.println('z',  "*** thread " + threadNum + " Retreived: " + s);
+			Debug.println('m', "A thread was trying to put Integer " + s  + 
 				"so thread " + threadNum + " took it with poll function.");
 		    }
 		    else{
-			Debug.println('z', "No thread trying to put an object so poll did not get anything.");
+			Debug.println('z',  "*** thread " + threadNum + " Retreived: " + s);
+			Debug.println('m', "No thread trying to put an object so poll did not get anything.");
 		    }
 		}
 	Debug.println('m', "wat");
@@ -95,11 +97,10 @@ public class POCTest implements Runnable{
    	new POCTest(2,120,3);
    	new POCTest(3,100,1);
    	new POCTest(4,90,4);*/
-  	new POCTest(5,40,4);
-   	new POCTest(6,80,3);
-   	//new POCTest(7,70,3);
-   	//new POCTest(8,60,4);
-   	//new POCTest(9,50,4);
+  	new POCTest(5,50,1);
+   	new POCTest(6,50,4);
+   	new POCTest(7,150,3);
+   	//new POCTest(8,210,3);
 
     }
 }

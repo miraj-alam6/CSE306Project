@@ -32,7 +32,7 @@ public class SynchronousQueueTest implements Runnable{
 	    Integer s = new Integer(threadNum + 5);
 	    Debug.println('z', "*** thread " + threadNum + " will call put and add" + s);
 	    boolean success = Nachos.scheduler.getSyncQ().put(s);
-	    Debug.println('z',  "*** thread " + threadNum + "Successfully called put and added = " + success);
+	    Debug.println('z',  "*** thread " + threadNum + " Successfully called put and added = " + success);
 	}
 	//if thread is consumer
 	else if(threadType == 2)
