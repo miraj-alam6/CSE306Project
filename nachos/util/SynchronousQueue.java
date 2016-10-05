@@ -183,9 +183,9 @@ public class SynchronousQueue<T> implements Queue<T> {
 	//Can't simply use booleans for this next part because things need to be effectively final,
 	//so instead I will just make two objects that each hold a boolean.
 	//boolean offerSucceeded = false;
-	BooleanHolder offerSucceededObject = new BooleanHolder();
+	final BooleanHolder offerSucceededObject = new BooleanHolder();
 	//boolean offerFailed = false
-	BooleanHolder offerFailedObject = new BooleanHolder();
+	final BooleanHolder offerFailedObject = new BooleanHolder();
 	
 
 	
@@ -242,8 +242,8 @@ public class SynchronousQueue<T> implements Queue<T> {
     {
 	//pollCalloutLock.P(); 
 	consumerLock.P();
-	BooleanHolder pollSucceededObject = new BooleanHolder();
-	BooleanHolder pollFailedObject = new BooleanHolder();
+	final BooleanHolder pollSucceededObject = new BooleanHolder();
+	final BooleanHolder pollFailedObject = new BooleanHolder();
 	
 	Runnable scheduledCallout = new Runnable(){
 		    @Override
