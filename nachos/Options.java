@@ -170,10 +170,10 @@ public class Options {
     
     // SynchronousQueueTest
     
-    public boolean SYNCQUEUE_TEST = true;
+    public boolean SYNCQUEUE_TEST = false;
     
     //Syncqueue with callout test???
-    
+    public boolean POC_TEST = true;
     
     /** Should we run the multiprocessor scheduling test? */
     public boolean SMP_TEST = false;

@@ -39,6 +39,7 @@ import nachos.kernel.filesys.FileSystem;
 import nachos.kernel.threads.test.SMPTest;
 import nachos.kernel.threads.test.SynchronousQueueTest;
 import nachos.kernel.threads.test.ThreadTest;
+import nachos.kernel.threads.test.POCTest;
 import nachos.kernel.userprog.test.ProgTest;
 import nachos.kernel.filesys.test.FileSystemTest;
 
@@ -132,6 +133,8 @@ public class Nachos implements Runnable {
 	//Synchro queue test
 	if(options.SYNCQUEUE_TEST)
 	    SynchronousQueueTest.start();
+	if(options.POC_TEST)
+	    POCTest.start();
 	
 	// Terminate the first thread, its job is done.
 	// Alternatively, you could give this thread the responsibility
