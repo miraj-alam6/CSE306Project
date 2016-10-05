@@ -47,12 +47,14 @@ public class POCTest implements Runnable{
 	   
 	    Integer s = new Integer(threadNum + 5);
 	    Debug.println('z', "*** thread " + threadNum + " will offer the Integer "+s);
-	    if(Nachos.scheduler.getSyncQ().offer(s,timeoutT)){
-		
+	    boolean success = Nachos.scheduler.getSyncQ().offer(s,timeoutT);
+	    if(success){
+		Debug.println('z',  "*** thread " + threadNum + "Successfully called put and added = " + success);
 		Debug.println('z', "A thread was trying to take the object, so thread " +threadNum
 			+ " gave Integer " + s + " to it");
 	    }
 	    else{
+		Debug.println('z',  "*** thread " + threadNum + "Successfully called put and added = " + success);
 		Debug.println('z', "No thread trying to take the object, so thread " +threadNum
 			+ " did not give Integer " + s + " to anything");
 	    }
@@ -89,15 +91,15 @@ public class POCTest implements Runnable{
   // 	new POCTest(11, 4); //Thread 11 will execute poll()
   // 	new POCTest(12, 4); //Thread 8 will execute poll()
    	
-   	new POCTest(10,120,2);
-   	new POCTest(1,120,3);
-   	new POCTest(7,120,1);
-   	new POCTest(4,120,4);
-/*   	new POCTest(2,40,4);
-   	new POCTest(5,80,3);
-   	new POCTest(6,70,3);
-   	new POCTest(2,60,4);
-   	new POCTest(4,50,4);
-*/
+   	/*new POCTest(1,60,2);
+   	new POCTest(2,120,3);
+   	new POCTest(3,100,1);
+   	new POCTest(4,90,4);*/
+  	new POCTest(5,40,4);
+   	new POCTest(6,80,3);
+   	//new POCTest(7,70,3);
+   	//new POCTest(8,60,4);
+   	//new POCTest(9,50,4);
+
     }
 }

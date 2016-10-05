@@ -177,6 +177,7 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     public boolean offer(T e, int timeout) 
     {
+	
 	producerLock.P();
 //	offerCalloutLock.P(); //probably delete this
 
@@ -204,7 +205,7 @@ public class SynchronousQueue<T> implements Queue<T> {
 	};
 	
 	Nachos.scheduler.getCalloutF().schedule(scheduledCallout, timeout);
-	
+	dataAvail.V();
 	consumeAvail.P();
 	//You get here, either if a consumerdoes V() or if the callout is executed.
 	//If the callout is executed, then offerFailed will have been set to true,
@@ -226,7 +227,6 @@ public class SynchronousQueue<T> implements Queue<T> {
 	    producerLock.V();
 	    return true;
 	}
-
     }
     
     /**
@@ -240,6 +240,7 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     public T poll(int timeout) 
     {
+
 	//pollCalloutLock.P(); 
 	consumerLock.P();
 	final BooleanHolder pollSucceededObject = new BooleanHolder();
@@ -260,10 +261,8 @@ public class SynchronousQueue<T> implements Queue<T> {
 	};
     
     Nachos.scheduler.getCalloutF().schedule(scheduledCallout, timeout);
-    
     //Debug.println('m',"set trying to take to true");
-   // tryingToTake = true;
-   
+    consumeAvail.V();
     dataAvail.P(); //will get this marble back either from the callout thus indicating failure or get it
     	 	   //from put, indicating  success
     T returnObj = object;

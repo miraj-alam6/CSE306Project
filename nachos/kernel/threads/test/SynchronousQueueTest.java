@@ -31,7 +31,8 @@ public class SynchronousQueueTest implements Runnable{
 	{
 	    Integer s = new Integer(threadNum + 5);
 	    Debug.println('z', "*** thread " + threadNum + " will call put and add" + s);
-	    Nachos.scheduler.getSyncQ().put(s);
+	    boolean success = Nachos.scheduler.getSyncQ().put(s);
+	    Debug.println('z',  "*** thread " + threadNum + "Successfully called put and added = " + success);
 	}
 	//if thread is consumer
 	else if(threadType == 2)
@@ -91,11 +92,11 @@ public class SynchronousQueueTest implements Runnable{
   // 	new SynchronousQueueTest(12, 4); //Thread 8 will execute poll()
    	
    	new SynchronousQueueTest(1, 1);
+   	new SynchronousQueueTest(2, 2);
    	new SynchronousQueueTest(3, 2);
-   	new SynchronousQueueTest(5, 2);
-   	new SynchronousQueueTest(6, 2);
-   	new SynchronousQueueTest(2, 1);
-   	new SynchronousQueueTest(4, 1);
+   	new SynchronousQueueTest(4, 2);
+   	new SynchronousQueueTest(5, 1);
+   	new SynchronousQueueTest(6, 1);
 
     }
 }

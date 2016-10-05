@@ -166,14 +166,14 @@ public class Options {
     
     // #MIRAJ added an option for CALLOUT_TEST
     
-    public boolean CALLOUT_TEST = true;  // Made this true for HW # 1
+    public boolean CALLOUT_TEST = false;  // Made this true for HW # 1
     
     // SynchronousQueueTest
     
     public boolean SYNCQUEUE_TEST = false;
     
     //Syncqueue with callout test???
-    public boolean POC_TEST = false;
+    public boolean POC_TEST = true;
     
     /** Should we run the multiprocessor scheduling test? */
     public boolean SMP_TEST = false;
