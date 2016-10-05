@@ -35,6 +35,8 @@ public class SynchronousQueue<T> implements Queue<T> {
     Semaphore consumerLock;
     Semaphore offerLock;
     Semaphore pollLock;
+    Semaphore offerCalloutLock;
+    Semaphore pollCalloutLock;
     boolean tryingToPut = false;
     boolean tryingToTake = false;
 //    boolean gaveDataThruOffer = false; //If you give data through offer, do not
@@ -53,6 +55,8 @@ public class SynchronousQueue<T> implements Queue<T> {
 	consumerLock = new Semaphore("consumerLock", 1);
 	offerLock = new Semaphore("offerLock", 1);
 	pollLock = new Semaphore("pollLock", 1);
+	offerCalloutLock = new Semaphore("offerLock", 1);
+	pollCalloutLock = new Semaphore("pollLock", 1);
     }
 
     /**
@@ -173,27 +177,56 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     public boolean offer(T e, int timeout) 
     {
+	producerLock.P();
+//	offerCalloutLock.P(); //probably delete this
+
+	//Can't simply use booleans for this next part because things need to be effectively final,
+	//so instead I will just make two objects that each hold a boolean.
+	//boolean offerSucceeded = false;
+	BooleanHolder offerSucceededObject = new BooleanHolder();
+	//boolean offerFailed = false
+	BooleanHolder offerFailedObject = new BooleanHolder();
 	
-	boolean offered;
+
 	
 	Runnable scheduledCallout = new Runnable(){
 		    @Override
 		    public void run() {
-			producerLock.V();
+			if(offerSucceededObject.b){
+			    return;
+			}
+			//offerFailed = false; //this isn't possible for effectively final functions
+			offerFailedObject.b = true; //this is how to bypass effectively final
+			consumeAvail.V();
+
 			return;
 		    }
 	};
 	
 	Nachos.scheduler.getCalloutF().schedule(scheduledCallout, timeout);
 	
-	producerLock.P();
-	tryingToPut = true;
 	consumeAvail.P();
-	object = e;
-	offered = true;
-	dataAvail.V();
-	producerLock.V();
-	return offered;
+	//You get here, either if a consumerdoes V() or if the callout is executed.
+	//If the callout is executed, then offerFailed will have been set to true,
+	//if you got her because of V() and you see that offerFailed is not true, immediately
+	//set offerSucceeded to true, so that any callouts that happen will realize that they should not
+	//set offerFailed to true and that they should do a consumeAvail.V(), since the consumeAvail.V() is done
+	//by this function
+	//if(offerFailed){ //can't use offerFailed because its effectively final property does not let it be changed in run
+	if(offerFailedObject.b){
+//	    offerCalloutLock.V(); //get rid of this
+	    producerLock.V();
+	    return false;
+	}
+	else{
+	    offerSucceededObject.b = true;
+	    object = e; 
+	    dataAvail.V();
+//	    offerCalloutLock.V(); //get rid of this
+	    producerLock.V();
+	    return true;
+	}
+
     }
     
     /**
@@ -207,27 +240,52 @@ public class SynchronousQueue<T> implements Queue<T> {
      */
     public T poll(int timeout) 
     {
+	//pollCalloutLock.P(); 
+	consumerLock.P();
+	BooleanHolder pollSucceededObject = new BooleanHolder();
+	BooleanHolder pollFailedObject = new BooleanHolder();
 	
 	Runnable scheduledCallout = new Runnable(){
 		    @Override
 		    public void run() {
-			consumerLock.V();
+			if(pollSucceededObject.b){
+			    return;
+			}
+			//offerFailed = false; //this isn't possible for effectively final functions
+			pollFailedObject.b = true; //this is how to bypass effectively final
+			dataAvail.V();
+
 			return;
 		    }
 	};
     
     Nachos.scheduler.getCalloutF().schedule(scheduledCallout, timeout);
-    consumerLock.P();
-    Debug.println('m',"set trying to take to true");
-    tryingToTake = true;
-    consumeAvail.V();
-    dataAvail.P();
+    
+    //Debug.println('m',"set trying to take to true");
+   // tryingToTake = true;
+   
+    dataAvail.P(); //will get this marble back either from the callout thus indicating failure or get it
+    	 	   //from put, indicating  success
     T returnObj = object;
-    object = null;	
-    consumerLock.V();
-    return returnObj;
+    if(pollFailedObject.b){
+	//    offerCalloutLock.V();
+	consumerLock.V();
+	return null;
+	}
+    else{
+	    consumeAvail.V();
+	  //  offerCalloutLock.V();
+	    consumerLock.V();
+	    return object;
+	}
     }
-    
-    
 
+    private static class BooleanHolder{
+	public boolean b;
+	public BooleanHolder(){
+	    b = false;
+	}
+    }
+  
 }
+
