@@ -41,7 +41,7 @@ public class Callout {
 	sl = new SpinLock("callout mutex");
 	timer = Machine.getTimer(0); 
 	timer.setHandler(new CalloutTimerInterruptHandler(timer));
-	timer.start();
+	//timer.start(); //commented this out for hw # 2
     }
     
     

@@ -62,7 +62,20 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		Syscall.exit(CPU.readRegister(4));
 		break;
 	    case Syscall.SC_Exec:
-		Syscall.exec("");
+		//Syscall.exec(""); //This line was originally here
+		/* Miraj change start here*/
+		int ptr0 = CPU.readRegister(4);
+		//int len0 = CPU.readRegister(5); //this is wrong, nothing in register5
+		//byte buf0[] = new byte[len0];
+		// Debugging stuff start here
+		Debug.println('+', "Gonna try to dereference address" +ptr0);
+		Debug.println('+', "" + dereferenceString(ptr0));
+		//Debugging stuff end here
+		//Note to self, the next part only works if we do a byte array
+		//System.arraycopy(Machine.mainMemory, ptr0, buf0, 0, len0);
+		//Debug.println('+', "" +buf0.length);
+		Syscall.exec(dereferenceString(ptr0));
+		/* Miraj change end here*/
 		break;
 	    case Syscall.SC_Write:
 		int ptr = CPU.readRegister(4);
@@ -84,10 +97,32 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		    CPU.readRegister(MIPS.NextPCReg)+4);
 	    return;
 	}
+	
 
 	System.out.println("Unexpected user mode exception " + which +
 		", " + type);
 	Debug.ASSERT(false);
 
     }
+    
+    //Abbreviation for characterArrayToString
+    public String cArrToStr(char[] arr){
+	String s = "";
+	for(int i = 0; i < arr.length; i++){
+	    s+= arr[i];
+	}
+	return s;
+    }
+    
+    //This will take an address for a string and return the string
+    public String dereferenceString(int address){
+  	String s = "";
+  	int index = 0;
+  	while(Machine.mainMemory[address + index] != 0){
+  	    s += (char)Machine.mainMemory[address+index];
+  	    index++;
+  	}
+  	
+  	return s;
+      }
 }

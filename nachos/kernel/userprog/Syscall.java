@@ -66,7 +66,8 @@ public class Syscall {
      * Stop Nachos, and print out performance stats.
      */
     public static void halt() {
-	Debug.print('+', "Shutdown, initiated by user program.\n");
+	
+	Debug.print('+', "Shutdown, initiated by user program halt syscall.\n");
 	Simulation.stop();
     }
 
@@ -90,7 +91,10 @@ public class Syscall {
      *
      * @param name The name of the file to execute.
      */
-    public static int exec(String name) {return 0;}
+    public static int exec(String name) {
+	Debug.println('+', "Stub for exec system call in thread: " + NachosThread.currentThread().name);
+	Debug.println('+', "Thread " + NachosThread.currentThread().name + " will execute program " + name);
+	return 0;}
 
     /**
      * Wait for the user program specified by "id" to finish, and
@@ -99,7 +103,9 @@ public class Syscall {
      * @param id The "space ID" of the program to wait for.
      * @return the exit status of the specified program.
      */
-    public static int join(int id) {return 0;}
+    public static int join(int id) {
+	Debug.println('+', "Stub for join system call in thread: " + NachosThread.currentThread().name);
+	return 0;}
 
 
     /* File system operations: Create, Open, Read, Write, Close

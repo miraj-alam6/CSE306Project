@@ -94,13 +94,15 @@ public class AddrSpace {
 
     Debug.println('a', "Initializing address space, numPages=" 
 		+ numPages + ", size=" + size);
+    Debug.println('a', "Total Pages on Machine is " 
+		+ Machine.NumPhysPages);
 
     // first, set up the translation 
     pageTable = new TranslationEntry[numPages];
     for (int i = 0; i < numPages; i++) {
       pageTable[i] = new TranslationEntry();
       pageTable[i].virtualPage = i; // for now, virtual page# = phys page#
-      pageTable[i].physicalPage = i;
+      pageTable[i].physicalPage = i; // #ASK isn't this line the one that will change
       pageTable[i].valid = true;
       pageTable[i].use = false;
       pageTable[i].dirty = false;
@@ -111,10 +113,11 @@ public class AddrSpace {
     
     // Zero out the entire address space, to zero the uninitialized data 
     // segment and the stack segment.
-    // #NOTE HW 1: YOU NEED TO CHANGE THIS PART, THIS IS COMPLETELY WRONG AS SOON AS
+    // #NOTE HW 2: YOU NEED TO CHANGE THIS PART, THIS IS COMPLETELY WRONG AS SOON AS
     //TWO PROCESSESS BEGIN TO RUN.
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < size; i++){
 	Machine.mainMemory[i] = (byte)0;
+    }
 
     // then, copy in the code and data segments into memory
     if (noffH.code.size > 0) {
