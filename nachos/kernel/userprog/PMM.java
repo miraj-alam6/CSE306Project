@@ -1,11 +1,18 @@
 package nachos.kernel.userprog;
 
 import java.util.*;
+
+import nachos.Debug;
 public class PMM {
     public PMEntry physicalPages[];
     
-    public PMM (int physicalMemSize){
-	physicalPages = new PMEntry[physicalMemSize];
+    public PMM (int numPhysicalPages){
+	physicalPages = new PMEntry[numPhysicalPages];
+	//need to initialize all the elements because they are objects and need
+	//to initliaze or else null pointer exception
+	for(int i = 0; i < physicalPages.length; i++){
+	    physicalPages[i] = new PMEntry();
+	}
     }
 
     //This is to allocate physical memory page for a process that is not
@@ -14,22 +21,38 @@ public class PMM {
     //more avaliable physical memory.
     //The parameter is the VPN
     public int allocatePMP(int VPN){
-	//Need to Get VPO from lowest bits, may need to have
-	//another parameter to specify size of VPN
+	//Need to use a Lock here
+	
 	for (int i = 0; i < physicalPages.length; i ++){
 	    if(physicalPages[i].entryStatus == 0){
 		physicalPages[i].setPage(VPN);
+		//Need to free a lock here
+		Debug.println('a', "Successfully allocated a PPN " + i + " to VPN " + VPN
+			+ "of thread " );
 		return i;
 	    }	    
 	}
+	//Need to free a lock here
 	return -1;
 	
     }
     //Physical Memory Entry
     private class PMEntry{
 	public int entryStatus; // 0 means free, 1 means occupied, other numebers for future use
-	public ArrayList<Integer> virtualPages;  //List of all virtual pages that
+	public ArrayList<Integer> virtualPages;  //List of all virtual pages that refer to it
+	//not sure if above is flawed or not, because two different processes may have same
+	//virtual page and map to same physical page if it is shared data.
 	public boolean shareAllowed;
+	public PMEntry(){
+	    entryStatus = 0;
+	    virtualPages = new ArrayList<Integer>();
+	    shareAllowed = false;
+	}
+	public PMEntry(boolean canShare){
+	    entryStatus = 0;
+	    virtualPages = new ArrayList<Integer>();
+	    shareAllowed = canShare;
+	}
 	//correspond to this physical page. We need this to do shared memory.
 	public void setPage(int virtualPageNumber){
 	   virtualPages.add(virtualPageNumber);

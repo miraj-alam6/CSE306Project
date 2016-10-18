@@ -35,6 +35,7 @@ import nachos.kernel.devices.test.SerialTest;
 import nachos.kernel.threads.test.CalloutTest; // #MIRAJ:  added this
 import nachos.kernel.threads.Scheduler;
 import nachos.kernel.userprog.ExceptionHandler;
+import nachos.kernel.userprog.PMM;
 import nachos.kernel.filesys.FileSystem;
 import nachos.kernel.threads.test.SMPTest;
 import nachos.kernel.threads.test.SynchronousQueueTest;
@@ -71,6 +72,9 @@ public class Nachos implements Runnable {
     /** Access to serial ports. */
     public static SerialDriver serialDriver;
 
+    // #MIRAJ: Change here, made a static field for Physical Memory Manager
+    public static PMM pMM;
+    
     /**
      * 	Nachos initialization -- performed by first Nachos thread.
      *	Initialize various subsystems, depending on configuration options.
@@ -154,13 +158,16 @@ public class Nachos implements Runnable {
    * various subsystems to figure out what to do.
    */
   public static void main(String args[]) {
+      //
+      
       Debug.init(args);
       options = new Options(args);
       Debug.println('+', "Entering main");
       Debug.println('z', "Testing Debugging Message Argument z");
       // Initialize the hardware.
       Machine.init();
-
+      //initialize physical memory manager
+      pMM = new PMM(Machine.NumPhysPages);
       
       // The kernel code assumes that it is running in the context of a
       // Nachos thread, but right now we are only in a Java thread.
