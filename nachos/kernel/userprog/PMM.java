@@ -3,11 +3,15 @@ package nachos.kernel.userprog;
 import java.util.*;
 
 import nachos.Debug;
+import nachos.kernel.threads.Lock;
+
 public class PMM {
     public PMEntry physicalPages[];
+    private Lock allocatorLock;
     
     public PMM (int numPhysicalPages){
 	physicalPages = new PMEntry[numPhysicalPages];
+	allocatorLock = new Lock("allocatorLock");
 	//need to initialize all the elements because they are objects and need
 	//to initliaze or else null pointer exception
 	for(int i = 0; i < physicalPages.length; i++){
@@ -22,17 +26,20 @@ public class PMM {
     //The parameter is the VPN
     public int allocatePMP(int VPN){
 	//Need to use a Lock here
-	
+	allocatorLock.acquire();
 	for (int i = 0; i < physicalPages.length; i ++){
 	    if(physicalPages[i].entryStatus == 0){
 		physicalPages[i].setPage(VPN);
 		//Need to free a lock here
 		Debug.println('a', "Successfully allocated a PPN " + i + " to VPN " + VPN
 			+ "of thread " );
+		allocatorLock.release();
 		return i;
 	    }	    
 	}
-	//Need to free a lock here
+	
+	//Need to free a Lock here
+	allocatorLock.release();
 	return -1;
 	
     }
@@ -53,7 +60,7 @@ public class PMM {
 	    virtualPages = new ArrayList<Integer>();
 	    shareAllowed = canShare;
 	}
-	//correspond to this physical page. We need this to do shared memory.
+	//correspond to this physical page. 
 	public void setPage(int virtualPageNumber){
 	   virtualPages.add(virtualPageNumber);
 	   entryStatus = 1;

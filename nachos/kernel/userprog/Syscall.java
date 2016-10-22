@@ -8,6 +8,7 @@ package nachos.kernel.userprog;
 
 import nachos.Debug;
 import nachos.kernel.Nachos;
+import nachos.kernel.userprog.test.ProgTest;
 import nachos.machine.NachosThread;
 import nachos.machine.Simulation;
 
@@ -93,7 +94,11 @@ public class Syscall {
      */
     public static int exec(String name) {
 	Debug.println('+', "Stub for exec system call in thread: " + NachosThread.currentThread().name);
-	Debug.println('+', "Thread " + NachosThread.currentThread().name + " will execute program " + name);
+	//Trying the main part of the syscall now:
+	Debug.println('+', "Thread " + NachosThread.currentThread().name + " will try to execute program " + name);
+	new ProgTest(name, Nachos.lastProgramID);
+	//Done with main part of the syscall
+	
 	return 0;}
 
     /**

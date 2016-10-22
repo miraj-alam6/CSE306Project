@@ -93,9 +93,9 @@ public class AddrSpace {
 						// at least until we have
 						// virtual memory
 
-    Debug.println('a', "Initializing address space, numPages=" 
+    Debug.println('z', "Initializing address space, numPages=" 
 		+ numPages + ", size=" + size);
-    Debug.println('a', "Total Pages on Machine is " 
+    Debug.println('z', "Total Pages on Machine is " 
 		+ Machine.NumPhysPages);
 
     // first, set up the translation 
@@ -136,7 +136,10 @@ public class AddrSpace {
 	    noffH.code.size);
 
       executable.seek(noffH.code.inFileAddr);
+    
       executable.read(Machine.mainMemory, noffH.code.virtualAddr, noffH.code.size);
+      //I thought next line would fix stuff, but it made no difference
+      //executable.read(Machine.mainMemory, Machine.mainMemory[pageTable[noffH.code.virtualAddr].physicalPage], noffH.code.size);
     }
 
     if (noffH.initData.size > 0) {
@@ -145,7 +148,10 @@ public class AddrSpace {
 	    noffH.initData.size);
 
       executable.seek(noffH.initData.inFileAddr);
+ 
       executable.read(Machine.mainMemory, noffH.initData.virtualAddr, noffH.initData.size);
+      //I thought next line would fix stuff, but it made no difference
+      // executable.read(Machine.mainMemory, Machine.mainMemory[pageTable[noffH.initData.virtualAddr].physicalPage], noffH.initData.size);
     }
 
     return(0);

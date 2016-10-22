@@ -51,6 +51,7 @@ import java.util.*;
  */
 public class Nachos implements Runnable {
     
+    
     /** Option settings. */
     public static Options options;
     
@@ -74,6 +75,8 @@ public class Nachos implements Runnable {
 
     // #MIRAJ: Change here, made a static field for Physical Memory Manager
     public static PMM pMM;
+    
+    public static int lastProgramID = 0;
     
     /**
      * 	Nachos initialization -- performed by first Nachos thread.
@@ -163,7 +166,7 @@ public class Nachos implements Runnable {
       Debug.init(args);
       options = new Options(args);
       Debug.println('+', "Entering main");
-      Debug.println('z', "Testing Debugging Message Argument z");
+      //Debug.println('z', "Testing Debugging Message Argument z");
       // Initialize the hardware.
       Machine.init();
       //initialize physical memory manager
@@ -190,6 +193,10 @@ public class Nachos implements Runnable {
 	return arg0.compareTo(arg1);
     }
       
+  }
+
+  public static void incrementProgramID() {
+      lastProgramID++;
   }
 }
 

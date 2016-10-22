@@ -42,11 +42,14 @@ public class ProgTest implements Runnable {
     public ProgTest(String filename, int num) {
 	String name = "ProgTest"+ num + "(" + filename + ")";
 	
-	Debug.println('+', "starting ProgTest: " + name);
+	//Debug.println('+', "starting ProgTest: " + name);
 
 	execName = filename;
 	AddrSpace space = new AddrSpace();
 	UserThread t = new UserThread(name, this, space);
+	Nachos.incrementProgramID(); // #MIRAJ added this Next process that calls
+	//the constructor of ProgTest should pass in the ID with the value that
+	//is gotten due to this incrementProgramID() function
 	Nachos.scheduler.readyToRun(t);
     }
 
@@ -69,6 +72,8 @@ public class ProgTest implements Runnable {
 
 	AddrSpace space = ((UserThread)NachosThread.currentThread()).space;
 	//NOTE: once again not realistic
+	//Note to self: this is basically reading in the executable, instead of
+	//actually executing it. CPU.runUserCode() is what actually executes it
 	if(space.exec(executable) == -1) {
 	    Debug.println('+', "Unable to read executable file: " + execName);
 	    Nachos.scheduler.finishThread();

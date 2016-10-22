@@ -115,6 +115,9 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
     }
     
     //This will take an address for a string and return the string
+    //THis is probably not good enough if the physical pages are not continguous for
+    //a string. You'll need to use virtual address instead.
+    //#ASK the prof if the thing i get in ReadRegister(4) is a virtual or physical address
     public String dereferenceString(int address){
   	String s = "";
   	int index = 0;
