@@ -9,6 +9,8 @@ import nachos.machine.CPU;
 import nachos.machine.MIPS;
 import nachos.machine.Machine;
 import nachos.machine.MachineException;
+import nachos.machine.NachosThread;
+import nachos.kernel.Nachos;
 import nachos.kernel.userprog.Syscall;
 
 /**
@@ -65,16 +67,12 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		//Syscall.exec(""); //This line was originally here
 		/* Miraj change start here*/
 		int ptr0 = CPU.readRegister(4);
-		//int len0 = CPU.readRegister(5); //this is wrong, nothing in register5
-		//byte buf0[] = new byte[len0];
 		// Debugging stuff start here
 		Debug.println('+', "Gonna try to dereference address" +ptr0);
-		Debug.println('+', "" + AddrSpace.dereferenceString(ptr0));
-		//Debugging stuff end here
-		//Note to self, the next part only works if we do a byte array
-		//System.arraycopy(Machine.mainMemory, ptr0, buf0, 0, len0);
-		//Debug.println('+', "" +buf0.length);
-		Syscall.exec(AddrSpace.dereferenceString(ptr0));
+		//Debug.println('+', "" + AddrSpace.dereferenceString(ptr0));
+	
+		Syscall.exec(
+			((UserThread)NachosThread.currentThread()).space.dereferenceString(ptr0));
 		/* Miraj change end here*/
 		break;
 	    case Syscall.SC_Write:

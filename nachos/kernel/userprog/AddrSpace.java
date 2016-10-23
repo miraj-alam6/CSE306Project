@@ -206,12 +206,29 @@ public class AddrSpace {
   //THis is probably not good enough if the physical pages are not continguous for
   //a string. You'll need to use virtual address instead.
   //#ASK the prof if the thing i get in ReadRegister(4) is a virtual or physical address
-  public static String dereferenceString(int address){
+  public String dereferenceString(int address){
 	String s = "";
 	int index = 0;
-	while(Machine.mainMemory[address + index] != 0){
-	    s += (char)Machine.mainMemory[address+index];
+	//Machine.mainMemory[pageTable[address].]
+	int VPN = address/Machine.PageSize; 
+	int offset = address - VPN * Machine.PageSize;
+	int PPN = pageTable[VPN].physicalPage;
+	int PhysAddr = PPN * Machine.PageSize + offset + index;
+	Debug.println('z',"phys address i'm using I think is " + PhysAddr);
+	Debug.println('z',"virtual address I'm using " + (address+index));
+	
+	while(Machine.mainMemory[PhysAddr] != 0){
+	    //Debug.println('z',"virt page " + pageTable[address+index].virtualPage);
+	    s += (char)Machine.mainMemory[PhysAddr];
 	    index++;
+	    Debug.println('z',"virtual address I'm using " + (address+index));
+	    VPN = address/Machine.PageSize; 
+	    offset = address - VPN * Machine.PageSize;
+	    PPN = pageTable[VPN].physicalPage;
+	    PhysAddr = PPN * Machine.PageSize + offset + index;
+	    Debug.println('z',"phys address i'm using I think is " + PhysAddr);
+	    Debug.println('z', "Translation has gotten me " + 
+		    (char)Machine.mainMemory[PhysAddr]);
 	}
 	
 	return s;
