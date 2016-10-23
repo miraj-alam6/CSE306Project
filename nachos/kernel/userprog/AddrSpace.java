@@ -103,6 +103,7 @@ public class AddrSpace {
     for (int i = 0; i < numPages; i++) {
       pageTable[i] = new TranslationEntry();
       pageTable[i].virtualPage = i; // for now, virtual page# = phys page#
+      pageTable[i].physicalPage = i;
       pageTable[i].physicalPage = Nachos.pMM.allocatePMP(i); // #Changed this line from being i to allocating
       pageTable[i].valid = true;
       pageTable[i].use = false;
@@ -129,6 +130,7 @@ public class AddrSpace {
     } 
      /* Potential solution done*/
     
+    restoreState();
     // then, copy in the code and data segments into memory
     if (noffH.code.size > 0) {
       Debug.println('a', "Initializing code segment, at " +
@@ -136,9 +138,10 @@ public class AddrSpace {
 	    noffH.code.size);
 
       executable.seek(noffH.code.inFileAddr);
-    
       executable.read(Machine.mainMemory, noffH.code.virtualAddr, noffH.code.size);
       //I thought next line would fix stuff, but it made no difference
+     // Debug.println('z', "Code is "+noffH.code.virtualAddr);
+     // Debug.println('z', "Data is"+noffH.initData.virtualAddr);
       //executable.read(Machine.mainMemory, Machine.mainMemory[pageTable[noffH.code.virtualAddr].physicalPage], noffH.code.size);
     }
 

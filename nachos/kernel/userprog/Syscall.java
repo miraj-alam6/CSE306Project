@@ -96,10 +96,11 @@ public class Syscall {
 	Debug.println('+', "Stub for exec system call in thread: " + NachosThread.currentThread().name);
 	//Trying the main part of the syscall now:
 	Debug.println('+', "Thread " + NachosThread.currentThread().name + " will try to execute program " + name);
+	int id = Nachos.lastProgramID;
 	new ProgTest(name, Nachos.lastProgramID);
 	//Done with main part of the syscall
 	
-	return 0;}
+	return id;}
 
     /**
      * Wait for the user program specified by "id" to finish, and
@@ -138,14 +139,18 @@ public class Syscall {
      *
      * @param name  The name of the file to be created.
      */
-    public static void create(String name) { }
+    public static void create(String name) {
+	Debug.println('+', "Stub for create system call in thread: " + NachosThread.currentThread().name);
+    }
 
     /**
      * Remove a Nachos file.
      *
      * @param name  The name of the file to be removed.
      */
-    public static void remove(String name) { }
+    public static void remove(String name) {
+	Debug.println('+', "Stub for remove system call in thread: " + NachosThread.currentThread().name);
+    }
 
     /**
      * Open the Nachos file "name", and return an "OpenFileId" that can 
@@ -154,7 +159,9 @@ public class Syscall {
      * @param name  The name of the file to open.
      * @return  An OpenFileId that uniquely identifies the opened file.
      */
-    public static int open(String name) {return 0;}
+    public static int open(String name) {
+	Debug.println('+', "Stub for open system call in thread: " + NachosThread.currentThread().name);
+	return 0;}
 
     /**
      * Write "size" bytes from "buffer" to the open file.
@@ -164,11 +171,13 @@ public class Syscall {
      * @param id The OpenFileId of the file to which to write the data.
      */
     public static void write(byte buffer[], int size, int id) {
+	Debug.println('+', "Stub for write system call in thread: " + NachosThread.currentThread().name);
 	if (id == ConsoleOutput) {
 	    for(int i = 0; i < size; i++) {
 		Nachos.consoleDriver.putChar((char)buffer[i]);
 	    }
 	}
+	
     }
 
     /**
@@ -183,14 +192,18 @@ public class Syscall {
      * @param id The OpenFileId of the file from which to read the data.
      * @return The actual number of bytes read.
      */
-    public static int read(byte buffer[], int size, int id) {return 0;}
+    public static int read(byte buffer[], int size, int id) {
+	Debug.println('+', "Stub for read system call in thread: " + NachosThread.currentThread().name);
+	return 0;}
 
     /**
      * Close the file, we're done reading and writing to it.
      *
      * @param id  The OpenFileId of the file to be closed.
      */
-    public static void close(int id) {}
+    public static void close(int id) {
+	Debug.println('+', "Stub for close system call in thread: " + NachosThread.currentThread().name);
+    }
 
 
     /*
