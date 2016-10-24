@@ -37,6 +37,8 @@ public class UserThread extends NachosThread {
 
     /** User-level CPU register state. */
     private int userRegisters[] = new int[MIPS.NumTotalRegs];
+    
+    private UserThread parent;
 
     /**
      * Initialize a new user thread.
@@ -50,8 +52,30 @@ public class UserThread extends NachosThread {
     public UserThread(String name, Runnable runObj, AddrSpace addrSpace) {
 	super(name, runObj);
 	space = addrSpace;
+	parent = null;
+    }
+    
+    public UserThread(String name, Runnable runObj, AddrSpace addrSpace, UserThread paren) {
+	super(name, runObj);
+	space = addrSpace;
+	parent = paren;
     }
 
+    public UserThread getParent()
+    {
+	return parent;
+    }
+    
+    public void setParent(UserThread pare)
+    {
+	parent = pare;
+    }
+    
+    public AddrSpace getAddrSpace()
+    {
+	return space;
+    }
+    
     /**
      * Save the CPU state of a user program on a context switch.
      */

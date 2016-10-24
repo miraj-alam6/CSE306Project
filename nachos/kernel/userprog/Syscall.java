@@ -80,10 +80,11 @@ public class Syscall {
      * @param status Status code to pass to processes doing a Join().
      * status = 0 means the program exited normally.
      */
-    public static void exit(int status) {
+    public static int exit(int status) {
 	Debug.println('+', "User program exits with status=" + status
 				+ ": " + NachosThread.currentThread().name);
 	Nachos.scheduler.finishThread();
+	return status;
     }
 
     /**
@@ -218,7 +219,9 @@ public class Syscall {
      * @param func The user address of the procedure to be run by the
      * new thread.
      */
-    public static void fork(int func) {}
+    public static void fork(int func) {
+	
+    }
 
     /**
      * Yield the CPU to another runnable thread, whether in this address space 
