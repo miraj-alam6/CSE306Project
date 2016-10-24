@@ -9,6 +9,8 @@ import nachos.machine.CPU;
 import nachos.machine.MIPS;
 import nachos.machine.Machine;
 import nachos.machine.MachineException;
+import nachos.machine.NachosThread;
+import nachos.kernel.Nachos;
 import nachos.kernel.userprog.Syscall;
 
 /**
@@ -65,16 +67,12 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		//Syscall.exec(""); //This line was originally here
 		/* Miraj change start here*/
 		int ptr0 = CPU.readRegister(4);
-		//int len0 = CPU.readRegister(5); //this is wrong, nothing in register5
-		//byte buf0[] = new byte[len0];
 		// Debugging stuff start here
 		Debug.println('+', "Gonna try to dereference address" +ptr0);
-		Debug.println('+', "" + dereferenceString(ptr0));
-		//Debugging stuff end here
-		//Note to self, the next part only works if we do a byte array
-		//System.arraycopy(Machine.mainMemory, ptr0, buf0, 0, len0);
-		//Debug.println('+', "" +buf0.length);
-		Syscall.exec(dereferenceString(ptr0));
+		//Debug.println('+', "" + AddrSpace.dereferenceString(ptr0));
+	
+		Syscall.exec(
+			((UserThread)NachosThread.currentThread()).space.dereferenceString(ptr0));
 		/* Miraj change end here*/
 		break;
 	    case Syscall.SC_Write:
@@ -84,6 +82,9 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 
 		System.arraycopy(Machine.mainMemory, ptr, buf, 0, len);
 		Syscall.write(buf, len, CPU.readRegister(6));
+		break;
+	    case Syscall.SC_Yield:
+		Syscall.yield();
 		break;
 	    case Syscall.SC_Fork:
 		break;
@@ -122,18 +123,4 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 	return s;
     }
     
-    //This will take an address for a string and return the string
-    //THis is probably not good enough if the physical pages are not continguous for
-    //a string. You'll need to use virtual address instead.
-    //#ASK the prof if the thing i get in ReadRegister(4) is a virtual or physical address
-    public String dereferenceString(int address){
-  	String s = "";
-  	int index = 0;
-  	while(Machine.mainMemory[address + index] != 0){
-  	    s += (char)Machine.mainMemory[address+index];
-  	    index++;
-  	}
-  	
-  	return s;
-      }
 }

@@ -86,7 +86,8 @@ public class AddrSpace {
 	     + UserStackSize;	// we need to increase the size
     				// to leave room for the stack
     int numPages = (int)(size / Machine.PageSize);
-
+    int numPagesForCode = (int) (roundToPage(noffH.code.size) / Machine.PageSize);
+    int numPagesForData = (int) (roundToPage(noffH.initData.size) / Machine.PageSize);
     Debug.ASSERT((numPages <= Machine.NumPhysPages),// check we're not trying
 		 "AddrSpace constructor: Not enough memory!");
                                                 // to run anything too big --
@@ -138,11 +139,16 @@ public class AddrSpace {
 	    noffH.code.size);
 
       executable.seek(noffH.code.inFileAddr);
-      executable.read(Machine.mainMemory, noffH.code.virtualAddr, noffH.code.size);
+      //executable.read(Machine.mainMemory, noffH.code.virtualAddr, noffH.code.size);
       //I thought next line would fix stuff, but it made no difference
      // Debug.println('z', "Code is "+noffH.code.virtualAddr);
      // Debug.println('z', "Data is"+noffH.initData.virtualAddr);
       //executable.read(Machine.mainMemory, Machine.mainMemory[pageTable[noffH.code.virtualAddr].physicalPage], noffH.code.size);
+      //I think this works.
+      for(int i = 0; i < numPagesForCode; i++){
+	  executable.read(Machine.mainMemory, pageTable[i].physicalPage
+		  * Machine.PageSize, Machine.PageSize);
+      }
     }
 
     if (noffH.initData.size > 0) {
@@ -152,9 +158,14 @@ public class AddrSpace {
 
       executable.seek(noffH.initData.inFileAddr);
  
-      executable.read(Machine.mainMemory, noffH.initData.virtualAddr, noffH.initData.size);
+      //executable.read(Machine.mainMemory, noffH.initData.virtualAddr, noffH.initData.size);
       //I thought next line would fix stuff, but it made no difference
       // executable.read(Machine.mainMemory, Machine.mainMemory[pageTable[noffH.initData.virtualAddr].physicalPage], noffH.initData.size);
+      //Gonna try to read the code in, I think this works.
+      for(int i = numPagesForCode; i < numPagesForCode + numPagesForData; i++){
+	  executable.read(Machine.mainMemory, pageTable[i].physicalPage
+		  * Machine.PageSize, Machine.PageSize);
+      }
     }
 
     return(0);
@@ -188,8 +199,41 @@ public class AddrSpace {
     int sp = pageTable.length * Machine.PageSize;
     CPU.writeRegister(MIPS.StackReg, sp);
     Debug.println('a', "Initializing stack register to " + sp);
+    
   }
 
+  //This will take an address for a string and return the string
+  //THis is probably not good enough if the physical pages are not continguous for
+  //a string. You'll need to use virtual address instead.
+  //#ASK the prof if the thing i get in ReadRegister(4) is a virtual or physical address
+  public String dereferenceString(int address){
+	String s = "";
+	int index = 0;
+	//Machine.mainMemory[pageTable[address].]
+	int VPN = address/Machine.PageSize; 
+	int offset = address - VPN * Machine.PageSize;
+	int PPN = pageTable[VPN].physicalPage;
+	int PhysAddr = PPN * Machine.PageSize + offset + index;
+	Debug.println('z',"phys address i'm using I think is " + PhysAddr);
+	Debug.println('z',"virtual address I'm using " + (address+index));
+	
+	while(Machine.mainMemory[PhysAddr] != 0){
+	    //Debug.println('z',"virt page " + pageTable[address+index].virtualPage);
+	    s += (char)Machine.mainMemory[PhysAddr];
+	    index++;
+	    Debug.println('z',"virtual address I'm using " + (address+index));
+	    VPN = address/Machine.PageSize; 
+	    offset = address - VPN * Machine.PageSize;
+	    PPN = pageTable[VPN].physicalPage;
+	    PhysAddr = PPN * Machine.PageSize + offset + index;
+	    Debug.println('z',"phys address i'm using I think is " + PhysAddr);
+	    Debug.println('z', "Translation has gotten me " + 
+		    (char)Machine.mainMemory[PhysAddr]);
+	}
+	
+	return s;
+    }
+  
   /**
    * On a context switch, save any machine state, specific
    * to this address space, that needs saving.

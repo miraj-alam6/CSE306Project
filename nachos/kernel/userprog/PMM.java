@@ -4,6 +4,7 @@ import java.util.*;
 
 import nachos.Debug;
 import nachos.kernel.threads.Lock;
+import nachos.machine.Machine;
 
 public class PMM {
     public PMEntry physicalPages[];
@@ -27,12 +28,13 @@ public class PMM {
     public int allocatePMP(int VPN){
 	//Need to use a Lock here
 	allocatorLock.acquire();
-	for (int i = 0; i < physicalPages.length; i ++){
+	for (int i = 0; i < physicalPages.length; i += 2){
 	    if(physicalPages[i].entryStatus == 0){
 		physicalPages[i].setPage(VPN);
 		//Need to free a lock here
 		Debug.println('a', "Successfully allocated a PPN " + i + " to VPN " + VPN
-			+ "of thread " );
+			+ "of current process.\nAddresses:"+
+			i*Machine.PageSize+ ","+ VPN * Machine.PageSize );
 		allocatorLock.release();
 		return i;
 	    }	    
