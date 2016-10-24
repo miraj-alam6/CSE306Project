@@ -224,6 +224,9 @@ public class Syscall {
      * Yield the CPU to another runnable thread, whether in this address space 
      * or not. 
      */
-    public static void yield() {}
+    public static void yield() {
+	Debug.println('z', "Through syscall yielding thread "+ NachosThread.currentThread().name);
+	 Nachos.scheduler.yieldThread();
+    }
 
 }
