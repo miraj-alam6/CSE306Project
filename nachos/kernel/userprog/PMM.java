@@ -28,7 +28,7 @@ public class PMM {
     public int allocatePMP(int VPN){
 	//Need to use a Lock here
 	allocatorLock.acquire();
-	for (int i = 0; i < physicalPages.length; i += 1){
+	for (int i = 0; i < physicalPages.length; i += 2){
 	    if(physicalPages[i].entryStatus == 0){
 		physicalPages[i].setPage(VPN);
 		//Need to free a lock here
@@ -67,6 +67,12 @@ public class PMM {
 	   virtualPages.add(virtualPageNumber);
 	   entryStatus = 1;
 	}
+	
+    }
+    
+    
+    public void deallocatePMP(int VPN){
+	
 	
     }
 }

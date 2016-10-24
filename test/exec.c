@@ -1,4 +1,4 @@
-/* halt.c
+/* exec.c
 *	Simple program to test whether running a user program works.
 *
 *	Just do a "syscall" that shuts down the OS.
@@ -12,6 +12,7 @@
 
 #include "syscall.h"
 
+
 int main()
 {
 	/*
@@ -21,6 +22,7 @@ int main()
 	Not possible to do because you can't just add strings like that in C and
 	string concat is not available because no library.
 	*/
+	
 	char *filename = "test/halt";
 	
 	Exec(filename);

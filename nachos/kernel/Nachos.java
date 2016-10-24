@@ -42,6 +42,7 @@ import nachos.kernel.threads.test.SynchronousQueueTest;
 import nachos.kernel.threads.test.ThreadTest;
 import nachos.kernel.threads.test.POCTest;
 import nachos.kernel.userprog.test.ProgTest;
+import nachos.kernel.userprog.test.ConsoleProgTest;
 import nachos.kernel.filesys.test.FileSystemTest;
 
 import java.util.*;
@@ -142,6 +143,8 @@ public class Nachos implements Runnable {
 	    SynchronousQueueTest.start();
 	if(options.POC_TEST)
 	    POCTest.start();
+	if(options.CONSOLE_PROG_TEST)
+	    ConsoleProgTest.start();
 	
 	// Terminate the first thread, its job is done.
 	// Alternatively, you could give this thread the responsibility

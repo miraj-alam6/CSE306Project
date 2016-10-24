@@ -104,7 +104,6 @@ public class AddrSpace {
     for (int i = 0; i < numPages; i++) {
       pageTable[i] = new TranslationEntry();
       pageTable[i].virtualPage = i; // for now, virtual page# = phys page#
-      pageTable[i].physicalPage = i;
       pageTable[i].physicalPage = Nachos.pMM.allocatePMP(i); // #Changed this line from being i to allocating
       pageTable[i].valid = true;
       pageTable[i].use = false;
@@ -127,11 +126,13 @@ public class AddrSpace {
      * I made a Potential solution below, need to somehow test it
      */
     for(int i = 0; i < numPages; i++){
-	Machine.mainMemory[pageTable[i].physicalPage] = (byte)0;
+	for(int j = 0; j < Machine.PageSize; j++){
+	    Machine.mainMemory[i * Machine.PageSize + j] = (byte)0;
+	}
     } 
      /* Potential solution done*/
     
-    restoreState();
+  //restoreState();
     // then, copy in the code and data segments into memory
     if (noffH.code.size > 0) {
       Debug.println('a', "Initializing code segment, at " +
@@ -162,9 +163,13 @@ public class AddrSpace {
       //I thought next line would fix stuff, but it made no difference
       // executable.read(Machine.mainMemory, Machine.mainMemory[pageTable[noffH.initData.virtualAddr].physicalPage], noffH.initData.size);
       //Gonna try to read the code in, I think this works.
-      for(int i = numPagesForCode; i < numPagesForCode + numPagesForData; i++){
+      // TODO: noffH.initData.virtualAddress and get VPN, and use that instead of numPagesForCode for your starting point
+      //TODO: Keep in mind page reading if page that's not full 
+      //Debug.println('z', "BLAHHHH "+ numPagesForCode + "," + noffH.initData.virtualAddr/Machine.PageSize );
+      for(int i = (noffH.initData.virtualAddr/Machine.PageSize); i < numPagesForCode + numPagesForData; i++){
 	  executable.read(Machine.mainMemory, pageTable[i].physicalPage
 		  * Machine.PageSize, Machine.PageSize);
+	  Debug.println('z', "BLAHHHH "+ numPagesForCode + "," + noffH.initData.virtualAddr/Machine.PageSize );
       }
     }
 
@@ -235,6 +240,8 @@ public class AddrSpace {
       	//how to get physical address
 	int PhysAddr = getPhysicalAddress(address, index);
       	
+	Debug.println('z',"phys address i'm using I think is " + PhysAddr);
+	Debug.println('z',"virtual address I'm using " + (address+index));
 	int size = 0;
       	//first get the size of the array
       	while(/*Machine.mainMemory[PhysAddr] != 0 &&*/ index < len){

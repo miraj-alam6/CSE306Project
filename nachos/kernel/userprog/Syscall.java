@@ -175,6 +175,7 @@ public class Syscall {
 	Debug.println('+', "Stub for write system call in thread: " + NachosThread.currentThread().name);
 	if (id == ConsoleOutput) {
 	    for(int i = 0; i < size; i++) {
+		//doesn't use physical address
 		Nachos.consoleDriver.putChar((char)buffer[i]);
 	    }
 	}

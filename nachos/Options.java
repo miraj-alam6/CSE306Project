@@ -169,11 +169,13 @@ public class Options {
     public boolean CALLOUT_TEST = false;  // Made this true for HW # 1
     
     // SynchronousQueueTest
-    
     public boolean SYNCQUEUE_TEST = false;
     
     //Syncqueue with callout test???
     public boolean POC_TEST = false;
+    
+    //Test a prog with a console running
+    public boolean CONSOLE_PROG_TEST = false;
     
     /** Should we run the multiprocessor scheduling test? */
     public boolean SMP_TEST = false;
@@ -251,6 +253,14 @@ public class Options {
 				PROG_TEST = true;
 			    }
 			 }),
+               new Spec("-xc",  // enable console prog test
+        	       new Class[] { },
+        	       null,
+        	       new Options.Action() {
+        	       	   public void processOption(String flag, Object[] params) {
+        	       	      CONSOLE_PROG_TEST = true;
+        	       	   }
+			}),	 
 		new Spec("-nt",  // enable network test
 			 new Class[] { },
 			 null,
