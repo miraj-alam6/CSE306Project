@@ -79,8 +79,9 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		int ptr = CPU.readRegister(4);
 		int len = CPU.readRegister(5);
 		byte buf[] = new byte[len];
-
-		System.arraycopy(Machine.mainMemory, ptr, buf, 0, len);
+		//the following wouldn't work, it's using virtual address as physical address
+		//System.arraycopy(Machine.mainMemory, ptr, buf, 0, len);
+		buf = ((UserThread)NachosThread.currentThread()).space.getByteArray(ptr,len);
 		Syscall.write(buf, len, CPU.readRegister(6));
 		break;
 	    case Syscall.SC_Yield:

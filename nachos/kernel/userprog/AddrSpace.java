@@ -210,10 +210,7 @@ public class AddrSpace {
 	String s = "";
 	int index = 0;
 	//Machine.mainMemory[pageTable[address].]
-	int VPN = address/Machine.PageSize; 
-	int offset = address - VPN * Machine.PageSize;
-	int PPN = pageTable[VPN].physicalPage;
-	int PhysAddr = PPN * Machine.PageSize + offset + index;
+	int PhysAddr = getPhysicalAddress(address, index);
 	Debug.println('z',"phys address i'm using I think is " + PhysAddr);
 	Debug.println('z',"virtual address I'm using " + (address+index));
 	
@@ -222,10 +219,7 @@ public class AddrSpace {
 	    s += (char)Machine.mainMemory[PhysAddr];
 	    index++;
 	    Debug.println('z',"virtual address I'm using " + (address+index));
-	    VPN = address/Machine.PageSize; 
-	    offset = address - VPN * Machine.PageSize;
-	    PPN = pageTable[VPN].physicalPage;
-	    PhysAddr = PPN * Machine.PageSize + offset + index;
+	    PhysAddr = getPhysicalAddress(address, index);
 	    Debug.println('z',"phys address i'm using I think is " + PhysAddr);
 	    Debug.println('z', "Translation has gotten me " + 
 		    (char)Machine.mainMemory[PhysAddr]);
@@ -233,6 +227,78 @@ public class AddrSpace {
 	
 	return s;
     }
+  
+  //This function will get an array of bytes by using an address
+  public byte[] getByteArray(int address,int len){
+      	byte[] bytes;
+      	int index = 0; //gonna loop thru with this
+      	//how to get physical address
+	int PhysAddr = getPhysicalAddress(address, index);
+      	
+	int size = 0;
+      	//first get the size of the array
+      	while(/*Machine.mainMemory[PhysAddr] != 0 &&*/ index < len){
+      	    size++;
+      	    index++;
+      	}
+      	
+      	bytes = new byte[size];
+      	
+      //restart index for second pass where we actually get the data from the array
+      	index = 0;
+      	PhysAddr = getPhysicalAddress(address, index);
+      	while(/*Machine.mainMemory[PhysAddr] != 0 &&*/ index < len){
+      	    bytes[index] = Machine.mainMemory[PhysAddr];
+      	    size++;
+      	    index++;
+      	    PhysAddr = getPhysicalAddress(address, index);
+      	}
+      	
+      	
+	return bytes;
+    }
+  
+//This function will get an array of ints by using an address
+  public int[] getIntArray(int address){
+      	int[] ints;
+      	int index = 0; //gonna loop thru with this
+      	//how to get physical address
+	int PhysAddr = getPhysicalAddress(address, index);
+      	
+	int size = 0;
+      	//first get the size of the array
+      	while(Machine.mainMemory[PhysAddr] != 0){
+      	    size++;
+      	    index+= 4;
+      	}
+      	
+      	ints = new int[size];
+      	
+      //restart index for second pass where we actually get the data from the array
+      	index = 0;
+      	PhysAddr = getPhysicalAddress(address, index);
+      	while(Machine.mainMemory[PhysAddr] != 0){
+      	    ints[index] = Machine.mainMemory[PhysAddr];
+      	    size++;
+      	    index+=4;
+      	    PhysAddr = getPhysicalAddress(address, index);
+      	}
+      	
+      	
+	return ints;
+    }
+  
+  //This function will get a physical address based off of the virtual address and its index
+  //index itself is basically an offset from address that is already possibly offsetted,
+  //and thus the already present offset is calculated, and together offest + index is
+  //the actual offset from the start of a page.
+  public int getPhysicalAddress(int address, int index){
+    	int VPN = address/Machine.PageSize; 
+	int offset = address - VPN * Machine.PageSize;
+	int PPN = pageTable[VPN].physicalPage;
+	int PhysAddr = PPN * Machine.PageSize + offset + index;
+	return PhysAddr;
+  }
   
   /**
    * On a context switch, save any machine state, specific
