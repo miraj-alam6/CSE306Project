@@ -90,8 +90,6 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		break;
 	    case Syscall.SC_Join:
 		break;
-	    case Syscall.SC_Yield:
-		break;
 	    case Syscall.SC_Read:
 		break;
 	    }
