@@ -196,7 +196,23 @@ public class Syscall {
      */
     public static int read(byte buffer[], int size, int id) {
 	Debug.println('+', "Stub for read system call in thread: " + NachosThread.currentThread().name);
-	return 0;}
+	int x = 0;
+	if(id == ConsoleInput)
+	{
+	    while(x < size)
+	    {
+	       char ch = Nachos.consoleDriver.getChar();
+	       if(ch == '\n')
+	       {
+		   buffer[x] = (byte)'\0';
+		   break;
+	       }
+	       buffer[x] = (byte)ch;
+	       x++;
+	    }
+	}
+	return x;
+	}
 
     /**
      * Close the file, we're done reading and writing to it.
