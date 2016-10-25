@@ -202,6 +202,7 @@ public class Syscall {
     public static int read(byte buffer[], int size, int id) {
 	Debug.println('+', "Stub for read system call in thread: " + NachosThread.currentThread().name);
 	int x = 0;
+	String s = ""; // #Miraj me trying to debug something
 	if(id == ConsoleInput)
 	{
 	    while(x < size)
@@ -213,9 +214,12 @@ public class Syscall {
 		   break;
 	       }
 	       buffer[x] = (byte)ch;
+	       s+= ch;
 	       x++;
 	    }
 	}
+	Debug.println('z', "What was read is " + s);
+		
 	return x;
 	}
 
