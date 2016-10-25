@@ -54,11 +54,11 @@ public class AddrSpace {
   private static final int UserStackSize = 1024;
 
   private NoffHeader noffH;
-  
+  private int spaceID;
   /**
    * Create a new address space.
    */
-  public AddrSpace() { }
+  public AddrSpace(int ID) { spaceID = ID; Debug.println('z', "SpaceID is "+spaceID);}
 
   /**
    * Load the program from a file "executable", and set everything
@@ -106,7 +106,7 @@ public class AddrSpace {
     for (int i = 0; i < numPages; i++) {
       pageTable[i] = new TranslationEntry();
       pageTable[i].virtualPage = i; // for now, virtual page# = phys page#
-      pageTable[i].physicalPage = Nachos.pMM.allocatePMP(i); // #Changed this line from being i to allocating
+      pageTable[i].physicalPage = Nachos.pMM.allocatePMP(i, spaceID); // #Changed this line from being i to allocating
       pageTable[i].valid = true;
       pageTable[i].use = false;
       pageTable[i].dirty = false;
@@ -128,7 +128,9 @@ public class AddrSpace {
      * I made a Potential solution below, need to somehow test it
      */
     for(int i = 0; i < numPages; i++){
-	Machine.mainMemory[pageTable[i].physicalPage] = (byte)0;
+	for(int j = 0; j < Machine.PageSize; j++){
+	    Machine.mainMemory[getPhysicalAddress(i*Machine.PageSize, j)] = (byte)0;
+	}
     } 
      /* Potential solution done*/
     
@@ -171,7 +173,32 @@ public class AddrSpace {
 
     return(0);
   }
-  
+  public void freeAddrSpace(){
+      if(noffH == null){
+		return;
+      }
+	    
+	    // how big is address space?
+      long size = roundToPage(noffH.code.size)
+		     + roundToPage(noffH.initData.size + noffH.uninitData.size)
+		     + UserStackSize;	// we need to increase the size
+	    				// to leave room for the stack
+      int numPages = (int)(size / Machine.PageSize);
+ 
+      //Clear the memory, probably not necessary
+      for(int i = 0; i < numPages; i++){
+	for(int j = 0; j < Machine.PageSize; j++){
+	    Machine.mainMemory[getPhysicalAddress(i*Machine.PageSize, j)] = (byte)0;
+	}
+      } 
+      //Deallocate the actual memory, definitely necessary
+      for(int i = 0; i < numPages; i++){
+	  Nachos.pMM.deallocatePMP(i,spaceID);
+      } 
+  }
+  public int getSpaceID(){
+      return spaceID;
+  }
   public void copyAddrSapce(AddrSpace x)
   {
       long size;
@@ -199,7 +226,7 @@ public class AddrSpace {
       {
 	  pageTable[i] = new TranslationEntry();
 	  pageTable[i].virtualPage = i; // for now, virtual page# = phys page#
-	  pageTable[i].physicalPage = Nachos.pMM.allocatePMP(i); // #Changed this line from being i to allocating
+	  pageTable[i].physicalPage = Nachos.pMM.allocatePMP(i,spaceID); // #Changed this line from being i to allocating
 	  pageTable[i].valid = true;
 	  pageTable[i].use = false;
 	  pageTable[i].dirty = false;

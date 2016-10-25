@@ -83,6 +83,11 @@ public class Syscall {
     public static int exit(int status) {
 	Debug.println('+', "User program exits with status=" + status
 				+ ": " + NachosThread.currentThread().name);
+	if(NachosThread.currentThread() instanceof UserThread){
+	    Debug.println('w', "About to deallocate memory of the process with ID "+ 
+		    ((UserThread)NachosThread.currentThread()).space.getSpaceID());
+	    ((UserThread)NachosThread.currentThread()).space.freeAddrSpace();
+	}
 	Nachos.scheduler.finishThread();
 	return status;
     }
@@ -247,7 +252,7 @@ public class Syscall {
      * or not. 
      */
     public static void yield() {
-	Debug.println('z', "Through syscall yielding thread "+ NachosThread.currentThread().name);
+	Debug.println('+', "Through syscall yielding thread "+ NachosThread.currentThread().name);
 	 Nachos.scheduler.yieldThread();
     }
 

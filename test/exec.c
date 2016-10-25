@@ -12,7 +12,7 @@
 
 #include "syscall.h"
 
-
+int x = 20;
 int main()
 {
 	/*

@@ -1,6 +1,7 @@
 package nachos.kernel.threads;
 
 import nachos.Debug;
+import nachos.Options;
 import nachos.kernel.Nachos;
 import nachos.machine.CPU;
 import nachos.machine.InterruptHandler;
@@ -41,7 +42,9 @@ public class Callout {
 	sl = new SpinLock("callout mutex");
 	timer = Machine.getTimer(0); 
 	timer.setHandler(new CalloutTimerInterruptHandler(timer));
-	//timer.start(); //commented this out for hw # 2
+	if(Nachos.options.USE_CALLOUT_FACILITY){
+	    timer.start(); //commented this out for hw # 2
+	}
     }
     
     

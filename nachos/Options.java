@@ -195,6 +195,9 @@ public class Options {
     /** Should we run the network test? */
     public boolean NETWORK_TEST = false;
     
+    //I just added this so that timer isn't started for HW # 2
+    public boolean USE_CALLOUT_FACILITY = false;
+    
     public Options(String[] args) {
 	argList = Arrays.asList(args);
 	parseArgList();

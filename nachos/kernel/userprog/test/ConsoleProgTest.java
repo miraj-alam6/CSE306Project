@@ -44,7 +44,7 @@ public class ConsoleProgTest implements Runnable {
 	    if(ch == '\n')
 		console.putChar('\r');
 
-	    if (ch == 'q') {
+	    if (ch == 27) { //27 corresponds to escape key
 		Debug.println('+', "ConsoleTest: quitting");
 		console.stop();
 		Nachos.scheduler.finishThread();    // if q, quit

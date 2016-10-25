@@ -45,7 +45,7 @@ public class ProgTest implements Runnable {
 	//Debug.println('+', "starting ProgTest: " + name);
 
 	execName = filename;
-	AddrSpace space = new AddrSpace();
+	AddrSpace space = new AddrSpace(num);
 	UserThread t = new UserThread(name, this, space);
 	Nachos.incrementProgramID(); // #MIRAJ added this Next process that calls
 	//the constructor of ProgTest should pass in the ID with the value that
