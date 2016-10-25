@@ -88,10 +88,14 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		Syscall.yield();
 		break;
 	    case Syscall.SC_Fork:
+		int func = CPU.readRegister(4);
+		Syscall.fork(func);
 		break;
 	    case Syscall.SC_Join:
 		break;
 	    case Syscall.SC_Read:
+		byte buff[] = new byte[25];
+		Syscall.read(buff, 25, CPU.readRegister(6));
 		break;
 	    }
 

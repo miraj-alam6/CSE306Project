@@ -45,6 +45,8 @@ public class PMM {
 	return -1;
 	
     }
+    
+    
     //Physical Memory Entry
     private class PMEntry{
 	public int entryStatus; // 0 means free, 1 means occupied, other numebers for future use
@@ -70,9 +72,4 @@ public class PMM {
 	
     }
     
-    
-    public void deallocatePMP(int VPN){
-	
-	
-    }
 }

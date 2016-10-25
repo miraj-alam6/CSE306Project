@@ -221,6 +221,7 @@ public class Syscall {
      */
     public static void close(int id) {
 	Debug.println('+', "Stub for close system call in thread: " + NachosThread.currentThread().name);
+	
     }
 
 
@@ -236,7 +237,8 @@ public class Syscall {
      * @param func The user address of the procedure to be run by the
      * new thread.
      */
-    public static void fork(int func) {
+    public static void fork(int func) 
+    {
 	
     }
 

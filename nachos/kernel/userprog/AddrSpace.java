@@ -53,6 +53,8 @@ public class AddrSpace {
   /** Default size of the user stack area -- increase this as necessary! */
   private static final int UserStackSize = 1024;
 
+  private NoffHeader noffH;
+  
   /**
    * Create a new address space.
    */
@@ -74,7 +76,6 @@ public class AddrSpace {
    *    otherwise 0.
    */
   public int exec(OpenFile executable) {
-    NoffHeader noffH;
     long size;
     
     
@@ -105,7 +106,6 @@ public class AddrSpace {
     for (int i = 0; i < numPages; i++) {
       pageTable[i] = new TranslationEntry();
       pageTable[i].virtualPage = i; // for now, virtual page# = phys page#
-      pageTable[i].physicalPage = i;
       pageTable[i].physicalPage = Nachos.pMM.allocatePMP(i); // #Changed this line from being i to allocating
       pageTable[i].valid = true;
       pageTable[i].use = false;
@@ -171,7 +171,42 @@ public class AddrSpace {
 
     return(0);
   }
-
+  
+  public void copyAddrSapce(AddrSpace x)
+  {
+      long size;
+      noffH = x.noffH;
+      size = roundToPage(noffH.code.size)
+		     + roundToPage(noffH.initData.size + noffH.uninitData.size)
+		     + UserStackSize;	// we need to increase the size
+	    				// to leave room for the stack
+      int numPages = (int)(size / Machine.PageSize);
+      int numPagesForCode = (int) (roundToPage(noffH.code.size) / Machine.PageSize);
+      int numPagesForData = (int) (roundToPage(noffH.initData.size) / Machine.PageSize);
+      
+      pageTable = new TranslationEntry[numPages];
+      for (int i = 0; i < (numPagesForCode+numPagesForData); i++) {
+        pageTable[i] = new TranslationEntry();
+        pageTable[i].virtualPage = i; // for now, virtual page# = phys page#
+        pageTable[i].physicalPage = x.pageTable[i].physicalPage; // #Changed this line from being i to allocating
+        pageTable[i].valid = true;
+        pageTable[i].use = false;
+        pageTable[i].dirty = false;
+        pageTable[i].readOnly = false;
+      }
+      
+      for(int i = (numPagesForCode+numPagesForData); i < size; i++)
+      {
+	  pageTable[i] = new TranslationEntry();
+	  pageTable[i].virtualPage = i; // for now, virtual page# = phys page#
+	  pageTable[i].physicalPage = Nachos.pMM.allocatePMP(i); // #Changed this line from being i to allocating
+	  pageTable[i].valid = true;
+	  pageTable[i].use = false;
+	  pageTable[i].dirty = false;
+	  pageTable[i].readOnly = false;
+      }
+      
+  }
   /**
    * Initialize the user-level register set to values appropriate for
    * starting execution of a user program loaded in this address space.

@@ -26,6 +26,7 @@ import nachos.machine.CPU;
 import nachos.machine.Machine;
 import nachos.machine.NachosThread;
 import nachos.kernel.devices.ConsoleDriver;
+import nachos.kernel.devices.ConsoleManager;
 import nachos.kernel.devices.DiskDriver;
 import nachos.kernel.devices.NetworkDriver;
 import nachos.kernel.devices.SerialDriver;
@@ -73,6 +74,8 @@ public class Nachos implements Runnable {
 
     /** Access to serial ports. */
     public static SerialDriver serialDriver;
+    
+    public static ConsoleManager consoleManager;
 
     // #MIRAJ: Change here, made a static field for Physical Memory Manager
     public static PMM pMM;
@@ -90,7 +93,8 @@ public class Nachos implements Runnable {
     @SuppressWarnings("unused")
     public void run() {
 	// Initialize device drivers.
-
+	consoleManager = new ConsoleManager();
+	
 	if(Machine.NUM_CONSOLES > 0)
 	    consoleDriver = new ConsoleDriver(Machine.getConsole(0));
 

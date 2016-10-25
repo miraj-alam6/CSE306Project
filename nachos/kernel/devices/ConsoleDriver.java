@@ -48,6 +48,8 @@ public class ConsoleDriver {
     
     /** Interrupt handler used for console output interrupts. */
     private InterruptHandler outputHandler;
+    
+    private int inUse;
 
     /**
      * Initialize the driver and the underlying physical device.
@@ -61,6 +63,16 @@ public class ConsoleDriver {
 	// Delay setting the interrupt handlers until first use.
     }
     
+    
+    public int getUsed()
+    {
+	return inUse;
+    }
+    
+    public void setUsed(int use)
+    {
+	inUse = use;
+    }
     /**
      * Create and set the keyboard interrupt handler, if one has not
      * already been set.

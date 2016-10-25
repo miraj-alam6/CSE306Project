@@ -12,6 +12,7 @@ package nachos.kernel.userprog;
 
 import nachos.machine.MIPS;
 import nachos.machine.NachosThread;
+import nachos.kernel.devices.ConsoleDriver;
 import nachos.machine.CPU;
 
 /**
@@ -39,6 +40,8 @@ public class UserThread extends NachosThread {
     private int userRegisters[] = new int[MIPS.NumTotalRegs];
     
     private UserThread parent;
+    private ConsoleDriver driver;
+ 
 
     /**
      * Initialize a new user thread.
@@ -61,6 +64,16 @@ public class UserThread extends NachosThread {
 	parent = paren;
     }
 
+    public ConsoleDriver getConsoleDriver()
+    {
+	return driver;
+    }
+    
+    public void setConsoleDriver(ConsoleDriver d)
+    {
+	driver = d;
+    }
+    
     public UserThread getParent()
     {
 	return parent;
@@ -75,7 +88,7 @@ public class UserThread extends NachosThread {
     {
 	return space;
     }
-    
+        
     /**
      * Save the CPU state of a user program on a context switch.
      */
