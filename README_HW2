@@ -1,9 +1,12 @@
-Section 1: Overview:
+Miraj Alam, Kwun Chan
+
+README Section 1: Overview:
 
 In this project, we created the systems calls Exec, Exit, Join, Yield, Read, and Write and a facility to allocate 
-physical memory pages, and to make sure that multiple programs can run at the same time by doing address translation
-and code loading properly. The way that our tests show that the system calls are working for their intended function is
-described in Section 2: How to compile and test
+physical memory pages, and to make sure that multiple programs can run at the same time(concurrently) by doing 
+address translation and code loading properly. Memory is also deallocated when a program ends.  The way that our 
+tests show that the system calls are working for their intended function is described in Section 2: How to compile 
+and test.
 
 Part 1: System Calls: All system calls except Fork were implemented. 
 
@@ -11,30 +14,73 @@ Part 2: Multiple Consoles: This part of the homework assignment was not implemen
 time comes
 
 
-Section 2: How to compile and test:
+README Section 2: How to compile and test:
 
-We created a bunch of test programs in C that have been compiled and included in the test directory. We expanded upon the
-code for ProgTest, and that is what is used to execute the first program which then executes its own code which in these
-tests often consist of calling exec("anothertestprogram"). We also made a class called ConsoleProgTest where the the console
-runs on a separate thread, thus it doesn't automatically close as soon as something is written to it.
+We created a bunch of test programs in C that have been compiled and included in the test directory. We expanded 
+upon the code for ProgTest, and that is what is used to execute the first program which then executes its own code 
+which in these tests often consist of calling exec("anothertestprogram"). We also made a class called ConsoleProgTest 
+where the console runs on a separate thread, thus it doesn't automatically close as soon as something is written to it.
 -x is the flag for turning on ProgTest, and it takes an argument for the filepath
 -xc is the flag for turning on ConsoleProgTest,  and it takes an argument for the filepath
-I will elaborate more on the difference between -x and -xc later the Assumptions so please read that to understand how to 
+I will elaborate more on the difference between -x and -xc later in section 3: assumptions so please read that to understand how to 
 use the flags.
 
 Each of them are in the test directory
 
 Here is what each of them do, if you want to read the source code, open the .c files for each of these
 program names.
-testprog1: this one simply is a program that does the yield system call 3 times.
-testprog2: this one does exec(testprog1) TWICE, thus, each of the two programs will keep yielding, thus showing
-that concurrency works.
-testprog3: this program simply writes to the console. It's better to use consoleprogtest for this, it works for both, but I'll
-elaborate in the assumptions section why it's better to use consoleprogtest
-testprog4:
-.
-Currently the option for callout_test is set to true.
 
-Section 3: Our Assumptions
+testprog1: this one simply is a program that does the yield system call 3 times. You can see this in the 
+debugging messages in java console in eclipse. Thus -x is good enough, because no console is necessary (More 
+elaboration in Section 3 of README)
 
-We assume that the machine would be restarted between tests and we assume that scheduler would always be used. 
+testprog2: this one does exec(testprog1) TWICE, thus, each of the two processes will keep yield thrice and the
+scheduler keeps switching between them, thus showing that concurrency works, and the yield system call works. This
+test also shows that the exec system call works, thus the Address Space uses address translation correctly with a proper
+page table and code loading.
+
+testprog3: this program simply writes to the console, but it does writing a string that was defined in the data section. 
+It's better to use consoleprogtest for this, it works for both, but I'll elaborate in the assumptions section why it's 
+better to use consoleprogtest
+
+testprog4: this program simply executes testprog3 thus showing that data section translation indeed works.
+
+testprog5: this program shows that the join system call works because a message is printed after join. It's better to use consoleprogtest for this, it works for both, but I'll elaborate in the assumptions section why it's better to use 
+consoleprogtest.
+
+testprog6: this program shows that read works, by reading in what you type with a max buffer size of 25, and then 
+printing out what was read by using the write system call on the same buffer that was read into in the C file. Even 
+though a console will show up in this program, it is important to use -x instead of -xc(I will explain in Section 3 of README)
+
+Debug Flags:
+-w flag gets extra output that specifiy page allocation
+-z flag gets extra miscellaneous output
+
+Run each of the programs by putting this into the Run Configuration Arguments
+
+-x test/testprog1
+-x test/testprog2
+-xc test/testprog3
+-xc test/testprog4
+-xc test/testprog5
+-x test/testprog6
+
+
+README Section 3: Our Assumptions
+You run each of the programs doing
+One big assumption for this code is that the code that is executed by exec(), will run. Nachos doesn't crash if an
+invalid program name is provided, but if the code itself has a big issue, that was not tested.
+
+These are the assumptions of why you should use -x vs -xc or vice versa for each of the specific tests:
+
+testprog1 and testprog2 you do -x because no console is needed
+testprog3 testprog4 and testprog5 work fine with -x but it's better to do -xc because the console does not automatically
+close so you have enough time to actually read what's on the console.
+testprog6 -xc is not good because, while it still technically works, it definitely doesn't immediately get input for Read
+system call because the console takes in what you write for the first time and press enter as something that the console 
+itself has, AND then the next thing that you type is what actually gets read into the console. And then the program works
+as expected.This weirdness is because the console is running on a different thread. So it's better to do -x, because the 
+first thing that you type is read into it as expected and that is what is put into the buffer that is written to the console.
+
+We assume that the machine would be restarted between tests so that the arguments in run configurations can be changed to
+start a different test.

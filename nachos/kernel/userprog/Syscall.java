@@ -190,7 +190,7 @@ public class Syscall {
      * @param id The OpenFileId of the file to which to write the data.
      */
     public static void write(byte buffer[], int size, int id) {
-	Debug.println('+', "Stub for write system call in thread: " + NachosThread.currentThread().name);
+	Debug.println('+', "Write system call in thread: " + NachosThread.currentThread().name);
 	if (id == ConsoleOutput) {
 	    for(int i = 0; i < size; i++) {
 		//doesn't use physical address
