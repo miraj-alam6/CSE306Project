@@ -61,18 +61,19 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		Syscall.halt();
 		break;
 	    case Syscall.SC_Exit:
-		Syscall.exit(CPU.readRegister(4));
+		int exitRet = Syscall.exit(CPU.readRegister(4));
+		CPU.writeRegister(2, exitRet); //return value should be written to r2
 		break;
 	    case Syscall.SC_Exec:
 		//Syscall.exec(""); //This line was originally here
 		/* Miraj change start here*/
 		int ptr0 = CPU.readRegister(4);
 		// Debugging stuff start here
-		Debug.println('+', "Gonna try to dereference address" +ptr0);
-		//Debug.println('+', "" + AddrSpace.dereferenceString(ptr0));
-	
-		Syscall.exec(
+		Debug.println('+', "Gonna try to dereference address " +ptr0);
+		//Debug.println('+', "" + AddrSpace.dereferenceString(ptr0));	
+		int execRet = Syscall.exec(
 			((UserThread)NachosThread.currentThread()).space.dereferenceString(ptr0));
+		CPU.writeRegister(2, execRet); //return value should be written to r2
 		/* Miraj change end here*/
 		break;
 	    case Syscall.SC_Write:

@@ -54,7 +54,7 @@ import java.util.*;
 public class Nachos implements Runnable {
     
     //This is gonna be used for exec and prog
-    public static ArrayList<ProgEntry> programsList;
+    public static ArrayList<ProgEntry> programsList = new ArrayList<ProgEntry>();
     /** Option settings. */
     public static Options options;
     
@@ -81,7 +81,7 @@ public class Nachos implements Runnable {
     // #MIRAJ: Change here, made a static field for Physical Memory Manager
     public static PMM pMM;
     
-    public static int lastProgramID = 0;
+    public static int nextProgramID = 0;
     
     /**
      * 	Nachos initialization -- performed by first Nachos thread.
@@ -204,15 +204,28 @@ public class Nachos implements Runnable {
   }
 
   public static void incrementProgramID() {
-      lastProgramID++;
+      nextProgramID++;
   }
   
+  public static void addNewProgram(int spaceID) {      
+      ProgEntry newEntry = new ProgEntry(spaceID);
+      programsList.add(newEntry);
+  }
+  
+  
+  
+  
   private static class ProgEntry{
-
+      
       int spaceID;
       int exited; // 0 means no, 1 means yes
-      
+      public ProgEntry(int n){
+	spaceID = n;
+	exited = 0;
+      }
         
     }
+
+
 }
 

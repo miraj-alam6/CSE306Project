@@ -102,9 +102,17 @@ public class Syscall {
     public static int exec(String name) {
 	Debug.println('+', "Stub for exec system call in thread: " + NachosThread.currentThread().name);
 	//Trying the main part of the syscall now:
+	
 	Debug.println('+', "Thread " + NachosThread.currentThread().name + " will try to execute program " + name);
-	int id = Nachos.lastProgramID;
-	new ProgTest(name, Nachos.lastProgramID);
+	int id = Nachos.nextProgramID;
+	
+	new ProgTest(name, Nachos.nextProgramID);
+	Debug.println('+', "New program to execute is ID" +id);
+	Nachos.addNewProgram(id);
+	//NEXT LINE IS WRONG, be careful, the new Prog is not the currentThread, just use
+	//Nachos.addNewProgram(((UserThread)NachosThread.currentThread()).space.getSpaceID());
+	//int spaceid = ((UserThread)NachosThread.currentThread()).space.getSpaceID();
+	//Debug.ASSERT(id == spaceid);
 	//Done with main part of the syscall
 	
 	return id;}
