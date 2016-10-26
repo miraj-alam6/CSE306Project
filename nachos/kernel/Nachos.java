@@ -53,7 +53,8 @@ import java.util.*;
  */
 public class Nachos implements Runnable {
     
-    
+    //This is gonna be used for exec and prog
+    public static ArrayList<ProgEntry> programsList;
     /** Option settings. */
     public static Options options;
     
@@ -205,5 +206,13 @@ public class Nachos implements Runnable {
   public static void incrementProgramID() {
       lastProgramID++;
   }
+  
+  private static class ProgEntry{
+
+      int spaceID;
+      int exited; // 0 means no, 1 means yes
+      
+        
+    }
 }
 
