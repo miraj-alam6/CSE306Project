@@ -1,9 +1,14 @@
-#include "syscall.h"
+/* testprog4.c
 
+*/
+
+#include "syscall.h"
+char *message = "This is a message. In Data section";
+/*Length of above message is 35 including null pointer*/
 int main()
 {
 
-	Exec("test/testprog4");
-	
-	Exit(0);
+	Write(message, 35, 1);
+
+	return 0;
 }

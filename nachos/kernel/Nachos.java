@@ -35,6 +35,7 @@ import nachos.kernel.devices.test.NetworkTest;
 import nachos.kernel.devices.test.SerialTest;
 import nachos.kernel.threads.test.CalloutTest; // #MIRAJ:  added this
 import nachos.kernel.threads.Scheduler;
+import nachos.kernel.threads.Semaphore;
 import nachos.kernel.userprog.ExceptionHandler;
 import nachos.kernel.userprog.PMM;
 import nachos.kernel.filesys.FileSystem;
@@ -212,6 +213,30 @@ public class Nachos implements Runnable {
       programsList.add(newEntry);
   }
   
+  //Do semaphore P on the entry with the parameter ID
+  public static void programSemP(int ID){
+      for(int i = 0; i < programsList.size(); i++){
+	  if(programsList.get(i).spaceID == ID){
+	      programsList.get(i).programSem.P();
+	      return;
+	  }
+      }
+      return;
+  }
+
+  //Do semaphore V on the entry with the parameter ID
+  public static void programSemV(int ID){
+      for(int i = 0; i < programsList.size(); i++){
+	  if(programsList.get(i).spaceID == ID){
+	      programsList.get(i).programSem.V();
+	      //TODO: Cleanup, maybe the next line which is commented out will do the job but
+	      //Idk yet.
+	      //programsList.remove(i); //Remove it from the list because semV only called
+	      //if you exit.
+	      return;
+	  }
+      }
+  }
   
   
   
@@ -219,9 +244,11 @@ public class Nachos implements Runnable {
       
       int spaceID;
       int exited; // 0 means no, 1 means yes
+      Semaphore programSem; 
       public ProgEntry(int n){
 	spaceID = n;
 	exited = 0;
+	programSem = new Semaphore("Program Sem" + spaceID, 0);
       }
         
     }

@@ -1,0 +1,40 @@
+Section 1: Overview:
+
+In this project, we created the systems calls Exec, Exit, Join, Yield, Read, and Write and a facility to allocate 
+physical memory pages, and to make sure that multiple programs can run at the same time by doing address translation
+and code loading properly. The way that our tests show that the system calls are working for their intended function is
+described in Section 2: How to compile and test
+
+Part 1: System Calls: All system calls except Fork were implemented. 
+
+Part 2: Multiple Consoles: This part of the homework assignment was not implemented.
+time comes
+
+
+Section 2: How to compile and test:
+
+We created a bunch of test programs in C that have been compiled and included in the test directory. We expanded upon the
+code for ProgTest, and that is what is used to execute the first program which then executes its own code which in these
+tests often consist of calling exec("anothertestprogram"). We also made a class called ConsoleProgTest where the the console
+runs on a separate thread, thus it doesn't automatically close as soon as something is written to it.
+-x is the flag for turning on ProgTest, and it takes an argument for the filepath
+-xc is the flag for turning on ConsoleProgTest,  and it takes an argument for the filepath
+I will elaborate more on the difference between -x and -xc later the Assumptions so please read that to understand how to 
+use the flags.
+
+Each of them are in the test directory
+
+Here is what each of them do, if you want to read the source code, open the .c files for each of these
+program names.
+testprog1: this one simply is a program that does the yield system call 3 times.
+testprog2: this one does exec(testprog1) TWICE, thus, each of the two programs will keep yielding, thus showing
+that concurrency works.
+testprog3: this program simply writes to the console. It's better to use consoleprogtest for this, it works for both, but I'll
+elaborate in the assumptions section why it's better to use consoleprogtest
+testprog4:
+.
+Currently the option for callout_test is set to true.
+
+Section 3: Our Assumptions
+
+We assume that the machine would be restarted between tests and we assume that scheduler would always be used. 

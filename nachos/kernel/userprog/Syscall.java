@@ -82,13 +82,15 @@ public class Syscall {
      * status = 0 means the program exited normally.
      */
     public static int exit(int status) {
-	Debug.println('+', "User program exits with status=" + status
+	Debug.println('+', "Exit system call with status=" + status
 				+ ": " + NachosThread.currentThread().name);
 	if(NachosThread.currentThread() instanceof UserThread){
 	    Debug.println('w', "About to deallocate memory of the process with ID "+ 
 		    ((UserThread)NachosThread.currentThread()).space.getSpaceID());
 	    ((UserThread)NachosThread.currentThread()).space.freeAddrSpace();
 	}
+	
+	Nachos.programSemV(((UserThread)NachosThread.currentThread()).space.getSpaceID());
 	Nachos.scheduler.finishThread();
 	return status;
     }
@@ -100,7 +102,7 @@ public class Syscall {
      * @param name The name of the file to execute.
      */
     public static int exec(String name) {
-	Debug.println('+', "Stub for exec system call in thread: " + NachosThread.currentThread().name);
+	Debug.println('+', "Exec system call in thread: " + NachosThread.currentThread().name);
 	//Trying the main part of the syscall now:
 	
 	Debug.println('+', "Thread " + NachosThread.currentThread().name + " will try to execute program " + name);
@@ -125,7 +127,9 @@ public class Syscall {
      * @return the exit status of the specified program.
      */
     public static int join(int id) {
-	Debug.println('+', "Stub for join system call in thread: " + NachosThread.currentThread().name);
+	Debug.println('+', "Join system call in thread: " + NachosThread.currentThread().name);
+	Nachos.programSemP(id);
+	Debug.println('+', "got this id "+ id);
 	return 0;}
 
 
@@ -209,7 +213,7 @@ public class Syscall {
      * @return The actual number of bytes read.
      */
     public static int read(byte buffer[], int size, int id) {
-	Debug.println('+', "Stub for read system call in thread: " + NachosThread.currentThread().name);
+	Debug.println('+', "Read system call in thread: " + NachosThread.currentThread().name);
 	int x = 0;
 	String s = ""; // #Miraj me trying to debug something
 	if(id == ConsoleInput)
@@ -231,7 +235,7 @@ public class Syscall {
 	       x++;
 	    }
 	}
-	Debug.println('z', "What was read is " + s);
+	Debug.println('+', "What was read is " + s);
 	return x;
 	}
 

@@ -93,6 +93,7 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		Syscall.fork(func);
 		break;
 	    case Syscall.SC_Join:
+		Syscall.join(CPU.readRegister(4));
 		break;
 	    case Syscall.SC_Read:
 		int address = CPU.readRegister(4);
