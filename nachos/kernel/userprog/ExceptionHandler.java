@@ -94,8 +94,10 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 	    case Syscall.SC_Join:
 		break;
 	    case Syscall.SC_Read:
-		byte buff[] = new byte[25];
-		Syscall.read(buff, 25, CPU.readRegister(6));
+		int address = CPU.readRegister(4);
+		byte buff[] = new byte[CPU.readRegister(5)];
+		int leng = Syscall.read(buff, CPU.readRegister(5), CPU.readRegister(6));
+		((UserThread)NachosThread.currentThread()).space.readByteintoMem(address,leng,buff);
 		break;
 	    }
 

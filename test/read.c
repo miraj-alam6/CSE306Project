@@ -16,5 +16,6 @@ int main()
 	}
 	
 	Read(buffer,length,0); /*0 is for ConsoleInput*/
+	Write(buffer,length,1);
 	return 0;
 }

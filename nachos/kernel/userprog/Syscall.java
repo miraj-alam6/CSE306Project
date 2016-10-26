@@ -8,6 +8,7 @@ package nachos.kernel.userprog;
 
 import nachos.Debug;
 import nachos.kernel.Nachos;
+import nachos.kernel.devices.ConsoleDriver;
 import nachos.kernel.userprog.test.ProgTest;
 import nachos.machine.NachosThread;
 import nachos.machine.Simulation;
@@ -205,21 +206,24 @@ public class Syscall {
 	String s = ""; // #Miraj me trying to debug something
 	if(id == ConsoleInput)
 	{
+	    ConsoleDriver conso = Nachos.consoleDriver;
 	    while(x < size)
 	    {
-	       char ch = Nachos.consoleDriver.getChar();
+	       char ch = conso.getChar();
+	       conso.putChar(ch);	// echo it!
+
 	       if(ch == '\n')
 	       {
-		   buffer[x] = (byte)'\0';
+		   conso.putChar('\r');
 		   break;
 	       }
+	       
 	       buffer[x] = (byte)ch;
 	       s+= ch;
 	       x++;
 	    }
 	}
 	Debug.println('z', "What was read is " + s);
-		
 	return x;
 	}
 

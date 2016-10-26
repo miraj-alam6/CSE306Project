@@ -291,6 +291,23 @@ public class AddrSpace {
 	return s;
     }
   
+  public void readByteintoMem(int address,int numRead, byte buff[])
+  {
+      //int index = 0;
+      //int PhysAddr = getPhysicalAddress(address,index);
+      
+      
+      for(int i = 0; i < numRead; i++)
+      {
+	  int PhysAddr = getPhysicalAddress(address,i);
+	  Debug.println('z',"phys address i'm using I think is " + PhysAddr);
+	  Debug.println('z',"virtual address I'm using " + (address+i));
+	  Machine.mainMemory[PhysAddr] = buff[i];
+	  Debug.println('z', "Translation has gotten me " + 
+		    (char)Machine.mainMemory[PhysAddr]);
+      }
+  }
+  
   //This function will get an array of bytes by using an address
   public byte[] getByteArray(int address,int len){
       	byte[] bytes;
