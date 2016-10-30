@@ -263,7 +263,16 @@ public class Options {
         	       	   public void processOption(String flag, Object[] params) {
         	       	      CONSOLE_PROG_TEST = true;
         	       	   }
-			}),	 
+			}),
+		new Spec("-co",  // enable console prog test
+			new Class[] { },
+			null,
+			new Options.Action() {
+		      	   public void processOption(String flag, Object[] params) {
+		      	      CALLOUT_TEST = true;
+		      	      USE_CALLOUT_FACILITY = true;
+		       	   }
+			}),			
 		new Spec("-nt",  // enable network test
 			 new Class[] { },
 			 null,

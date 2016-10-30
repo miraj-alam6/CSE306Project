@@ -367,8 +367,7 @@ public class Scheduler {
 	    
 	};
 
-	callout.schedule(scheduledCallout, ticks); //Put the callout into the scheduled list of callouts
-	
+	callout.schedule(scheduledCallout, ticks); //Put the callout into the scheduled list of callouts	
 	s.P(); //put the thread to sleeep by doing s.P(), 
     }
     
