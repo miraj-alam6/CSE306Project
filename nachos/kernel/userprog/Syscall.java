@@ -63,7 +63,9 @@ public class Syscall {
     /** Integer code identifying the "Remove" system call. */
     public static final byte SC_Remove = 11;
 
-
+    /** Integer code identifying the "PredictCPU" system call. */
+    public static final byte SC_PredictCPU = 12;
+    
     /**
      * Stop Nachos, and print out performance stats.
      */
@@ -274,6 +276,11 @@ public class Syscall {
     public static void yield() {
 	Debug.println('+', "Through syscall yielding thread "+ NachosThread.currentThread().name);
 	 Nachos.scheduler.yieldThread();
+    }
+    
+    public static void predictCPU(int ticks){
+	Debug.println('+', "PredictCPU syscall with ticks " + ticks);
+	((UserThread)NachosThread.currentThread()).setTicksLeft(ticks);
     }
 
 }

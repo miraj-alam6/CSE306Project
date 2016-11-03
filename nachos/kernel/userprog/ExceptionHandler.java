@@ -101,6 +101,9 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		int leng = Syscall.read(buff, CPU.readRegister(5), CPU.readRegister(6));
 		((UserThread)NachosThread.currentThread()).space.readByteintoMem(address,leng,buff);
 		break;
+	    case Syscall.SC_PredictCPU:
+		Syscall.predictCPU(CPU.readRegister(4));
+		break;
 	    }
 
 	    // Update the program counter to point to the next instruction

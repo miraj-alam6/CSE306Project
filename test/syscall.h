@@ -30,6 +30,7 @@
 #define SC_Fork		9
 #define SC_Yield	10
 #define SC_Remove	11
+#define SC_PredictCPU	12
 
 #ifndef IN_ASM
 
@@ -126,7 +127,11 @@ void Fork(void (*func)());
 /* Yield the CPU to another runnable thread, whether in this address space 
  * or not. 
  */
-void Yield();		
+void Yield();
+
+/* Predict how many ticks the program will run
+*/
+void PredictCPU(int ticks);
 
 #endif /* IN_ASM */
 
