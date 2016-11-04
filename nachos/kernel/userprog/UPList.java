@@ -1,8 +1,6 @@
-package nachos.kernel.threads;
+package nachos.kernel.userprog;
 import java.util.PriorityQueue;
 import java.util.ArrayList;
-
-import nachos.kernel.userprog.UserThread;
 
 //UPList: UserProcess List
 public interface UPList {
@@ -11,8 +9,9 @@ public interface UPList {
     //This will set the next process that should run, which is
     //not necessarily the next one in the basic list. It will
     //depend on which scheduling process implements it
-    public void setNextProcess();
-    public void finishThread(int spaceID);
     
+    public UserThread getNextProcess();
+    public void finishThread(int spaceID);
+    public void addProcess(UserThread uT);
 }
 

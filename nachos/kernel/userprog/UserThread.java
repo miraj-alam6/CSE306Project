@@ -44,7 +44,8 @@ public class UserThread extends NachosThread {
     private int ticksLeft; //For non preemptive scheduling policies, this will
     //stay constant, thus it will represent simply how many ticks the process will
     //take.
-
+    private int ticksWaiting;
+    
     public int getTicksLeft(){
 	return ticksLeft;
     }

@@ -10,6 +10,7 @@ import nachos.Debug;
 import nachos.kernel.Nachos;
 import nachos.kernel.devices.ConsoleDriver;
 import nachos.kernel.userprog.test.ProgTest;
+import nachos.machine.CPU;
 import nachos.machine.NachosThread;
 import nachos.machine.Simulation;
 
@@ -93,6 +94,7 @@ public class Syscall {
 	}
 	
 	Nachos.programSemV(((UserThread)NachosThread.currentThread()).space.getSpaceID());
+	Nachos.scheduler.endProcess((UserThread)NachosThread.currentThread());
 	Nachos.scheduler.finishThread();
 	return status;
     }
@@ -192,6 +194,7 @@ public class Syscall {
      * @param id The OpenFileId of the file to which to write the data.
      */
     public static void write(byte buffer[], int size, int id) {
+	//int oldLevel = CPU.setLevel(CPU.IntOff);
 	Debug.println('+', "Write system call in thread: " + NachosThread.currentThread().name);
 	if (id == ConsoleOutput) {
 	    for(int i = 0; i < size; i++) {
@@ -199,6 +202,7 @@ public class Syscall {
 		Nachos.consoleDriver.putChar((char)buffer[i]);
 	    }
 	}
+	//CPU.setLevel(oldLevel);
 	
     }
 

@@ -14,6 +14,10 @@
 
 package nachos.kernel.threads;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+
 import nachos.Debug;
 import nachos.kernel.Nachos;
 import nachos.machine.CPU;
@@ -24,7 +28,7 @@ import nachos.machine.InterruptHandler;
 import nachos.util.FIFOQueue;
 import nachos.util.Queue;
 import nachos.util.SynchronousQueue;
-
+import nachos.kernel.userprog.*;
 /**
  * The scheduler is responsible for maintaining a list of threads that
  * are ready to run and for choosing the next thread to run.  It also
@@ -56,7 +60,8 @@ public class Scheduler {
     
     /** Queue of threads that are ready to run, but not running. */
     private final Queue<NachosThread> readyList;
-
+    private final ArrayList<NachosThread> readyListDeux;
+    private final UPList userProcList;
     /** Queue of CPUs that are idle. */
     private final Queue<CPU> cpuList;
     
@@ -78,7 +83,15 @@ public class Scheduler {
     private SynchronousQueue<Integer> syncQ; // To test the synchronous queue
     
     public Scheduler(NachosThread firstThread) {
+	//TODO: based on scheduling policy, set this to an actual
+	//object of a class that implement UPList
+	//TODO: Pick what the actual type is later, for now, just make it
+	//the first come first serve, and test manually by changing the type
+	//here
+	userProcList = new FCFSQueue();
+	
 	readyList = new FIFOQueue<NachosThread>();
+	readyListDeux = new ArrayList<NachosThread>();
 	cpuList = new FIFOQueue<CPU>();
 	callout = new Callout();
 	syncQ = new SynchronousQueue<Integer>();
@@ -148,6 +161,8 @@ public class Scheduler {
 	int oldLevel = CPU.setLevel(CPU.IntOff);
 	mutex.acquire();
 	makeReady(thread);
+	// #MIRAJ HW2 
+	
 	dispatchIdleCPUs();
 	mutex.release();
 	CPU.setLevel(oldLevel);
@@ -208,6 +223,32 @@ public class Scheduler {
 	Debug.ASSERT(CPU.getLevel() == CPU.IntOff);
 	mutex.acquire();
 	NachosThread result = readyList.poll();
+
+	//This part makes it not work so far Start
+	//Not sure if this works. Will only have one userthread in here
+	//at a time, get it later in the code
+	
+	
+	/*
+	if(result instanceof UserThread){	    
+	    if(((LinkedList<UserThread>)readyList).size() > 0){
+		mutex.release();
+	    	return findNextToRun();
+	    }
+	  //This part makes it not work so far Done    
+	    
+	}
+	
+	
+	//If the ready list is empty, that means that 
+	if(result ==  null){
+	    if(userProcList.userThreads.size() > 0){
+		result = userProcList.getNextProcess();
+	    }
+	    Debug.println('q', "Eventually becomes null");
+	}
+	
+	*/
 	mutex.release();
 	return result;
     }
@@ -346,7 +387,7 @@ public class Scheduler {
 	// The caller is responsible for re-enabling interrupts.
     }
     
-    
+   
 
     /*Implemented for HW 1*/
     public void sleepThread (int ticks) {
@@ -385,7 +426,7 @@ public class Scheduler {
 
 	// We have to make sure the thread has been set to the FINISHED state
 	// before making it the thread to be destroyed, because we don't want
-	// someone to try to destroy a thread that is not FINISHED.
+	// someone to try to x a thread that is not FINISHED.
 	currentThread.setStatus(NachosThread.FINISHED);
 	
 	// Delete the carcass of any thread that died previously.
@@ -463,5 +504,17 @@ public class Scheduler {
 	    });
 	}
 
+    }
+    
+    
+    /*This is for HW 3*/
+    public void addProcessToList(UserThread uT){
+	userProcList.addProcess(uT);
+	
+    }
+
+    public void endProcess(UserThread currentThread) {
+	userProcList.finishThread(currentThread.space.getSpaceID());
+	
     }
 }

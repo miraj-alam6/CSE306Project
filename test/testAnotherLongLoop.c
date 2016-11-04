@@ -3,13 +3,13 @@
 int main()
 {
 	int i;
-	char *message = "Message from testAnotherLongLoop";
+	char *message = "Message from testAnotherLongLoop\n\r";
 	int messageLength = getStringSize(message);
 
-	for (i = 0; i < 50; i++) {
+	for (i = 0; i < 10; i++) {
 		Write(message, messageLength, 1);
 	}
-
+	PredictCPU(50);/* Why doesn't this work*/
 	return 0;
 }
 
