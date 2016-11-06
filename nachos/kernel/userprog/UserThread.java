@@ -41,7 +41,7 @@ public class UserThread extends NachosThread {
     
     private UserThread parent;
     private ConsoleDriver driver;
-    private int ticksLeft; //For non preemptive scheduling policies, this will
+    private int ticksLeft = -1; //For non preemptive scheduling policies, this will
     //stay constant, thus it will represent simply how many ticks the process will
     //take.
     private int ticksWaiting;

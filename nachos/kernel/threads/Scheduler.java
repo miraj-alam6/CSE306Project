@@ -239,8 +239,9 @@ public class Scheduler {
 	    	return findNextToRun();
 	    }
 	  //This part makes it not work so far Done    
-	    
+	    result = null;
 	}
+	
 	
 	
 	//If the ready list is empty, that means that 

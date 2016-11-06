@@ -9,6 +9,20 @@ public class FCFSQueue implements UPList {
     public UserThread getNextProcess() {
 	// TODO Auto-generated method stub
 	UserThread nextProcess = null;
+	Debug.println('+', "Reached here");
+	
+	//New Stuff start here
+	//First check if anything has not had its
+	//ticks left set yet so that it becomes the next thread to run.
+	for(int i = 0 ; i < userThreads.size(); i++){
+	    if(userThreads.get(i).getTicksLeft() <= -1){
+		nextProcess = userThreads.get(i);
+		return nextProcess;
+	    }
+	}
+	//New Stuff end here
+	/**/
+	
 	if(userThreads.size() == 0){
 	    return null;
 	}

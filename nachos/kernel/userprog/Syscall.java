@@ -289,6 +289,7 @@ public class Syscall {
     public static void predictCPU(int ticks){
 	Debug.println('+', "PredictCPU syscall with ticks " + ticks);
 	((UserThread)NachosThread.currentThread()).setTicksLeft(ticks);
+	yield();
     }
 
 }
