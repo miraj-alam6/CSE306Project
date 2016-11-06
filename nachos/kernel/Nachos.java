@@ -54,6 +54,9 @@ import java.util.*;
  */
 public class Nachos implements Runnable {
     
+    //Checking this makes the yields for writing to console not disrupt the
+    //way that I am doing FCFS
+    public static boolean writingToConsole = false;
     //This is gonna be used for exec and prog
     public static ArrayList<ProgEntry> programsList = new ArrayList<ProgEntry>();
     /** Option settings. */

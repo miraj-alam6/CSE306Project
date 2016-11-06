@@ -224,12 +224,15 @@ public class Scheduler {
 	mutex.acquire();
 	NachosThread result = readyList.poll();
 
+	 if(Nachos.writingToConsole){
+	     return null;
+	 }
 	//This part makes it not work so far Start
 	//Not sure if this works. Will only have one userthread in here
 	//at a time, get it later in the code
 	
-	
-	/*
+	//Debug.println('+', "Trying something, infnitely printed in findNextToRun for write.");
+	//NEW STUFF START HERE
 	if(result instanceof UserThread){	    
 	    if(((LinkedList<UserThread>)readyList).size() > 0){
 		mutex.release();
@@ -245,10 +248,11 @@ public class Scheduler {
 	    if(userProcList.userThreads.size() > 0){
 		result = userProcList.getNextProcess();
 	    }
-	    Debug.println('q', "Eventually becomes null");
+	    //
+	   // Debug.println('+', "This was " +result);
 	}
-	
-	*/
+	//NEW STUFF END HERE
+	/**/
 	mutex.release();
 	return result;
     }
@@ -276,6 +280,7 @@ public class Scheduler {
      */
     private void yieldCPU(int status, SpinLock toRelease) {
 	Debug.ASSERT(CPU.getLevel() == CPU.IntOff);
+	//Debug.println('+', "Trying something, infnitely printed in yieldCPU");
 	CPU currentCPU = CPU.currentCPU();
 	NachosThread currentThread = NachosThread.currentThread();
 	NachosThread nextThread = findNextToRun();

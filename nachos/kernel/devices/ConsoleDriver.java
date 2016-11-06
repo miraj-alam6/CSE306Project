@@ -50,6 +50,7 @@ public class ConsoleDriver {
     private InterruptHandler outputHandler;
     
     private int inUse;
+    
 
     /**
      * Initialize the driver and the underlying physical device.

@@ -51,7 +51,7 @@ public class ProgTest implements Runnable {
 	//the constructor of ProgTest should pass in the ID with the value that
 	//is gotten due to this incrementProgramID() function
 	//TODO: Get rid of this 
-	Nachos.scheduler.readyToRun(t);
+	//Nachos.scheduler.readyToRun(t);
 	//TODO: Eventually just the following will be enough
 	//Add to the userProcList
 	Nachos.scheduler.addProcessToList(t);

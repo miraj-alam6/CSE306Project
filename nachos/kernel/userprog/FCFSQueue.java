@@ -1,16 +1,34 @@
 package nachos.kernel.userprog;
 
 import nachos.Debug;
+import nachos.machine.NachosThread;
 
 public class FCFSQueue implements UPList {
 
     @Override
     public UserThread getNextProcess() {
 	// TODO Auto-generated method stub
+	UserThread nextProcess = null;
 	if(userThreads.size() == 0){
 	    return null;
 	}
-	UserThread nextProcess = userThreads.get(0);
+	if(NachosThread.currentThread() instanceof UserThread){
+	    if(userThreads.size() == 1 && 
+		NachosThread.currentThread() == userThreads.get(0)){
+		return nextProcess;
+	    }
+	    else if(NachosThread.currentThread() == userThreads.get(0)){
+		nextProcess = userThreads.get(1);
+	    }
+	    else{
+		
+		nextProcess = userThreads.get(0);
+	    }
+	    
+	}
+	else{
+	    nextProcess = userThreads.get(0);
+	}
 	return nextProcess;
     }
 
