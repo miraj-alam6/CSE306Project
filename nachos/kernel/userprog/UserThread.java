@@ -52,6 +52,11 @@ public class UserThread extends NachosThread {
     public void setTicksLeft(int ticks){
 	ticksLeft = ticks;
     }
+    
+    public int getTicksWaiting()
+    {
+	return ticksWaiting;
+    }
     /**
      * Initialize a new user thread.
      *
