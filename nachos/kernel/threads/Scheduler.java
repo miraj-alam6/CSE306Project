@@ -88,7 +88,9 @@ public class Scheduler {
 	//TODO: Pick what the actual type is later, for now, just make it
 	//the first come first serve, and test manually by changing the type
 	//here
-	userProcList = new FCFSQueue();
+	//The type of scheduling list will be returned by this function and 
+	//will differ per which scheduling policty is being used.
+	userProcList = GetSchedulingList();
 	
 	readyList = new FIFOQueue<NachosThread>();
 	readyListDeux = new ArrayList<NachosThread>();
@@ -117,6 +119,21 @@ public class Scheduler {
 	firstCPU.dispatch(firstThread);
     };
     
+    private UPList GetSchedulingList() {
+	if(Nachos.options.FCFS_SCHEDULING){
+	    return new FCFSQueue();
+	}
+	else if(Nachos.options.SJF_SCHEDULING){
+	    return new SJFQueue();
+	}
+	else{
+	    Nachos.options.CPU_TIMERS = false;
+	    return new FCFSQueue();
+	    //turn off preemptive scheduling if it was turned on
+	    
+	}
+    }
+
     /*
      * Return the synchronousqueue set here
      */
@@ -288,6 +305,13 @@ public class Scheduler {
 
 	// If the current thread wants to keep running and there is no other thread to run,
 	// do nothing.
+	
+	//#MIRAJ
+	//Added this as an extra precaution
+	if(NachosThread.currentThread() == nextThread){
+	    nextThread = null;
+	}
+	
 	if(status == NachosThread.RUNNING && nextThread == null) {
 	    Debug.println('t', "No other thread to run -- " + currentThread.name
 		    			+ " continuing");
@@ -483,7 +507,8 @@ public class Scheduler {
 	    // so that once the interrupt handler is done, it will appear as 
 	    // if the interrupted thread called yield at the point it is 
 	    // was interrupted.
-	    yieldOnReturn();
+	   yieldOnReturn();
+	    
 	}
 
 	/**
@@ -504,6 +529,7 @@ public class Scheduler {
 			Debug.println('t', "Yielding current thread on interrupt return");
 			Nachos.scheduler.yieldThread();
 		    } else {
+			
 			Debug.println('i', "No current thread on interrupt return, skipping yield");
 		    }
 		}

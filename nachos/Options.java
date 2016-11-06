@@ -137,6 +137,18 @@ public class Options {
     public byte NETWORK_ID = -1;
 
     // Kernel configuration options.
+    /**
+     * All the scheduling policies
+     * 
+     * 
+     * */
+    public boolean FCFS_SCHEDULING = false;
+    public boolean SJF_SCHEDULING = false;
+    public boolean SRT_SCHEDULING = false;
+    public boolean RR_SCHEDULING = false;
+    public boolean HRRN_SCHEDULING = false;
+    public boolean FBS_SCHEDULING = false;
+    
     
     /**
      * Are we going to be using per-CPU time-slicing timers?
@@ -344,7 +356,59 @@ public class Options {
 			    public void processOption(String flag, Object[] params) {
 				DISK_FILE_NAME = (String)params[0];
 			    }
+			 }),
+		//Now all the scheduling policies
+		new Spec("-fcfs",  // first come first serve scheduling
+			 new Class[] { },
+			 null,
+			 new Options.Action() {
+			    public void processOption(String flag, Object[] params) {
+				FCFS_SCHEDULING = true;
+			    }
+			 }),
+		new Spec("-sjf",  // shortest job first scheduling
+			 new Class[] { },
+			 null,
+			 new Options.Action() {
+			    public void processOption(String flag, Object[] params) {
+				SJF_SCHEDULING = true;
+			    }
+			 }),
+		new Spec("-srt",  // shortest remaining time scheduling
+			 new Class[] { },
+			 null,
+			 new Options.Action() {
+			    public void processOption(String flag, Object[] params) {
+				SRT_SCHEDULING = true;
+				CPU_TIMERS = true;
+			    }
+			 }),
+		new Spec("-rr",  // first come first serve scheduling
+			 new Class[] { },
+			 null,
+			 new Options.Action() {
+			    public void processOption(String flag, Object[] params) {
+				RR_SCHEDULING = true;
+				CPU_TIMERS = true;
+			    }
+			 }),
+		new Spec("-hrrn",  // highest response ratio next scheduling
+			 new Class[] { },
+			 null,
+			 new Options.Action() {
+			    public void processOption(String flag, Object[] params) {
+				HRRN_SCHEDULING = true;
+			    }
+			 }),
+		new Spec("-fbs",  // feedback scheduling
+			 new Class[] { },
+			 null,
+			 new Options.Action() {
+			    public void processOption(String flag, Object[] params) {
+				FBS_SCHEDULING = true;
+			    }
 			 })
+		
 	});
     }
     
