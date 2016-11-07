@@ -25,6 +25,7 @@ public class Callout {
     //total elapsed time of the machine
     int elapsedTime;
     //the timer to handle the interrupts for callout
+    //TODO: IN THE FUTURE JUST USE THE TIMER THAT WILL BE DEFINED IN NACHOS
     Timer timer;
     Semaphore s; 
     /** Spin lock for mutually exclusive access to scheduler state. */

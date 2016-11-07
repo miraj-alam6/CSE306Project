@@ -64,4 +64,10 @@ public class FCFSQueue implements UPList {
 	Debug.println('q', "In FCFS size is " + userThreads.size());
     }
 
+    @Override
+    public void addTime(int ticksToAdd) {
+	//FCFS doesn't need to do anything for here
+	
+    }
+
 }

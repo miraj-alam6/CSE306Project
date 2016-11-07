@@ -507,8 +507,10 @@ public class Scheduler {
 	    // so that once the interrupt handler is done, it will appear as 
 	    // if the interrupted thread called yield at the point it is 
 	    // was interrupted.
-	   yieldOnReturn();
-	    
+	   //yieldOnReturn();
+	   //this function will add waiting time to each of the user threads
+	    //that are waiting in the UPList
+	   //addWaitingTime();
 	}
 
 	/**
@@ -535,6 +537,8 @@ public class Scheduler {
 		}
 	    });
 	}
+	
+	
 
     }
     
@@ -550,37 +554,4 @@ public class Scheduler {
 	
     }
     
-    private static class PreemptiveTimerHandler implements InterruptHandler {
-
-	/** The Timer device this is a handler for. */
-	private final Timer timer;
-
-	/**
-	 * Initialize an interrupt handler for a specified Timer device.
-	 * 
-	 * @param timer  The device this handler is going to handle.
-	 */
-	public PreemptiveTimerHandler (Timer timer) {
-	    this.timer = timer;
-	}
-
-	public void handleInterrupt() {
-	   Debug.println('i', "Timer interrupt: " + timer.name);
-	    
-	}
-
-	/**
-	 * Called to cause a context switch (for example, on a time slice)
-	 * in the interrupted thread when the handler returns.
-	 *
-	 * We can't do the context switch right here, because that would switch
-	 * out the interrupt handler, and we want to switch out the 
-	 * interrupted thread.  Instead, we set a hook to kernel code to be executed
-	 * when the current handler returns.
-	 */
-	private void yieldOnReturn() {
-	    Debug.println('i', "Yield on interrupt return requested");
-	}
-
-    }
 }

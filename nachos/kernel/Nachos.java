@@ -23,8 +23,10 @@ package nachos.kernel;
 import nachos.Options;
 import nachos.Debug;
 import nachos.machine.CPU;
+import nachos.machine.InterruptHandler;
 import nachos.machine.Machine;
 import nachos.machine.NachosThread;
+import nachos.machine.Timer;
 import nachos.kernel.devices.ConsoleDriver;
 import nachos.kernel.devices.ConsoleManager;
 import nachos.kernel.devices.DiskDriver;
@@ -87,6 +89,8 @@ public class Nachos implements Runnable {
     
     public static int nextProgramID = 0;
     
+    public static nachos.machine.Timer generalTimer;
+    
     /**
      * 	Nachos initialization -- performed by first Nachos thread.
      *	Initialize various subsystems, depending on configuration options.
@@ -114,6 +118,12 @@ public class Nachos implements Runnable {
 	
 	// Initialize the filesystem.
 
+	//MIRAJ: I added this for HW 3
+	generalTimer = Machine.getTimer(0);
+	generalTimer.setHandler(new GeneralTimerInterruptHandler(generalTimer));
+//	generalTimer.start();
+	
+	
 	if(options.FILESYS_STUB || options.FILESYS_REAL)
 	    fileSystem = FileSystem.init(diskDriver);
 
@@ -256,6 +266,26 @@ public class Nachos implements Runnable {
         
     }
 
+  private class GeneralTimerInterruptHandler implements InterruptHandler {
 
+	/** The Timer device this is a handler for. */
+	private final Timer timer;
+
+	/**
+	 * Initialize an interrupt handler for a specified Timer device.
+	 * 
+	 * @param timer  The device this handler is going to handle.
+	 */
+	
+	
+	public GeneralTimerInterruptHandler(Timer timer) {
+	    this.timer = timer;
+	}
+
+	public void handleInterrupt() {
+	    Debug.println('+', "Helloooo");
+	}
+	
+  }
 }
 

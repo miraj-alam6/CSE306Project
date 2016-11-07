@@ -13,12 +13,7 @@ public class SJFQueue implements UPList{
 	//New Stuff start here
 	//First check if anything has not had its
 	//ticks left set yet so that it becomes the next thread to run.
-	for(int i = 0 ; i < userThreads.size(); i++){
-	    if(userThreads.get(i).getTicksLeft() <= -1){
-		nextProcess = userThreads.get(i);
-		return nextProcess;
-	    }
-	}
+	
 	//New Stuff end here
 	/**/
 	
@@ -65,5 +60,9 @@ public class SJFQueue implements UPList{
 	Debug.println('+', "In SJF size is " + userThreads.size());
     }
 
-
+    @Override
+    public void addTime(int ticksToAdd) {
+	//SJF doesn't need to do anything for here
+	
+    }
 }

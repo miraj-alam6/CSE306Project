@@ -59,5 +59,15 @@ public class HRRNQueue implements UPList{
 	userThreads.add(uT);
 	Debug.println('q', "In HRRN size is " + userThreads.size());
     }
+    
+    @Override
+    public void addTime(int ticksToAdd) {
+	for(int i = 0; i < userThreads.size(); i++){
+	    if(userThreads.get(i) != NachosThread.currentThread() ){
+		userThreads.get(i).addWaitingTime(ticksToAdd);
+	    }
+	}
+	
+    }
 
 }
