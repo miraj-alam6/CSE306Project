@@ -28,6 +28,7 @@ public class SJFQueue implements UPList{
 	if(userThreads.size() == 0){
 	    return null;
 	}
+	
 	int smallestIndex = 0;
 	UserThread smallestTimeThread = userThreads.get(0);
 	for(int i = 1; i < userThreads.size(); i++){
@@ -52,7 +53,7 @@ public class SJFQueue implements UPList{
 	for(int i =0; i < userThreads.size(); i++){
 	   if(userThreads.get(i).space.getSpaceID() == spaceID){
 	       userThreads.remove(i);
-	       Debug.println('q', "In FCFS size is " + userThreads.size());
+	       Debug.println('q', "In SJF size is " + userThreads.size());
 	   } 
 	    
 	}
@@ -61,7 +62,7 @@ public class SJFQueue implements UPList{
     @Override
     public void addProcess(UserThread uT) {
 	userThreads.add(uT);
-	Debug.println('+', "In FCFS size is " + userThreads.size());
+	Debug.println('+', "In SJF size is " + userThreads.size());
     }
 
 

@@ -9,26 +9,37 @@ public class HRRNQueue implements UPList{
     public UserThread getNextProcess() {
 	// TODO Auto-generated method stub
 	UserThread nextProcess = null;
+	// TODO Auto-generated method stub
+	
+	for(int i = 0 ; i < userThreads.size(); i++){
+	    if(userThreads.get(i).getTicksLeft() <= -1 || userThreads.get(i).getTicksWaiting() <= -1){
+		nextProcess = userThreads.get(i);
+		return nextProcess;
+	    }
+	}
+	
 	if(userThreads.size() == 0){
 	    return null;
 	}
-	if(NachosThread.currentThread() instanceof UserThread){
-	    if(userThreads.size() == 1 && 
-		NachosThread.currentThread() == userThreads.get(0)){
-		return nextProcess;
+	
+	int smallestIndex = 0;
+	UserThread highestRatioThread = userThreads.get(0);
+	for(int i = 1; i < userThreads.size(); i++){
+	    int tRatio = (highestRatioThread.getTicksLeft()+highestRatioThread.getTicksWaiting())/highestRatioThread.getTicksLeft();
+	    int ratio = (userThreads.get(i).getTicksLeft()+userThreads.get(i).getTicksWaiting())/userThreads.get(i).getTicksLeft();
+	    if (ratio > tRatio){
+		highestRatioThread = userThreads.get(i);
+		smallestIndex = i;
 	    }
-	    else if(NachosThread.currentThread() == userThreads.get(0)){
-		nextProcess = userThreads.get(1);
-	    }
-	    else{
-		
-		nextProcess = userThreads.get(0);
-	    }
-	    
+	}
+	
+	if(NachosThread.currentThread() == highestRatioThread){
+	    nextProcess = null;
 	}
 	else{
-	    nextProcess = userThreads.get(0);
+	    nextProcess = highestRatioThread;
 	}
+	
 	return nextProcess;
     }
 
@@ -38,36 +49,14 @@ public class HRRNQueue implements UPList{
 	for(int i =0; i < userThreads.size(); i++){
 	    	if(userThreads.get(i).space.getSpaceID() == spaceID){
 	    	    userThreads.remove(i);
-	    	    Debug.println('q', "In FCFS size is " + userThreads.size());
+	    	    Debug.println('q', "In HRRN size is " + userThreads.size());
 	    	} 
 	}	
     }
 
     @Override
     public void addProcess(UserThread uT) {
-	// TODO Auto-generated method stub
-	int ratio = (uT.getTicksLeft()+uT.getTicksWaiting())/uT.getTicksLeft();
-	
-	int count = 0;
-	while(count < userThreads.size())
-	{
-	    UserThread temp = userThreads.get(count);
-	    int tRatio = (temp.getTicksLeft()+temp.getTicksWaiting())/temp.getTicksLeft();
-	    if(tRatio > ratio)
-	    {
-		count++;
-	    }
-	    else if(tRatio < ratio && count == 0)
-	    {
-		userThreads.add(1,uT);
-		break;
-	    }
-	    else
-	    {
-		userThreads.add(count+1,uT);
-		break;
-	    }
-	}
+	userThreads.add(uT);
 	Debug.println('q', "In HRRN size is " + userThreads.size());
     }
 
