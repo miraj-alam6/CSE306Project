@@ -70,7 +70,7 @@ public class Scheduler {
 
     /** Spin lock for mutually exclusive access to scheduler state. */
     private final SpinLock mutex = new SpinLock("scheduler mutex");
-
+    private boolean preempt;
     /**
      * Initialize the scheduler.
      * Set the list of ready but not running threads to empty.
@@ -548,5 +548,39 @@ public class Scheduler {
     public void endProcess(UserThread currentThread) {
 	userProcList.finishThread(currentThread.space.getSpaceID());
 	
+    }
+    
+    private static class PreemptiveTimerHandler implements InterruptHandler {
+
+	/** The Timer device this is a handler for. */
+	private final Timer timer;
+
+	/**
+	 * Initialize an interrupt handler for a specified Timer device.
+	 * 
+	 * @param timer  The device this handler is going to handle.
+	 */
+	public PreemptiveTimerHandler (Timer timer) {
+	    this.timer = timer;
+	}
+
+	public void handleInterrupt() {
+	   Debug.println('i', "Timer interrupt: " + timer.name);
+	    
+	}
+
+	/**
+	 * Called to cause a context switch (for example, on a time slice)
+	 * in the interrupted thread when the handler returns.
+	 *
+	 * We can't do the context switch right here, because that would switch
+	 * out the interrupt handler, and we want to switch out the 
+	 * interrupted thread.  Instead, we set a hook to kernel code to be executed
+	 * when the current handler returns.
+	 */
+	private void yieldOnReturn() {
+	    Debug.println('i', "Yield on interrupt return requested");
+	}
+
     }
 }
