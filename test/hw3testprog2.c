@@ -17,8 +17,9 @@ int main()
 	for (i = 0; i < 10000; i++) {
 		i += 1;
 	}
-	Write(message, messageLength, 1);
+	
 	Exec("test/hw3testprog2_3");
+	Write(message, messageLength, 1);
 	return 0;
 }
 

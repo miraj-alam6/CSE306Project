@@ -4,7 +4,7 @@ int main()
 {
 	
 	int i;
-	char *message = "This should print first in both SJF and HRRN because small CPU time,long wait\n\r";
+	char *message = "2_4:\n\r";
 	int messageLength = getStringSize(message);
 	PredictCPU(10);
 	Write(message, messageLength, 1);

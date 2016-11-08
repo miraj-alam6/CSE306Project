@@ -4,7 +4,7 @@ int main()
 {
 	
 	int i;
-	char *message = "2_3: Should print before 2_2 in SJF because smaller CPU burst time\n\r";
+	char *message = "2_3:\n\r";
 	int messageLength = getStringSize(message);
 	PredictCPU(50);
 	Write(message, messageLength, 1);
