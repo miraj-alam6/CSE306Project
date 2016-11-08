@@ -527,12 +527,12 @@ public class Scheduler {
 	   if(NachosThread.currentThread() instanceof UserThread)
 	   {
 	       UserThread s = (UserThread) NachosThread.currentThread();
+	       s.setQuantumP(s.getQuantumP()+100);
 	       if(s.getQuantumP() >= Nachos.scheduler.QUANTUMT)
 	       {
 		   s.setQuantumP(0);
 		   yieldOnReturn();
 	       }
-	       s.setQuantumP(s.getQuantumP()+100);
 	   }
 	}
 
