@@ -40,6 +40,7 @@ import nachos.kernel.threads.Scheduler;
 import nachos.kernel.threads.Semaphore;
 import nachos.kernel.userprog.ExceptionHandler;
 import nachos.kernel.userprog.PMM;
+import nachos.kernel.userprog.UserThread;
 import nachos.kernel.filesys.FileSystem;
 import nachos.kernel.threads.test.SMPTest;
 import nachos.kernel.threads.test.SynchronousQueueTest;
@@ -121,7 +122,7 @@ public class Nachos implements Runnable {
 	//MIRAJ: I added this for HW 3
 	generalTimer = Machine.getTimer(0);
 	generalTimer.setHandler(new GeneralTimerInterruptHandler(generalTimer));
-//	generalTimer.start();
+	generalTimer.start();
 	
 	
 	if(options.FILESYS_STUB || options.FILESYS_REAL)
@@ -269,7 +270,7 @@ public class Nachos implements Runnable {
   private class GeneralTimerInterruptHandler implements InterruptHandler {
 
 	/** The Timer device this is a handler for. */
-	private final Timer timer;
+	private final nachos.machine.Timer timer;
 
 	/**
 	 * Initialize an interrupt handler for a specified Timer device.
@@ -283,7 +284,27 @@ public class Nachos implements Runnable {
 	}
 
 	public void handleInterrupt() {
-	    Debug.println('+', "Helloooo");
+	    updateWaiting();
+	    if(NachosThread.currentThread() == null && 
+		    //Nachos.scheduler.getReadyListEmpty() && 
+		    Nachos.scheduler.getUPListEmpty()){
+		//TODO: turn off all the cpu timers. here as well since 
+		// we know everythign is done processing
+		generalTimer.stop();
+		
+	    }
+	}
+	
+	public void updateWaiting(){
+	    ArrayList<UserThread> userThreadsList = scheduler.getUserThreadsList();
+	    if(userThreadsList != null){
+		for(int i = 0; i < userThreadsList.size(); i++){
+		    if(userThreadsList.get(i) != NachosThread.currentThread()){
+			userThreadsList.get(i).addWaitingTime(timer.interval);
+		    }
+		}
+	    }
+	    
 	}
 	
   }

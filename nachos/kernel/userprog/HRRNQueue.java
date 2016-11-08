@@ -40,6 +40,9 @@ public class HRRNQueue implements UPList{
 	    nextProcess = highestRatioThread;
 	}
 	
+	if(nextProcess != null){
+	    nextProcess.resetWaitingTime();
+	}
 	return nextProcess;
     }
 

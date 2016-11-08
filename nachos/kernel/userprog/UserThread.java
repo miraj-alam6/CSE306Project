@@ -12,6 +12,7 @@ package nachos.kernel.userprog;
 
 import nachos.machine.MIPS;
 import nachos.machine.NachosThread;
+import nachos.Debug;
 import nachos.kernel.devices.ConsoleDriver;
 import nachos.machine.CPU;
 
@@ -59,6 +60,10 @@ public class UserThread extends NachosThread {
     }
     public void addWaitingTime(int ticks){
 	ticksWaiting += ticks;
+	//Debug.println('+', "Thread " + name+" has been waiting " + ticksWaiting);
+    }
+    public void resetWaitingTime(){
+	ticksWaiting = 0;
     }
     /**
      * Initialize a new user thread.

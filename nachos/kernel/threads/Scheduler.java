@@ -81,7 +81,16 @@ public class Scheduler {
     
     private Callout callout; // This will hold the list of all scheduled callouts
     private SynchronousQueue<Integer> syncQ; // To test the synchronous queue
+    public boolean getReadyListEmpty(){
+	return (readyList.peek() == null);
+    }
+    public boolean getUPListEmpty(){
+	return (UPList.userThreads.size() == 0);
+    }
     
+    public ArrayList<UserThread> getUserThreadsList(){
+	return userProcList.userThreads;
+    }
     public Scheduler(NachosThread firstThread) {
 	//TODO: based on scheduling policy, set this to an actual
 	//object of a class that implement UPList
@@ -125,6 +134,9 @@ public class Scheduler {
 	}
 	else if(Nachos.options.SJF_SCHEDULING){
 	    return new SJFQueue();
+	}
+	else if(Nachos.options.HRRN_SCHEDULING){
+	    return new HRRNQueue();
 	}
 	else{
 	    Nachos.options.CPU_TIMERS = false;
