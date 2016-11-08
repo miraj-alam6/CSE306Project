@@ -29,7 +29,7 @@ public class SJFQueue implements UPList{
     public UserThread getNextProcess() {
 	// TODO Auto-generated method stub
 	UserThread nextProcess = null;
-	Debug.println('+', "Reached here");
+	//Debug.println('+', "Reached here");
 	
 	//New Stuff start here
 	//First check if anything has not had its

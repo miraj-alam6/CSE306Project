@@ -69,7 +69,7 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		/* Miraj change start here*/
 		int ptr0 = CPU.readRegister(4);
 		// Debugging stuff start here
-		Debug.println('+', "Gonna try to dereference address " +ptr0);
+		Debug.println('w', "Gonna try to dereference address " +ptr0);
 		//Debug.println('+', "" + AddrSpace.dereferenceString(ptr0));	
 		int execRet = Syscall.exec(
 			((UserThread)NachosThread.currentThread()).space.dereferenceString(ptr0));

@@ -3,8 +3,9 @@ package nachos.kernel.userprog;
 import nachos.Debug;
 import nachos.machine.NachosThread;
 
-public class FCFSQueue implements UPList {
+public class FBSQueue implements UPList {
 
+    
     @Override
     public UserThread getNextProcess() {
 	// TODO Auto-generated method stub

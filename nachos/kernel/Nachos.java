@@ -91,6 +91,7 @@ public class Nachos implements Runnable {
     public static int nextProgramID = 0;
     
     public static nachos.machine.Timer generalTimer;
+    public static int randomTicks = 600;
     
     /**
      * 	Nachos initialization -- performed by first Nachos thread.
