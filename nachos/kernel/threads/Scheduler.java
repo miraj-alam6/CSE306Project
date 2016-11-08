@@ -17,7 +17,7 @@ package nachos.kernel.threads;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-
+import jdk.nashorn.internal.runtime.UserAccessorProperty;
 import nachos.Debug;
 import nachos.kernel.Nachos;
 import nachos.machine.CPU;
@@ -138,6 +138,14 @@ public class Scheduler {
 	}
 	else if(Nachos.options.HRRN_SCHEDULING){
 	    return new HRRNQueue();
+	}
+	else if(Nachos.options.RR_SCHEDULING){
+	    Debug.ASSERT(Nachos.options.CPU_TIMERS);
+	    return new FCFSQueue();
+	}
+	else if(Nachos.options.SRT_SCHEDULING){
+	    Debug.ASSERT(Nachos.options.CPU_TIMERS);
+	    return new SJFQueue();
 	}
 	else{
 	    Nachos.options.CPU_TIMERS = false;
@@ -524,18 +532,29 @@ public class Scheduler {
 	   //this function will add waiting time to each of the user threads
 	    //that are waiting in the UPList
 	   //addWaitingTime();
-	   Debug.println('+',"This sihsdlkasdklsajdklsajdlksajdkl\n\n\n");
-	   if(NachosThread.currentThread() instanceof UserThread)
+	  //Debug.println('+',"This sihsdlkasdklsajdklsajdlksajdkl\n\n\n " + NachosThread.currentThread());
+	   
+	    if(Nachos.scheduler.userProcList.userThreads.size() > 0)
 	   {
-	       UserThread s = (UserThread) NachosThread.currentThread();
-	       s.setQuantumP(s.getQuantumP()+100);
-	       if(s.getQuantumP() >= Nachos.scheduler.QUANTUMT)
-	       {
-		   s.setQuantumP(0);
-		   Nachos.scheduler.removeProcessFromList((UserThread)NachosThread.currentThread());
-		   Nachos.scheduler.addProcessToList((UserThread)NachosThread.currentThread());
-		   yieldOnReturn();
-	       }
+		if (Nachos.options.RR_SCHEDULING){
+	
+        		UserThread s = Nachos.scheduler.userProcList.userThreads.get(0);
+        		if(s.getTicksLeft() <= -1){
+        		    return;
+        		}
+        		s.setQuantumP(s.getQuantumP()+100);
+        		if(s.getQuantumP() >= Nachos.scheduler.QUANTUMT)
+        		{
+        		   s.setQuantumP(0);
+        		   Nachos.scheduler.removeProcessFromList(s);
+        		   Nachos.scheduler.addProcessToList(s);
+        		   yieldOnReturn();
+        	       }
+		}
+		else if (Nachos.options.SRT_SCHEDULING){
+//		    //Gonna need to do some stuff
+		    //yieldOnReturn();
+		}
 	   }
 	}
 

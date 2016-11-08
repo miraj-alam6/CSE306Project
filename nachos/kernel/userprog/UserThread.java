@@ -46,7 +46,7 @@ public class UserThread extends NachosThread {
     //stay constant, thus it will represent simply how many ticks the process will
     //take.
     private int ticksWaiting;
-    private int quantumProgress;
+    private int quantumProgress = 0;
     
     public int getQuantumP()
     {

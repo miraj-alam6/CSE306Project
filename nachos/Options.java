@@ -388,7 +388,7 @@ public class Options {
 			 null,
 			 new Options.Action() {
 			    public void processOption(String flag, Object[] params) {
-				FCFS_SCHEDULING = true;
+				RR_SCHEDULING = true;
 				CPU_TIMERS = true;
 			    }
 			 }),
