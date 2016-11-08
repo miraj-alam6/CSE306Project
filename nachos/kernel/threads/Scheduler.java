@@ -524,6 +524,7 @@ public class Scheduler {
 	   //this function will add waiting time to each of the user threads
 	    //that are waiting in the UPList
 	   //addWaitingTime();
+	   Debug.println('+',"This sihsdlkasdklsajdklsajdlksajdkl\n\n\n");
 	   if(NachosThread.currentThread() instanceof UserThread)
 	   {
 	       UserThread s = (UserThread) NachosThread.currentThread();
