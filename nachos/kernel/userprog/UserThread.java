@@ -46,10 +46,22 @@ public class UserThread extends NachosThread {
     //stay constant, thus it will represent simply how many ticks the process will
     //take.
     private int ticksWaiting;
+    private int quantumProgress;
+    
+    public int getQuantumP()
+    {
+	return quantumProgress;
+    }
+    
+    public void setQuantumP(int q)
+    {
+	quantumProgress = q;
+    }
     
     public int getTicksLeft(){
 	return ticksLeft;
     }
+    
     public void setTicksLeft(int ticks){
 	ticksLeft = ticks;
     }
@@ -58,6 +70,7 @@ public class UserThread extends NachosThread {
     {
 	return ticksWaiting;
     }
+    
     public void addWaitingTime(int ticks){
 	ticksWaiting += ticks;
 	//Debug.println('+', "Thread " + name+" has been waiting " + ticksWaiting);

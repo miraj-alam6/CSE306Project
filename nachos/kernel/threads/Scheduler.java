@@ -64,6 +64,7 @@ public class Scheduler {
     private final UPList userProcList;
     /** Queue of CPUs that are idle. */
     private final Queue<CPU> cpuList;
+    private final int QUANTUMT = 1000;
     
     /** Terminated thread awaiting reclamation of its stack. */
     private volatile NachosThread threadToBeDestroyed;
@@ -122,7 +123,7 @@ public class Scheduler {
 		timer.start();
 	    }
 	}
-
+	
 	// Dispatch firstThread on the first CPU.
 	CPU firstCPU = cpuList.poll();
 	firstCPU.dispatch(firstThread);
@@ -523,6 +524,16 @@ public class Scheduler {
 	   //this function will add waiting time to each of the user threads
 	    //that are waiting in the UPList
 	   //addWaitingTime();
+	   if(NachosThread.currentThread() instanceof UserThread)
+	   {
+	       UserThread s = (UserThread) NachosThread.currentThread();
+	       if(s.getQuantumP() >= Nachos.scheduler.QUANTUMT)
+	       {
+		   s.setQuantumP(0);
+		   yieldOnReturn();
+	       }
+	       s.setQuantumP(s.getQuantumP()+100);
+	   }
 	}
 
 	/**
@@ -542,6 +553,7 @@ public class Scheduler {
 		    if(NachosThread.currentThread() != null) {
 			Debug.println('t', "Yielding current thread on interrupt return");
 			Nachos.scheduler.yieldThread();
+			Nachos.scheduler.addProcessToList((UserThread)NachosThread.currentThread());
 		    } else {
 			
 			Debug.println('i', "No current thread on interrupt return, skipping yield");
