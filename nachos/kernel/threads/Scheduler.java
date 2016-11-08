@@ -531,6 +531,7 @@ public class Scheduler {
 	       if(s.getQuantumP() >= Nachos.scheduler.QUANTUMT)
 	       {
 		   s.setQuantumP(0);
+		   Nachos.scheduler.addProcessToList((UserThread)NachosThread.currentThread());
 		   yieldOnReturn();
 	       }
 	   }
@@ -553,7 +554,6 @@ public class Scheduler {
 		    if(NachosThread.currentThread() != null) {
 			Debug.println('t', "Yielding current thread on interrupt return");
 			Nachos.scheduler.yieldThread();
-			Nachos.scheduler.addProcessToList((UserThread)NachosThread.currentThread());
 		    } else {
 			
 			Debug.println('i', "No current thread on interrupt return, skipping yield");
