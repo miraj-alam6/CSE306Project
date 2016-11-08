@@ -73,4 +73,8 @@ public class HRRNQueue implements UPList{
 	
     }
 
+    @Override
+    public void removeProcess(UserThread uT) {
+    }
+
 }

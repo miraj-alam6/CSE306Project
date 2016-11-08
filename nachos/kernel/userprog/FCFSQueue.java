@@ -70,4 +70,10 @@ public class FCFSQueue implements UPList {
 	
     }
 
+    @Override
+    public void removeProcess(UserThread uT) {
+	// TODO Auto-generated method stub
+	userThreads.remove(uT);
+    }
+
 }

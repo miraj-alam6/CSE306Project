@@ -524,6 +524,7 @@ public class Scheduler {
 	   //this function will add waiting time to each of the user threads
 	    //that are waiting in the UPList
 	   //addWaitingTime();
+	    Debug.print('z', "COOOOOOOOOOOOOOOOOOO\n\n\n\n\n\n");
 	   if(NachosThread.currentThread() instanceof UserThread)
 	   {
 	       UserThread s = (UserThread) NachosThread.currentThread();
@@ -531,6 +532,7 @@ public class Scheduler {
 	       if(s.getQuantumP() >= Nachos.scheduler.QUANTUMT)
 	       {
 		   s.setQuantumP(0);
+		   Nachos.scheduler.removeProcessFromList((UserThread)NachosThread.currentThread());
 		   Nachos.scheduler.addProcessToList((UserThread)NachosThread.currentThread());
 		   yieldOnReturn();
 	       }
@@ -576,6 +578,11 @@ public class Scheduler {
     public void endProcess(UserThread currentThread) {
 	userProcList.finishThread(currentThread.space.getSpaceID());
 	
+    }
+    
+    public void removeProcessFromList(UserThread uT)
+    {
+	userProcList.removeProcess(uT);
     }
     
 }

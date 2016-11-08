@@ -14,5 +14,6 @@ public interface UPList {
     public void finishThread(int spaceID);
     public void addProcess(UserThread uT);
     public void addTime(int ticksToAdd);
+    public void removeProcess(UserThread uT);
 }
 

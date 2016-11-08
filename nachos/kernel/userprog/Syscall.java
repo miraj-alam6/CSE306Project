@@ -194,7 +194,7 @@ public class Syscall {
      * @param id The OpenFileId of the file to which to write the data.
      */
     public static void write(byte buffer[], int size, int id) {
-	int oldLevel = CPU.setLevel(CPU.IntOff);
+	//int oldLevel = CPU.setLevel(CPU.IntOff);
 	Debug.println('+', "Write system call in thread: " + NachosThread.currentThread().name);
 	String s = "";
 	if (id == ConsoleOutput) {
@@ -206,7 +206,7 @@ public class Syscall {
 	    }
 	    Nachos.writingToConsole = false;
 	}
-	CPU.setLevel(oldLevel);
+	//CPU.setLevel(oldLevel);
 	
     }
 

@@ -65,4 +65,8 @@ public class SJFQueue implements UPList{
 	//SJF doesn't need to do anything for here
 	
     }
+
+    @Override
+    public void removeProcess(UserThread uT) {
+    }
 }
