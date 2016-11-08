@@ -115,6 +115,10 @@ public class Syscall {
 	new ProgTest(name, Nachos.nextProgramID);
 	Debug.println('+', "New program to execute is ID" +id);
 	Nachos.addNewProgram(id);
+	if(Nachos.options.SRT_SCHEDULING){
+	   yield(); //yield so that we can calculate the cpu burst time
+	   //of the newly added process
+	}
 	//NEXT LINE IS WRONG, be careful, the new Prog is not the currentThread, just use
 	//Nachos.addNewProgram(((UserThread)NachosThread.currentThread()).space.getSpaceID());
 	//int spaceid = ((UserThread)NachosThread.currentThread()).space.getSpaceID();
@@ -283,13 +287,33 @@ public class Syscall {
      */
     public static void yield() {
 	Debug.println('+', "Through syscall yielding thread "+ NachosThread.currentThread().name);
-	 Nachos.scheduler.yieldThread();
+	Nachos.scheduler.yieldThread();
     }
     
     public static void predictCPU(int ticks){
 	Debug.println('+', "PredictCPU syscall with ticks " + ticks);
 	((UserThread)NachosThread.currentThread()).setTicksLeft(ticks);
-	yield();
+	if(Nachos.options.SRT_SCHEDULING){
+	    //Don't always yield here. Only yield if your ticks is less
+	    //than another process.AKA, this is not the shortest process
+	    //thus the actual shortest process should run, only reason we got
+	    //here is because default CPU ticks is -1 so we had to predictcpu
+	    //before determining if this is smallest
+	    if(NachosThread.currentThread() instanceof UserThread){
+		if(Nachos.scheduler.getUPList() instanceof SJFQueue){
+		   if( ((SJFQueue)Nachos.scheduler.getUPList()).
+			  shouldYield((UserThread)NachosThread.currentThread())){
+		       yield();  
+		   }
+		}
+		
+	    }
+	    
+	}
+	else{
+	    yield();
+	}
+	
     }
 
 }

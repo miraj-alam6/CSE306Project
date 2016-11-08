@@ -89,8 +89,13 @@ public class Scheduler {
 	return (UPList.userThreads.size() == 0);
     }
     
+    //this returns the array in the data structure
     public ArrayList<UserThread> getUserThreadsList(){
 	return userProcList.userThreads;
+    }
+    //This returns the actual custom data structure
+    public UPList getUPList(){
+	return userProcList;
     }
     public Scheduler(NachosThread firstThread) {
 	//TODO: based on scheduling policy, set this to an actual

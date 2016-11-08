@@ -3,6 +3,6 @@
 int main()
 {
 	PredictCPU(2);
-	Exec("test/hw3testprog2_1");
+	Exec("test/hw3testprog2");
 	return 0;
 }
