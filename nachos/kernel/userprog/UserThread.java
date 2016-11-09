@@ -28,6 +28,8 @@ import nachos.machine.CPU;
  */
 public class UserThread extends NachosThread {
 
+    public int serviceTime;
+
     /** The context in which this thread will execute. */
     public final AddrSpace space;
 

@@ -10,7 +10,7 @@ import nachos.kernel.userprog.test.StallingsTest;
 public class StallingsHelper {
     int count = 1;
     public int programCount = 0; 
-    public int maxProgramCount = 8;
+    public int maxProgramCount = 7;
     int makeANewProgramCount = 0;
     int makeANewProgramCountMax = 10000;
     //randomValue is added to offset to get the random # of ticks
