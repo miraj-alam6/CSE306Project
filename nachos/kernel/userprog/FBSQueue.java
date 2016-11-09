@@ -10,7 +10,7 @@ import nachos.util.Queue;
 
 public class FBSQueue implements UPList {
 
-    private int[] quantums = {20000, 10000, 10000, 700, 600};
+    private int[] quantums = {1000,900,800,700,600};
     private ArrayList<Queue<UserThread>> queues = new ArrayList<Queue<UserThread>>();
     
     public FBSQueue()

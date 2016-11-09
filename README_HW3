@@ -88,7 +88,8 @@ run. Here are the arguments lists:
 -xc test/hw3testprog3 -srt
 
 To test FBS:
-Can try any of the first three programs using -fbs in arguments
+Can try any of the first three programs using -fbs in arguments. To change the quantum of each queue in for feedback scheduling,
+change the values in the array in FBSQueue.java
 
 -xc test/hw3testprog1 -fbs
 -xc test/hw3testprog2 -fbs
