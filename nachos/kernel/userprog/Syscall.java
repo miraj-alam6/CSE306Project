@@ -89,6 +89,7 @@ public class Syscall {
 	
 	Debug.println('+', "Exit system call with status=" + status
 				+ ": " + NachosThread.currentThread().name);
+	Nachos.stallingsHelper.programCount--;
 	if(NachosThread.currentThread() instanceof UserThread){
 	    Debug.println('w', "About to deallocate memory of the process with ID "+ 
 		    ((UserThread)NachosThread.currentThread()).space.getSpaceID());

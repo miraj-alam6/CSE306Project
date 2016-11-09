@@ -304,7 +304,8 @@ public class Nachos implements Runnable {
 	    
 	    if(NachosThread.currentThread() == null && 
 		    //Nachos.scheduler.getReadyListEmpty() && 
-		    Nachos.scheduler.getUPListEmpty()){
+		    Nachos.scheduler.getUPListEmpty()
+		    && ! Nachos.options.STALLINGS_TEST){
 		//TODO: turn off all the cpu timers. here as well since 
 		// we know everythign is done processing
 		generalTimer.stop();

@@ -75,7 +75,7 @@ public class SJFQueue implements UPList{
 	for(int i =0; i < userThreads.size(); i++){
 	   if(userThreads.get(i).space.getSpaceID() == spaceID){
 	       userThreads.remove(i);
-	       Debug.println('q', "In SJF size is " + userThreads.size());
+	      // Debug.println('q', "In SJF size is " + userThreads.size());
 	   } 
 	    
 	}
@@ -85,7 +85,7 @@ public class SJFQueue implements UPList{
     public void addProcess(UserThread uT) {
 	considerYieldings[CPU.currentCPU().unit] = true;
 	userThreads.add(uT);
-	Debug.println('+', "In SJF size is " + userThreads.size());
+	//Debug.println('+', "In SJF size is " + userThreads.size());
     }
 
     @Override

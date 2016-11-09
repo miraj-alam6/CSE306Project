@@ -9,15 +9,27 @@ import nachos.kernel.userprog.test.StallingsTest;
 
 public class StallingsHelper {
     int count = 1;
+    public int programCount = 0; 
+    public int maxProgramCount = 8;
+    int makeANewProgramCount = 0;
+    int makeANewProgramCountMax = 10000;
     //randomValue is added to offset to get the random # of ticks
     //offset is calculated first however by counting how many "flips"
     //of the "unfair coin" are needed
     //This is called on every interrupt
     public void masterHelper(){
 	//The bulk of this function will be creating a program,
-	int makeAProgramRandom;
+	 if(programCount >= maxProgramCount){
+	     return;
+	 }
 	
-	
+	 makeANewProgramCount += 1000 * Math.random();
+	 if(makeANewProgramCount > makeANewProgramCountMax ){
+	     makeANewProgramCount = 0;
+	 }
+	 else{
+	     return;
+	 }
 	 int randomValue = ((int)(Math.random() * 100) + 1);
 	 int offset = 0;
 	 //This is basically an unfair coin where  heads has 10 percent chance
@@ -33,6 +45,7 @@ public class StallingsHelper {
 	 offset = 100 * failedFlips;
 	 
 	 Nachos.randomTicks = offset + randomValue;
+	 programCount++;
 	 new ProgTest("test/hw3testprog4", count++);
 	// Debug.println('+', "His palms are sweat" + randomValue + "," + offset +"," + Nachos.randomTicks);
 	 //Debug.println('+',"Time is " + Nachos.totalTime);
