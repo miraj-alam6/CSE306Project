@@ -95,6 +95,7 @@ public class Scheduler {
     public UPList getUPList(){
 	return userProcList;
     }
+    
     public Scheduler(NachosThread firstThread) {
 	//TODO: based on scheduling policy, set this to an actual
 	//object of a class that implement UPList
@@ -148,6 +149,11 @@ public class Scheduler {
 	else if(Nachos.options.SRT_SCHEDULING){
 	    Debug.ASSERT(Nachos.options.CPU_TIMERS);
 	    return new SJFQueue();
+	}
+	else if(Nachos.options.FBS_SCHEDULING)
+	{
+	    Debug.ASSERT(Nachos.options.CPU_TIMERS);
+	    return new FBSQueue();
 	}
 	else{
 	    Nachos.options.CPU_TIMERS = false;
@@ -284,13 +290,30 @@ public class Scheduler {
 	
 	
 	
-	//If the ready list is empty, that means that 
-	if(result ==  null){
-	    if(userProcList.userThreads.size() > 0){
-		result = userProcList.getNextProcess();
+	//If the ready list is empty, that means that
+	if(!Nachos.options.FBS_SCHEDULING)
+	{
+	    if(result ==  null){
+		if(userProcList.userThreads.size() > 0){
+		    result = userProcList.getNextProcess();
+		}
 	    }
 	    //
 	   // Debug.println('+', "This was " +result);
+	}
+	else
+	{
+	    if(result == null)
+	    {
+		ArrayList<Queue<UserThread>> fbs = ((FBSQueue)Nachos.scheduler.userProcList).getFBSQueues();
+		for(int i = 0; i < fbs.size(); i++)
+		{
+		    if(fbs.get(i).peek() != null)
+		    {
+			result = userProcList.getNextProcess();
+		    }
+		}
+	    }
 	}
 	//NEW STUFF END HERE
 	/**/
@@ -537,7 +560,7 @@ public class Scheduler {
 	  //Debug.println('+',"This sihsdlkasdklsajdklsajdlksajdkl\n\n\n " + NachosThread.currentThread());
 	   
 	    if(Nachos.scheduler.userProcList.userThreads.size() > 0)
-	   {
+	    {
 		if (Nachos.options.RR_SCHEDULING){
 	
         		UserThread s = Nachos.scheduler.userProcList.userThreads.get(0);
@@ -553,7 +576,55 @@ public class Scheduler {
         		   yieldOnReturn();
         	       }
 		}
-	   }
+	    }
+	    else if(Nachos.options.FBS_SCHEDULING)
+	    {
+		ArrayList<Queue<UserThread>> fbs = ((FBSQueue)Nachos.scheduler.userProcList).getFBSQueues();
+		boolean empty = true;
+		for(int i = 0; i < fbs.size(); i++)
+		{
+		    if(fbs.get(i).peek() != null)
+		    {
+			empty = false;
+		    }
+		}
+		
+		if(empty == false)
+		{
+		    
+		    	int[] quant = ((FBSQueue)Nachos.scheduler.userProcList).getQuantums();
+			for(int i = 0; i < fbs.size(); i++)
+			{
+			    UserThread peeked = fbs.get(i).peek();
+			    if(peeked != null)
+			    {
+				if(peeked.getIsRunning() == true)
+				    {
+					peeked.setQuantumP(peeked.getQuantumP()+100);
+					if(peeked.getQuantumP() >= quant[i])
+					{
+					    if(i == 4)
+					    {
+						peeked.setQuantumP(0);
+						peeked.setIsRunning(false);
+						UserThread s = fbs.get(4).poll();
+						fbs.get(4).offer(s);
+						yieldOnReturn();
+					    }
+					    else
+					    {
+						peeked.setQuantumP(0);
+						peeked.setIsRunning(false);
+						UserThread s = fbs.get(i).poll();
+						fbs.get(i+1).offer(s);
+						yieldOnReturn();
+					    }
+					}
+				    }
+			    }
+			}
+		}
+	    }
 	}
 
 	/**

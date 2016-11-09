@@ -1,69 +1,113 @@
 package nachos.kernel.userprog;
 
+
+import java.util.ArrayList;
+
 import nachos.Debug;
 import nachos.machine.NachosThread;
+import nachos.util.FIFOQueue;
+import nachos.util.Queue;
 
 public class FBSQueue implements UPList {
 
+    private int[] quantums = {20000, 10000, 10000, 700, 600};
+    private ArrayList<Queue<UserThread>> queues = new ArrayList<Queue<UserThread>>();
+    
+    public FBSQueue()
+    {
+	Queue<UserThread> queue1 = new FIFOQueue<UserThread>();
+	Queue<UserThread> queue2 = new FIFOQueue<UserThread>();
+	Queue<UserThread> queue3 = new FIFOQueue<UserThread>();
+	Queue<UserThread> queue4 = new FIFOQueue<UserThread>();
+	Queue<UserThread> queue5 = new FIFOQueue<UserThread>();
+	queues.add(queue1);
+	queues.add(queue2);
+	queues.add(queue3);
+	queues.add(queue4);
+	queues.add(queue5);
+	
+    }
+    
+    public ArrayList<Queue<UserThread>> getFBSQueues()
+    {
+	return queues;
+    }
+    
+    public int[] getQuantums()
+    {
+	return quantums;
+    }
     
     @Override
     public UserThread getNextProcess() {
 	// TODO Auto-generated method stub
 	UserThread nextProcess = null;
 	//Debug.println('+', "Reached here");
+
+	    if(queues.get(0).peek() != null)
+	    {
+		nextProcess = queues.get(0).peek();
+		nextProcess.setIsRunning(true);
+		Debug.println('q',"In first queue");
+	    }
+	    else
+	    {
+		if(queues.get(1).peek() != null)
+		{
+		    nextProcess = queues.get(1).peek();
+		    nextProcess.setIsRunning(true);
+		    Debug.println('q',"In 2nd queue");
+		}
+		else
+		{
+		    if(queues.get(2).peek() != null)
+		    {
+			nextProcess = queues.get(2).peek();
+			nextProcess.setIsRunning(true);
+			Debug.println('q',"In 3rd queue");
+		    }
+		    else
+		    {
+			if(queues.get(3).peek() != null)
+			{
+			    nextProcess = queues.get(3).peek();
+			    nextProcess.setIsRunning(true);
+			    Debug.println('q',"In fourth queue");
+			}
+			else
+			{
+			    if(queues.get(4).peek() != null)
+			    {
+				nextProcess = queues.get(4).peek();
+				nextProcess.setIsRunning(true);
+				Debug.println('q',"In fifth queue");
+			    }
+			}
+		    }
+		}
+	    }
 	
-	//New Stuff start here
-	//First check if anything has not had its
-	//ticks left set yet so that it becomes the next thread to run.
-	/* Don't need to do this for FCFS
-	for(int i = 0 ; i < userThreads.size(); i++){
-	    if(userThreads.get(i).getTicksLeft() <= -1){
-		nextProcess = userThreads.get(i);
-		return nextProcess;
-	    }
-	}
-	//New Stuff end here
-	/**/
 	
-	if(userThreads.size() == 0){
-	    return null;
-	}
-	if(NachosThread.currentThread() instanceof UserThread){
-	    if(userThreads.size() == 1 && 
-		NachosThread.currentThread() == userThreads.get(0)){
-		return nextProcess;
-	    }
-	    else if(NachosThread.currentThread() == userThreads.get(0)){
-		nextProcess = userThreads.get(1);
-	    }
-	    else{
-		
-		nextProcess = userThreads.get(0);
-	    }
-	    
-	}
-	else{
-	    nextProcess = userThreads.get(0);
-	}
 	return nextProcess;
     }
 
     @Override
     public void finishThread(int spaceID) {
 	// TODO Auto-generated method stub
-	for(int i =0; i < userThreads.size(); i++){
-	   if(userThreads.get(i).space.getSpaceID() == spaceID){
-	       userThreads.remove(i);
-	       Debug.println('q', "In FCFS size is " + userThreads.size());
-	   } 
-	    
+	for(int i = 0; i < queues.size(); i++){
+	   if(queues.get(i).peek() != null)
+	   {
+	       if(queues.get(i).peek().space.getSpaceID() == spaceID){
+		   queues.get(i).poll();
+	       }
+	   }
 	}
     }
 
     @Override
     public void addProcess(UserThread uT) {
-	userThreads.add(uT);
-	Debug.println('q', "In FCFS size is " + userThreads.size());
+	queues.get(0).offer(uT);
+	Debug.println('q', "In FSB size is " + queues.get(0).peek().name);
     }
 
     @Override
@@ -75,7 +119,6 @@ public class FBSQueue implements UPList {
     @Override
     public void removeProcess(UserThread uT) {
 	// TODO Auto-generated method stub
-	userThreads.remove(uT);
     }
 
 }

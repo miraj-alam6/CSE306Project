@@ -121,6 +121,7 @@ public class SJFQueue implements UPList{
 	}
 	return false;
     }
+
     public void reduceTicksWaiting(int ticks) {
 	
     }
