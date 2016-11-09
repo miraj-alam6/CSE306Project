@@ -1,9 +1,13 @@
 #include "syscall.h"
 
-int main()
-{
+int main(int n)
+{	
+	int i;
+	PredictCPU(12 * n);
 	
-	Exec("test/hw3testprog4_1");
-	return 0;
+	for (i = 0; i < n; i++) {
+		;
+	}
+	Exit(0);
 }
-
+	

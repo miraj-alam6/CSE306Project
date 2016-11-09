@@ -138,7 +138,10 @@ Run each of the programs by putting this into the Run Configuration Arguments
 
 
 README Section 3: Our Assumptions
-You run each of the programs doing
+One big assumption is that the -stl flag for doing the stalling should not take
+any program arguments so no -x flags, because -stl is its own test that will
+keep creating the same program using a timer.
+
 One big assumption for this code is that the code that is executed by exec(), will run. Nachos doesn't crash if an
 invalid program name is provided, but if the code itself has a big issue, that was not tested.
 

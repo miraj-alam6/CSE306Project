@@ -59,6 +59,10 @@ public class UserThread extends NachosThread {
 	isRunning = tf;
     }
     
+    //TODO: Make these private later and do accessors and setters.
+    public long startTime;
+    public long endTime;
+    
     public int getQuantumP()
     {
 	return quantumProgress;

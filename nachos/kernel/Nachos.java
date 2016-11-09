@@ -40,6 +40,7 @@ import nachos.kernel.threads.Scheduler;
 import nachos.kernel.threads.Semaphore;
 import nachos.kernel.userprog.ExceptionHandler;
 import nachos.kernel.userprog.PMM;
+import nachos.kernel.userprog.StallingsHelper;
 import nachos.kernel.userprog.UserThread;
 import nachos.kernel.filesys.FileSystem;
 import nachos.kernel.threads.test.SMPTest;
@@ -47,6 +48,7 @@ import nachos.kernel.threads.test.SynchronousQueueTest;
 import nachos.kernel.threads.test.ThreadTest;
 import nachos.kernel.threads.test.POCTest;
 import nachos.kernel.userprog.test.ProgTest;
+import nachos.kernel.userprog.test.StallingsTest;
 import nachos.kernel.userprog.test.ConsoleProgTest;
 import nachos.kernel.filesys.test.FileSystemTest;
 
@@ -91,7 +93,10 @@ public class Nachos implements Runnable {
     public static int nextProgramID = 0;
     
     public static nachos.machine.Timer generalTimer;
-    public static int randomTicks = 600;
+    public static int randomTicks = 700;
+    public static long totalTime = 0;
+    
+    public static StallingsHelper stallingsHelper = new StallingsHelper();
     
     /**
      * 	Nachos initialization -- performed by first Nachos thread.
@@ -166,6 +171,9 @@ public class Nachos implements Runnable {
 	    POCTest.start();
 	if(options.CONSOLE_PROG_TEST)
 	    ConsoleProgTest.start();
+	
+	if(options.STALLINGS_TEST)
+	    StallingsTest.start();
 	
 	// Terminate the first thread, its job is done.
 	// Alternatively, you could give this thread the responsibility
@@ -285,7 +293,15 @@ public class Nachos implements Runnable {
 	}
 
 	public void handleInterrupt() {
+	    
+	    totalTime += timer.interval; //just keep a general record of total
+	    //ticks that have passed
 	    updateWaiting();
+	    
+	    if(Nachos.options.STALLINGS_TEST){
+		stallingsHelper.masterHelper();
+	    }
+	    
 	    if(NachosThread.currentThread() == null && 
 		    //Nachos.scheduler.getReadyListEmpty() && 
 		    Nachos.scheduler.getUPListEmpty()){
