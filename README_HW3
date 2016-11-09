@@ -4,14 +4,14 @@ README Section 1: Overview:
 
 In this project, we created the scheduling policies of First-Come-First-Serve(FCFS),
 Shortest Job First(SJF), Shortest Remaining Time(SRT), Round-Robin(RR),
-and Highest Response Ratio Next(HRRN). Feedback Scheduling was not implemented.
+Highest Response Ratio Next(HRRN), and Feedback Scheduling (FBS).
 Test programs were made do demonstrate the functionality of each of the scheduling
 policies that were implemented. 
 
 A test program was also made to try to replicate the Stalling graphs. The extent
 to how much of this was implemented will be elaborated later. 
 
-Part 1: All scheduling policies except Feedback Scheduling were implemented. The
+Part 1: All scheduling policies were implemented. The
 main idea was that there is a list of user processes, and this list is contained
 in a class that finds the next process in different ways for each of the scheduling
 policies. This is achieved by making UPList an interface, and then each of the
@@ -38,7 +38,7 @@ Where the last parameter can be any scheduling policy where -fcfs is
 just one of the options.
 The different options are
 
--fcfs, -sjf, -srt, -hrrn, -rr.
+-fcfs, -sjf, -srt, -hrrn, -rr, -fbs.
 I will now list tests with specifed scheduling polices that demonstrated clearly
 how the scheduling policies are working because of the correctly different output
 for the same tests for different scheduling policies. These are just recommended
@@ -64,6 +64,7 @@ round robin is definitely working.
 -xc test/hw3testprog1 -sjf
 -xc test/hw3testprog1 -rr
 
+
 hw3testprog2 demonstrates a case where -sjf and -hrrn will be give different
 output, thus demonstrating hrrn working because it calls 2_2 before 2_3 with
 how the code currently is. But if you change the code in hwtestprog2_2, and 
@@ -83,9 +84,15 @@ this smaller process, while in sjf before doing the second loop, but in sjf it
 runs hwtestprog3 to completion and then runs the shortest process waiting to be
 run. Here are the arguments lists:
 
--xc test/hw3testprog2 -sjf
--xc test/hw3testprog2 -hrrn  
+-xc test/hw3testprog3 -sjf 
+-xc test/hw3testprog3 -srt
 
+To test FBS:
+Can try any of the first three programs using -fbs in arguments
+
+-xc test/hw3testprog1 -fbs
+-xc test/hw3testprog2 -fbs
+-xc test/hw3testprog3 -fbs
 
 We created a bunch of test programs in C that have been compiled and included in the test directory. We expanded 
 upon the code for ProgTest, and that is what is used to execute the first program which then executes its own code 
