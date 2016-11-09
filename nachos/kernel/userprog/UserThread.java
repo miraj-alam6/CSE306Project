@@ -47,6 +47,17 @@ public class UserThread extends NachosThread {
     //take.
     private int ticksWaiting;
     private int quantumProgress = 0;
+    private boolean isRunning = false;
+    
+    public boolean getIsRunning()
+    {
+	return isRunning;
+    }
+    
+    public void setIsRunning(boolean tf)
+    {
+	isRunning = tf;
+    }
     
     public int getQuantumP()
     {

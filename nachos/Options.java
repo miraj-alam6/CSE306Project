@@ -408,6 +408,7 @@ public class Options {
 			 new Options.Action() {
 			    public void processOption(String flag, Object[] params) {
 				FBS_SCHEDULING = true;
+				CPU_TIMERS = true;
 			    }
 			 }),
 		new Spec("-stalling",  // feedback scheduling

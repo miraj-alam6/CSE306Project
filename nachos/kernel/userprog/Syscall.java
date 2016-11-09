@@ -311,7 +311,10 @@ public class Syscall {
 	    
 	}
 	else{
-	    yield();
+	    if(!Nachos.options.FBS_SCHEDULING)
+	    {
+		yield();
+	    }
 	}
 	
     }
