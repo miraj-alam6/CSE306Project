@@ -1,5 +1,20 @@
 Miraj Alam, Kwun Chan
 
+Quicklist of the arguments to test:
+FOR PART 1:
+-xc test/hw3testprog1 -fcfs
+-xc test/hw3testprog2 -fcfs
+-xc test/hw3testprog3 -fcfs
+Where -fcfs can be replaced with any of the other scheduling policies 
+FOR PART 2:
+To see stallings results:
+-slt -fcfs
+Where -fcfs can be replaced with any of the other scheduling policies 
+-slt creates a testprogram that waits and randomly creates executions of
+test/hw3testprog4 which is the loop using for Stallings.
+
+
+
 README Section 1: Overview:
 
 In this project, we created the scheduling policies of First-Come-First-Serve(FCFS),
@@ -21,7 +36,7 @@ in the userprog package.
 
 Part 2: Test program was created and new processes were created periodically
 to run this program with randomness for the amount of iterations of the loop
-in the test program were done.
+in the test program were done. 
 
 
 README Section 2: How to compile and test:
@@ -48,6 +63,9 @@ For each of the tests I am specifying, there will be one test per line, and
 you can simply copy and paste all the arguments into the argument list and the
 test will be carried out with the scheduling policy as specified by the
 last parameter on each line.
+
+
+
 
 hw3testprog1 demonstrates difference between fcfs and sjf and rr, you can look
 at the code for each of the c files which in turn execute other c files
@@ -91,75 +109,27 @@ To test FBS:
 Can try any of the first three programs using -fbs in arguments. To change the quantum of each queue in for feedback scheduling,
 change the values in the array in FBSQueue.java
 
--xc test/hw3testprog1 -fbs
--xc test/hw3testprog2 -fbs
--xc test/hw3testprog3 -fbs
+PART 2:
+You can see the process with which we made our graph.
+To see the programs infinitely run, and the statistics from these programs do these:
 
-We created a bunch of test programs in C that have been compiled and included in the test directory. We expanded 
-upon the code for ProgTest, and that is what is used to execute the first program which then executes its own code 
-which in these tests often consist of calling exec("anothertestprogram"). We also made a class called ConsoleProgTest 
-where the console runs on a separate thread, thus it doesn't automatically close as soon as something is written to it.
--x is the flag for turning on ProgTest, and it takes an argument for the filepath
--xc is the flag for turning on ConsoleProgTest,  and it takes an argument for the filepath
-I will elaborate more on the difference between -x and -xc later in section 3: assumptions so please read that to understand how to 
-use the flags. These are the arguments lists that you should use:
+-slt -fcfs
+-slt -sjf
+-slt -srt
+-slt -hrrn
+-slt -rr
 
-Each of them are in the test directory
+As you can see, no longer using -x or -xc, because this is a different test where it runs infinitely, with random ticks, which is
+calculated as specified by the assignment description.
 
-Here is what each of them do, if you want to read the source code, open the .c files for each of these
-program names.
+Look at the picture of the graph the name of the file is StallingsGraph
 
-testprog1: this one simply is a program that does the yield system call 3 times. You can see this in the 
-debugging messages in java console in eclipse. Thus -x is good enough, because no console is necessary (More 
-elaboration in Section 3 of README)
 
-testprog2: this one does exec(testprog1) TWICE, thus, each of the two processes will keep yield thrice and the
-scheduler keeps switching between them, thus showing that concurrency works, and the yield system call works. This
-test also shows that the exec system call works, thus the Address Space uses address translation correctly with a proper
-page table and code loading.
-
-testprog3: this program simply writes to the console, but it does writing a string that was defined in the data section. 
-It's better to use consoleprogtest for this, it works for both, but I'll elaborate in the assumptions section why it's 
-better to use consoleprogtest
-
-testprog4: this program simply executes testprog3 thus showing that data section translation indeed works.
-
-testprog5: this program shows that the join system call works because a message is printed after join. It's better to use consoleprogtest for this, it works for both, but I'll elaborate in the assumptions section why it's better to use 
-consoleprogtest.
-
-testprog6: this program shows that read works, by reading in what you type with a max buffer size of 25, and then 
-printing out what was read by using the write system call on the same buffer that was read into in the C file. Even 
-though a console will show up in this program, it is important to use -x instead of -xc(I will explain in Section 3 of README)
-
-Debug Flags:
--w flag gets extra output that specifiy page allocation
--z flag gets extra miscellaneous output
-
-Run each of the programs by putting this into the Run Configuration Arguments
-
--x test/testprog1
--x test/testprog2
--xc test/testprog3
--xc test/testprog4
--xc test/testprog5
--x test/testprog6
+where you can replace -fcfs with any scheduling policy
 
 
 README Section 3: Our Assumptions
-You run each of the programs doing
-One big assumption for this code is that the code that is executed by exec(), will run. Nachos doesn't crash if an
-invalid program name is provided, but if the code itself has a big issue, that was not tested.
 
-These are the assumptions of why you should use -x vs -xc or vice versa for each of the specific tests:
-
-testprog1 and testprog2 you do -x because no console is needed
-testprog3 testprog4 and testprog5 work fine with -x but it's better to do -xc because the console does not automatically
-close so you have enough time to actually read what's on the console.
-testprog6 -xc is not good because, while it still technically works, it definitely doesn't immediately get input for Read
-system call because the console takes in what you write for the first time and press enter as something that the console 
-itself has, AND then the next thing that you type is what actually gets read into the console. And then the program works
-as expected.This weirdness is because the console is running on a different thread. So it's better to do -x, because the 
-first thing that you type is read into it as expected and that is what is put into the buffer that is written to the console.
-
-We assume that the machine would be restarted between tests so that the arguments in run configurations can be changed to
-start a different test.
+Many times the program won't terminate, this is because we didn't have enough time to properly turn off all the timers.
+So we're assuming that if the program doesn't terminate to just click the stop button in eclipse to stop it, or just run the program again
+to do a different test.
