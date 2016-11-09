@@ -12,7 +12,7 @@ To see stallings results:
 Where -fcfs can be replaced with any of the other scheduling policies 
 -slt creates a testprogram that waits and randomly creates executions of
 test/hw3testprog4 which is the loop using for Stallings.
-
+The graph result is StallingsGraphImage.png in the top level folder
 
 
 README Section 1: Overview:
@@ -125,7 +125,7 @@ To see the programs infinitely run, and the statistics from these programs do th
 As you can see, no longer using -x or -xc, because this is a different test where it runs infinitely, with random ticks, which is
 calculated as specified by the assignment description.
 
-Look at the picture of the graph the name of the file is StallingsGraph
+Look at the picture of the graph the name of the file is StallingsGraphImage.png
 
 
 where you can replace -fcfs with any scheduling policy
