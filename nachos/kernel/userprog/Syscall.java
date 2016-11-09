@@ -86,6 +86,7 @@ public class Syscall {
      */
     public static int exit(int status) {
 	long turnAroundTime = 0;
+	int serviceTime = 0;
 	
 	Debug.println('+', "Exit system call with status=" + status
 				+ ": " + NachosThread.currentThread().name);
@@ -97,16 +98,20 @@ public class Syscall {
 	    //Set end time of the program
 	    ((UserThread)NachosThread.currentThread()).endTime = Nachos.totalTime;
 	    turnAroundTime = ((UserThread)NachosThread.currentThread()).endTime - ((UserThread)NachosThread.currentThread()).startTime;
-	    Debug.println('+', "Stuff " + 
-	    (turnAroundTime == ((UserThread)NachosThread.currentThread()).endTime ));
+	    serviceTime = ((UserThread)NachosThread.currentThread()).serviceTime;
+	   // Debug.println('+', "Stuff " + 
+	   // (turnAroundTime == ((UserThread)NachosThread.currentThread()).endTime ));
 	    
 	}
 	
 	Nachos.programSemV(((UserThread)NachosThread.currentThread()).space.getSpaceID());
 	
 	
+	
 	Nachos.scheduler.endProcess((UserThread)NachosThread.currentThread());
-	Debug.println('+', "Turnaround time: "+ turnAroundTime + "\n\n");
+	Debug.println('+', "Turnaround time: "+ turnAroundTime);
+	Debug.println('+', "Service time: "+ serviceTime);
+	Debug.println('+', "Normalized TAT: "+ (float)turnAroundTime / serviceTime + "\n\n");
 	Nachos.scheduler.finishThread();
 	//TODO: Exit didn't work because this is never reached I think
 	return status;
@@ -312,6 +317,8 @@ public class Syscall {
 	    //thus the actual shortest process should run, only reason we got
 	    //here is because default CPU ticks is -1 so we had to predictcpu
 	    //before determining if this is smallest
+	    ((UserThread)NachosThread.currentThread()).serviceTime = ticks;
+	    
 	    if(NachosThread.currentThread() instanceof UserThread){
 		if(Nachos.scheduler.getUPList() instanceof SJFQueue){
 		   if( ((SJFQueue)Nachos.scheduler.getUPList()).
