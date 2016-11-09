@@ -210,7 +210,7 @@ public class Options {
     //I just added this so that timer isn't started for HW # 2
     public boolean USE_CALLOUT_FACILITY = false;
 
-    public boolean STALLING_TEST;
+    public boolean STALLINGS_TEST;
     
     public Options(String[] args) {
 	argList = Arrays.asList(args);
@@ -410,12 +410,12 @@ public class Options {
 				FBS_SCHEDULING = true;
 			    }
 			 }),
-		new Spec("-stalling",  // feedback scheduling
+		new Spec("-stl",  // feedback scheduling
 			 new Class[] { },
 			 null,
 			 new Options.Action() {
 			    public void processOption(String flag, Object[] params) {
-				STALLING_TEST = true;
+				STALLINGS_TEST = true;
 			    }
 			 }),
 		

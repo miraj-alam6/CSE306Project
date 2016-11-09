@@ -27,7 +27,7 @@ import nachos.kernel.filesys.OpenFile;
  * @author Peter Druschel (Rice University), Java translation
  * @author Eugene W. Stark (Stony Brook University)
  */
-public class ProgTest implements Runnable {
+public class StallingsTest implements Runnable {
 
     /** The name of the program to execute. */
     private String execName;
@@ -39,7 +39,7 @@ public class ProgTest implements Runnable {
      *
      * @param filename The name of the program to execute.
      */
-    public ProgTest(String filename, int num) {
+    public StallingsTest(String filename, int num) {
 	String name = "ProgTest"+ num + "(" + filename + ")";
 	
 	//Debug.println('+', "starting ProgTest: " + name);
@@ -47,10 +47,6 @@ public class ProgTest implements Runnable {
 	execName = filename;
 	AddrSpace space = new AddrSpace(num);
 	UserThread t = new UserThread(name, this, space);
-	
-	//Set start time right here
-	t.startTime = Nachos.totalTime;
-	//Debug.println('+', "This should be called");
 	Nachos.incrementProgramID(); // #MIRAJ added this Next process that calls
 	//the constructor of ProgTest should pass in the ID with the value that
 	//is gotten due to this incrementProgramID() function
@@ -106,18 +102,10 @@ public class ProgTest implements Runnable {
     public static void start() {
 	Debug.ASSERT(Nachos.options.FILESYS_REAL || Nachos.options.FILESYS_STUB,
 			"A filesystem is required to execute user programs");
-	final int[] count = new int[1];
-	Nachos.options.processOptions
-		(new Options.Spec[] {
-			new Options.Spec
-				("-x",
-				 new Class[] {String.class},
-				 "Usage: -x <executable file>",
-				 new Options.Action() {
-				    public void processOption(String flag, Object[] params) {
-					new ProgTest((String)params[0], count[0]++);
-				    }
-				 })
-		 });
+	int count = 0;
+	Nachos.stallingsHelper.masterHelper(); //call this once here, rest of the times it'll be called
+	//by the general timer. This will randomize the ticks
+	new StallingsTest("test/hw3testprog4", count++);
+	
     }
 }

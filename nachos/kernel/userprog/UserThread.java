@@ -48,6 +48,10 @@ public class UserThread extends NachosThread {
     private int ticksWaiting;
     private int quantumProgress = 0;
     
+    //TODO: Make these private later and do accessors and setters.
+    public long startTime;
+    public long endTime;
+    
     public int getQuantumP()
     {
 	return quantumProgress;

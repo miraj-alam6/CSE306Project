@@ -85,17 +85,29 @@ public class Syscall {
      * status = 0 means the program exited normally.
      */
     public static int exit(int status) {
+	long turnAroundTime = 0;
+	
 	Debug.println('+', "Exit system call with status=" + status
 				+ ": " + NachosThread.currentThread().name);
 	if(NachosThread.currentThread() instanceof UserThread){
 	    Debug.println('w', "About to deallocate memory of the process with ID "+ 
 		    ((UserThread)NachosThread.currentThread()).space.getSpaceID());
 	    ((UserThread)NachosThread.currentThread()).space.freeAddrSpace();
+	    //Set end time of the program
+	    ((UserThread)NachosThread.currentThread()).endTime = Nachos.totalTime;
+	    turnAroundTime = ((UserThread)NachosThread.currentThread()).endTime - ((UserThread)NachosThread.currentThread()).startTime;
+	    Debug.println('+', "Stuff " + 
+	    (turnAroundTime == ((UserThread)NachosThread.currentThread()).endTime ));
+	    
 	}
 	
 	Nachos.programSemV(((UserThread)NachosThread.currentThread()).space.getSpaceID());
+	
+	
 	Nachos.scheduler.endProcess((UserThread)NachosThread.currentThread());
+	Debug.println('+', "Turnaround time: "+ turnAroundTime + "\n\n");
 	Nachos.scheduler.finishThread();
+	//TODO: Exit didn't work because this is never reached I think
 	return status;
     }
 
