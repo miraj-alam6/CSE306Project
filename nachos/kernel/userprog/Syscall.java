@@ -311,13 +311,15 @@ public class Syscall {
     public static void predictCPU(int ticks){
 	Debug.println('+', "PredictCPU syscall with ticks " + ticks);
 	((UserThread)NachosThread.currentThread()).setTicksLeft(ticks);
+	((UserThread)NachosThread.currentThread()).serviceTime = ticks;
+	
 	if(Nachos.options.SRT_SCHEDULING){
 	    //Don't always yield here. Only yield if your ticks is less
 	    //than another process.AKA, this is not the shortest process
 	    //thus the actual shortest process should run, only reason we got
 	    //here is because default CPU ticks is -1 so we had to predictcpu
 	    //before determining if this is smallest
-	    ((UserThread)NachosThread.currentThread()).serviceTime = ticks;
+	    
 	    
 	    if(NachosThread.currentThread() instanceof UserThread){
 		if(Nachos.scheduler.getUPList() instanceof SJFQueue){
