@@ -109,9 +109,11 @@ public class Syscall {
 	
 	
 	Nachos.scheduler.endProcess((UserThread)NachosThread.currentThread());
-	Debug.println('+', "Turnaround time: "+ turnAroundTime);
-	Debug.println('+', "Service time: "+ serviceTime);
-	Debug.println('+', "Normalized TAT: "+ (float)turnAroundTime / serviceTime + "\n\n");
+	if(Nachos.options.STALLINGS_TEST){
+        	Debug.println('+', "Turnaround time: "+ turnAroundTime);
+        	Debug.println('+', "Service time: "+ serviceTime);
+        	Debug.println('+', "Normalized TAT: "+ (float)turnAroundTime / serviceTime + "\n\n");
+	}
 	Nachos.scheduler.finishThread();
 	//TODO: Exit didn't work because this is never reached I think
 	return status;

@@ -38,6 +38,9 @@ Part 2: Test program was created and new processes were created periodically
 to run this program with randomness for the amount of iterations of the loop
 in the test program were done. 
 
+ALL THE FILES CREATED ARE IN nachos.kernel.userprog, they are:
+FCFSQueue,SJFQueue ,HRRNQueue,FBSQueue, UPList, StallingsHelper
+Changes were also made to UserThread, Scheduler, Nachos, Options, and probably others.
 
 README Section 2: How to compile and test:
 
@@ -133,3 +136,14 @@ README Section 3: Our Assumptions
 Many times the program won't terminate, this is because we didn't have enough time to properly turn off all the timers.
 So we're assuming that if the program doesn't terminate to just click the stop button in eclipse to stop it, or just run the program again
 to do a different test.
+Another thing we are assuming is that for all the tests in part 2 that you will
+be using the Nachos console  that shows up to quickly see all the things that are 
+printed, you can also look at the the messages in the eclipse console, but the
+eclipse console is a bit more dense and simply tells you when a syscall is called
+rather than what it actually printed on the console.
+
+ANOTHER assumption about the console: We are assuming that you wait a while
+when testing the programs for output to show up on the screen. On many of these
+programs, long loops are executed, and then a message is show at the end of the
+loop, because it would be too messy to keep printing every iteration of the
+loop.
