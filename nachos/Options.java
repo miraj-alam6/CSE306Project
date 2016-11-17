@@ -123,7 +123,8 @@ public class Options {
     public int NUM_PORTS = 1;
     
     /** The types of disk devices on the system. */
-    public Class<?>[] DISK_TYPES = new Class<?>[] { /* Disk.class */ };
+    public Class<?>[] DISK_TYPES = new Class<?>[] {  Disk.class  };
+    //Uncommented Disk.class, so that we have a disk type
 
     /** The number of disks on the system. */
     public int NUM_DISKS = DISK_TYPES.length;
@@ -162,10 +163,10 @@ public class Options {
     public boolean RANDOM_YIELD = false;
     
     /** Should we use the stub filesystem, rather than the Nachos filesystem? **/
-    public boolean FILESYS_STUB = true;
+    public boolean FILESYS_STUB = false;
    
     /** Should we use the "real" Nachos filesystem (requires disk)? */
-    public boolean FILESYS_REAL = false;
+    public boolean FILESYS_REAL = true;
     
     /** Should we format the Nachos disk before using it? */
     public boolean FORMAT_DISK = false;
@@ -199,7 +200,7 @@ public class Options {
     public boolean CONSOLE_TEST = false;
     
     /** Should we run the filesystem test? */
-    public boolean FILESYS_TEST = false;
+    public boolean FILESYS_TEST = true;
     
     /** Should we run the serial port test? */
     public boolean SERIAL_TEST = false;
