@@ -252,7 +252,7 @@ public class FileSystemTest implements Runnable {
 		new Options.Spec
 			("-r",  // remove a Nachos file
 			 new Class[] {String.class},
-			 "Usage: -p <filename>",
+			 "Usage: -r <filename>",
 			 new Options.Action() {
 			    public void processOption(String flag, Object[] params) {
 				Nachos.fileSystem.remove((String)params[0]);
@@ -293,6 +293,7 @@ public class FileSystemTest implements Runnable {
      * Entry point for the FileSystem test.
      */
     public static void start() {
+	Debug.println('+', "Doing filesystem test");
 	NachosThread thread = new NachosThread("Filesystem test", new FileSystemTest());
 	Nachos.scheduler.readyToRun(thread);
     }
