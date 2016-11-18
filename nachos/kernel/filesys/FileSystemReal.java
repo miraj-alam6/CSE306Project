@@ -205,6 +205,7 @@ class FileSystemReal extends FileSystem {
    * @param index Offset in the buffer at which to place the data.
    */
   void readSector(int sectorNumber, byte[] data, int index) {
+      diskDriver.addWorkEntry(sectorNumber, index, true, data);
       diskDriver.readSector(sectorNumber, data, index);
   }
   

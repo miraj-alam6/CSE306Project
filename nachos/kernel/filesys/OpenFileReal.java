@@ -11,6 +11,8 @@
 package nachos.kernel.filesys;
 
 import nachos.Debug;
+import nachos.kernel.Nachos;
+import nachos.kernel.devices.DiskDriver;
 
 /**
  * This is a class for managing an open Nachos file.  As in UNIX, a
@@ -151,9 +153,11 @@ class OpenFileReal implements OpenFile {
 
 	// read in all the full and partial sectors that we need
 	buf = new byte[numSectors * diskSectorSize];
-	for (i = firstSector; i <= lastSector; i++)	
+	for (i = firstSector; i <= lastSector; i++){
+	    
 	    filesystem.readSector(hdr.byteToSector(i * diskSectorSize), 
 		    buf, (i - firstSector) * diskSectorSize);
+	}
 
 	// copy the part we want
 	System.arraycopy(buf, (int)position - (firstSector * diskSectorSize),

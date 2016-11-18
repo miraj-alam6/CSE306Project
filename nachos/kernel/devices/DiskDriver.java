@@ -20,6 +20,7 @@ package nachos.kernel.devices;
 
 import nachos.Debug;
 import nachos.machine.Machine;
+import nachos.util.FIFOQueue;
 import nachos.machine.Disk;
 import nachos.machine.InterruptHandler;
 import nachos.kernel.threads.Semaphore;
@@ -42,7 +43,9 @@ import nachos.kernel.threads.Lock;
  * @author Eugene W. Stark (Stony Brook University)
  */
 public class DiskDriver {
-
+    //Work queue, has all the things to do
+    private FIFOQueue<WorkEntry> workQueue = new FIFOQueue<WorkEntry>();
+    
     /** Raw disk device. */
     private Disk disk;
 
@@ -77,12 +80,20 @@ public class DiskDriver {
     /**
      * Get the sector size of the disk, in bytes.
      * 
+     * 
      * @return the sector size of the disk, in bytes.
      */
     public int getSectorSize() {
 	return disk.geometry.SectorSize;
     }
 
+    //
+    public void readSector(){
+
+    }
+    
+   
+    
     /**
      * Read the contents of a disk sector into a buffer.  Return only
      *	after the data has been read.
@@ -92,10 +103,17 @@ public class DiskDriver {
      * @param index Offset in the buffer at which to place the data.
      */
     public void readSector(int sectorNumber, byte[] data, int index) {
+	
 	Debug.ASSERT(0 <= sectorNumber && sectorNumber < getNumSectors());
 	lock.acquire();			// only one disk I/O at a time
-	disk.readRequest(sectorNumber, data, index);
-	semaphore.P();			// wait for interrupt
+	disk.readRequest(sectorNumber, data, index); //The request completes
+	Debug.println('z', "In readsector in diskdriver");
+	//TODO: this is where we have to do semaphore P of the process, not
+	//this single semaphore
+	//Probably do this by setting the semaphore because we still need
+	//one reference to it for the interrupt
+	//do the same in writeSector
+	semaphore.P(); // wait for interrupt to signal the readSector is over
 	lock.release();
     }
 
@@ -115,6 +133,21 @@ public class DiskDriver {
 	lock.release();
     }
 
+    //Added these two for HW # 4
+    public void addWorkEntry(int secNum, int index, boolean willRead, byte[] buf){
+	WorkEntry wE = new WorkEntry();
+	wE.setNumSectors(secNum);
+	wE.setIndex(index);
+	wE.setWillRead(willRead);
+	wE.setKernelBuffer(buf);
+	Semaphore s = new Semaphore("Work Entry sem",0);
+	wE.setWorkSem(s);
+	workQueue.add(wE);
+    }
+    
+    public WorkEntry removeWorkEntry(){
+	return workQueue.getFirst();
+    }
     /**
      * DiskDriver interrupt handler class.
      */
@@ -124,8 +157,13 @@ public class DiskDriver {
 	 * the request that just finished.
 	 */
 	public void handleInterrupt() {
+	   Debug.println('z', "Read has finished in DiskDriver interrupt"); 
 	    semaphore.V();
+	    //Will have to get the next thing from the queue
 	}
     }
 
+    
+    
 }
+
