@@ -156,7 +156,7 @@ public class Scheduler {
 	    return new FBSQueue();
 	}
 	else{
-	    Nachos.options.CPU_TIMERS = false;
+	    //Nachos.options.CPU_TIMERS = false;
 	    return new FCFSQueue();
 	    //turn off preemptive scheduling if it was turned on
 	    
@@ -553,7 +553,13 @@ public class Scheduler {
 	    // so that once the interrupt handler is done, it will appear as 
 	    // if the interrupted thread called yield at the point it is 
 	    // was interrupted.
-	   //yieldOnReturn();
+	   if(Nachos.options.MULTI_FILESYS_TEST){
+	       if(Nachos.scheduler.readyList.isEmpty()){
+		   this.timer.stop();
+	       }
+	       Debug.println('z', "\n\npreemptive scheduling");
+	       yieldOnReturn();
+	   }
 	   //this function will add waiting time to each of the user threads
 	    //that are waiting in the UPList
 	   //addWaitingTime();

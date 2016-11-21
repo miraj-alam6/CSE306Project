@@ -18,12 +18,15 @@
 
 package nachos.kernel.devices;
 
+import java.util.ArrayList;
+
 import nachos.Debug;
 import nachos.machine.Machine;
 import nachos.util.FIFOQueue;
 import nachos.machine.Disk;
 import nachos.machine.InterruptHandler;
 import nachos.kernel.threads.Semaphore;
+import nachos.kernel.Nachos;
 import nachos.kernel.threads.Lock;
 
 
@@ -44,7 +47,9 @@ import nachos.kernel.threads.Lock;
  */
 public class DiskDriver {
     //Work queue, has all the things to do
-    private FIFOQueue<WorkEntry> workQueue = new FIFOQueue<WorkEntry>();
+    //Not actually a Queue, but calling it a workQueue, it's actually
+    //an ArrayList
+    private ArrayList<WorkEntry> workQueue = new ArrayList<WorkEntry>();
     
     /** Raw disk device. */
     private Disk disk;
@@ -105,16 +110,21 @@ public class DiskDriver {
     public void readSector(int sectorNumber, byte[] data, int index) {
 	
 	Debug.ASSERT(0 <= sectorNumber && sectorNumber < getNumSectors());
+	
+	Semaphore s;
 	lock.acquire();			// only one disk I/O at a time
+	//add the work entry
+	addWorkEntry(sectorNumber, index, true, data);
+	s = workQueue.get(workQueue.size()-1).getWorkSem();
+	
 	disk.readRequest(sectorNumber, data, index); //The request completes
+	s.P();
 	Debug.println('z', "In readsector in diskdriver");
-	//TODO: this is where we have to do semaphore P of the process, not
-	//this single semaphore
-	//Probably do this by setting the semaphore because we still need
-	//one reference to it for the interrupt
-	//do the same in writeSector
-	semaphore.P(); // wait for interrupt to signal the readSector is over
+	
+	//should not do the semaphore P while in the lock
+	 // wait for interrupt to signal the readSector is over
 	lock.release();
+	;
     }
 
     /**
@@ -127,10 +137,15 @@ public class DiskDriver {
      */
     public void writeSector(int sectorNumber, byte[] data, int index) {
 	Debug.ASSERT(0 <= sectorNumber && sectorNumber < getNumSectors());
+	Semaphore s;
 	lock.acquire();			// only one disk I/O at a time
+	addWorkEntry(sectorNumber, index, false, data);
+	s = workQueue.get(workQueue.size()-1).getWorkSem();
+	
 	disk.writeRequest(sectorNumber, data, index);
-	semaphore.P();			// wait for interrupt
+	s.P();
 	lock.release();
+				// wait for interrupt
     }
 
     //Added these two for HW # 4
@@ -146,7 +161,7 @@ public class DiskDriver {
     }
     
     public WorkEntry removeWorkEntry(){
-	return workQueue.getFirst();
+	return workQueue.remove(0);
     }
     /**
      * DiskDriver interrupt handler class.
@@ -157,8 +172,10 @@ public class DiskDriver {
 	 * the request that just finished.
 	 */
 	public void handleInterrupt() {
-	   Debug.println('z', "Read has finished in DiskDriver interrupt"); 
-	    semaphore.V();
+	   Debug.println('z', "Work Queue is " + workQueue);
+	   WorkEntry entry = Nachos.diskDriver.removeWorkEntry();
+	   semaphore = entry.getWorkSem();
+	   semaphore.V();
 	    //Will have to get the next thing from the queue
 	}
     }
