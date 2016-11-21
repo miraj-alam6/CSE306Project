@@ -51,6 +51,7 @@ import nachos.kernel.userprog.test.ProgTest;
 import nachos.kernel.userprog.test.StallingsTest;
 import nachos.kernel.userprog.test.ConsoleProgTest;
 import nachos.kernel.filesys.test.FileSystemTest;
+import nachos.kernel.filesys.test.MultiFileSystemTest;
 
 import java.util.*;
 /**
@@ -155,6 +156,8 @@ public class Nachos implements Runnable {
 	    ProgTest.start();
 	if(options.FILESYS_TEST)
 	    FileSystemTest.start();
+	if(options.MULTI_FILESYS_TEST)
+	    MultiFileSystemTest.start();
 	if(options.SERIAL_TEST)
 	    SerialTest.start();
 	if(options.NETWORK_TEST)

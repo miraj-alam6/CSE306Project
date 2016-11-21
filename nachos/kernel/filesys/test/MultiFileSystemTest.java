@@ -38,6 +38,14 @@ public class MultiFileSystemTest implements Runnable {
     /** Transfer data in small chunks, just to be difficult. */
     private static final int TransferSize = 10;
 
+    private static int jobCount = 0;
+    //This will be set to the current value of jobCount
+    public int fileNumber;
+    
+    public MultiFileSystemTest(int i) {
+	fileNumber = i;
+    }
+
     /**
      * Copy the contents of the host file "from" to the Nachos file "to"
      *
@@ -94,7 +102,7 @@ public class MultiFileSystemTest implements Runnable {
      *
      * @param name The name of the file to print.
      */
-    private void print(String name) {
+    private static void print(String name) {
 	OpenFile openFile;    
 	int i, amountRead;
 	byte buffer[];
@@ -149,6 +157,7 @@ public class MultiFileSystemTest implements Runnable {
     /** Total size of the test file. */
     private static final int FileSize = ContentSize * 300;
 
+    private static boolean DOING_CP_TEST = false;
     /**
      * Write the test file for the performance test.
      */
@@ -232,6 +241,28 @@ public class MultiFileSystemTest implements Runnable {
 	Nachos.options.processOptions
 	(new Options.Spec[] {
 		new Options.Spec
+		("-cptest",  // copy a fixed file from UNIX to Nachos
+			new Class[] { },
+			 null,
+		 new Options.Action() {
+		    public void processOption(String flag, Object[] params) {
+			
+			Debug.println('+', "file_" + fileNumber);
+			copy("test/halt.c", "file_" + fileNumber);
+			
+		    }
+		 }),
+		
+		new Options.Spec
+			("-t",  // performance test
+			 new Class[] { },
+			 null,
+			 new Options.Action() {
+			    public void processOption(String flag, Object[] params) {
+				performanceTest();
+			    }
+			 }),
+		new Options.Spec
 			("-cp",  // copy from UNIX to Nachos
 			 new Class[] {String.class, String.class},
 			 "Usage: -cp <filename1> <filename2>",
@@ -240,24 +271,30 @@ public class MultiFileSystemTest implements Runnable {
 				copy((String)params[0], (String)params[1]);
 			    }
 			 }),
+		
+	 });
+	Nachos.scheduler.finishThread();
+    }
+
+    public static void MakeAnotherThread(){
+	
+    }
+    /**
+     * Entry point for the FileSystem test.
+     */
+    public static void start() {
+	Debug.println('+', "Doing filesystem test");
+	Nachos.options.processOptions
+	(new Options.Spec[] {
 		new Options.Spec
-			("-p",  // print a Nachos file
-			 new Class[] {String.class},
-			 "Usage: -p <filename>",
-			 new Options.Action() {
-			    public void processOption(String flag, Object[] params) {
-				print((String)params[0]);
-			    }
-			 }),
-		new Options.Spec
-			("-r",  // remove a Nachos file
-			 new Class[] {String.class},
-			 "Usage: -r <filename>",
-			 new Options.Action() {
-			    public void processOption(String flag, Object[] params) {
-				Nachos.fileSystem.remove((String)params[0]);
-			    }
-			 }),
+		("-p",  // print a Nachos file
+		 new Class[] {String.class},
+		 "Usage: -p <filename>",
+		 new Options.Action() {
+		    public void processOption(String flag, Object[] params) {
+			print((String)params[0]);
+		    }
+		 }),
 		new Options.Spec
 			("-l",  // list Nachos directory
 			 new Class[] { },
@@ -267,6 +304,16 @@ public class MultiFileSystemTest implements Runnable {
 				Nachos.fileSystem.list();
 			    }
 			 }),
+			new Options.Spec
+			("-r",  // remove a Nachos file
+			 new Class[] {String.class},
+			 "Usage: -r <filename>",
+			 new Options.Action() {
+			    public void processOption(String flag, Object[] params) {
+				Nachos.fileSystem.remove((String)params[0]);
+			    }
+			 }),
+			
 		new Options.Spec
 			("-D",  // print entire filesystem
 			 new Class[] { },
@@ -277,24 +324,30 @@ public class MultiFileSystemTest implements Runnable {
 			    }
 			 }),
 		new Options.Spec
-			("-t",  // performance test
-			 new Class[] { },
-			 null,
-			 new Options.Action() {
-			    public void processOption(String flag, Object[] params) {
-				performanceTest();
+		("-cptest",  // copy a fixed file from UNIX to Nachos
+			new Class[] { },
+			null,
+			new Options.Action() {
+		    	public void processOption(String flag, Object[] params) {
+				DOING_CP_TEST = true;
 			    }
-			 })
+			 })			
+			
 	 });
-	Nachos.scheduler.finishThread();
-    }
-
-    /**
-     * Entry point for the FileSystem test.
-     */
-    public static void start() {
-	Debug.println('+', "Doing filesystem test");
-	NachosThread thread = new NachosThread("Filesystem test", new MultiFileSystemTest());
-	Nachos.scheduler.readyToRun(thread);
+	
+	
+	if(DOING_CP_TEST){
+	    NachosThread thread1 = new NachosThread("MultiFilesystemTest1", new MultiFileSystemTest(jobCount++));
+	    Nachos.scheduler.readyToRun(thread1);
+	    NachosThread thread2 = new NachosThread("MultiFilesystemTest2", new MultiFileSystemTest(jobCount++));
+	    Nachos.scheduler.readyToRun(thread2);
+	}
+	else{
+	    NachosThread thread1 = new NachosThread("MultiFilesystemTest1", new MultiFileSystemTest(jobCount++));
+	    Nachos.scheduler.readyToRun(thread1);
+	    
+	}
+	
+	//
     }
 }

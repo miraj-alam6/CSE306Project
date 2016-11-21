@@ -138,6 +138,7 @@ class FileSystemReal extends FileSystem {
     FreeMapFileSize = (numDiskSectors / BitMap.BitsInByte);
     DirectoryFileSize = (DirectoryEntry.sizeOf() * NumDirEntries);
     
+    //This happens if FORMAT_DISK is true, AKA -f was provided
     if (format) {
       BitMap freeMap = new BitMap(numDiskSectors);
       Directory directory = new Directory(NumDirEntries, this);
@@ -217,6 +218,7 @@ class FileSystemReal extends FileSystem {
    * @param index Offset in the buffer from which to get the data.
    */
   void writeSector(int sectorNumber, byte[] data, int index) {
+      diskDriver.addWorkEntry(sectorNumber, index, false, data);
       diskDriver.writeSector(sectorNumber, data, index);
   }
 
