@@ -59,6 +59,8 @@ public class DiskDriver {
 
     /** Only one read/write request can be sent to the disk at a time. */
     private Lock lock;
+    
+    private boolean driverBusy = false;
 
     /**
      * Initialize the synchronous interface to the physical disk, in turn
@@ -111,20 +113,28 @@ public class DiskDriver {
 	
 	Debug.ASSERT(0 <= sectorNumber && sectorNumber < getNumSectors());
 	
-	Semaphore s;
 	lock.acquire();			// only one disk I/O at a time
 	//add the work entry
 	addWorkEntry(sectorNumber, index, true, data);
-	s = workQueue.get(workQueue.size()-1).getWorkSem();
 	
-	disk.readRequest(sectorNumber, data, index); //The request completes
-	s.P();
-	Debug.println('z', "In readsector in diskdriver");
+	Debug.println('+', "This is" +driverBusy);
+	if(driverBusy == false){
+	    
+	    driverBusy = true;
+	    semaphore = workQueue.get(0).getWorkSem();
+	    
+	    disk.readRequest(sectorNumber, data, index);
+	    //lock.release();
+	    semaphore.P();
+	    lock.release();
+	}
+	else{
+	    lock.release();
+	}
+	 //The request completes
+	Debug.println('z', "Readsector completetd");
+
 	
-	//should not do the semaphore P while in the lock
-	 // wait for interrupt to signal the readSector is over
-	lock.release();
-	;
     }
 
     /**
@@ -137,15 +147,22 @@ public class DiskDriver {
      */
     public void writeSector(int sectorNumber, byte[] data, int index) {
 	Debug.ASSERT(0 <= sectorNumber && sectorNumber < getNumSectors());
-	Semaphore s;
 	lock.acquire();			// only one disk I/O at a time
 	addWorkEntry(sectorNumber, index, false, data);
-	s = workQueue.get(workQueue.size()-1).getWorkSem();
 	
-	disk.writeRequest(sectorNumber, data, index);
-	s.P();
-	lock.release();
-				// wait for interrupt
+	
+	if(driverBusy == false){
+	    
+	    driverBusy = true;
+	    semaphore = workQueue.get(0).getWorkSem();
+	    disk.writeRequest(sectorNumber, data, index);
+	    //lock.release();
+	    semaphore.P();
+	    lock.release();
+	}
+	else{
+	    lock.release();
+	}
     }
 
     //Added these two for HW # 4
@@ -172,10 +189,32 @@ public class DiskDriver {
 	 * the request that just finished.
 	 */
 	public void handleInterrupt() {
-	   Debug.println('z', "Work Queue is " + workQueue);
-	   WorkEntry entry = Nachos.diskDriver.removeWorkEntry();
-	   semaphore = entry.getWorkSem();
+	   Debug.println('+', "Work Queue front entry secontor number is " + workQueue.get(0).getSectorNum());
+	   
+	   //
+	   
 	   semaphore.V();
+	   if(workQueue.size() > 0){
+	       workQueue.remove(0);
+	   }
+	   if(workQueue.size() > 0){
+	       //driverBusy = true;
+	       WorkEntry entry = Nachos.diskDriver.workQueue.get(0);
+	       semaphore = entry.getWorkSem();
+	       if(entry.getWillRead()){
+		   disk.readRequest(entry.getSectorNum(), entry.getKernelBuffer(), 
+			   entry.getIndex());
+	       }
+	       else{
+		   disk.writeRequest(entry.getSectorNum(), entry.getKernelBuffer(), 
+			   entry.getIndex());
+	       }
+	       semaphore.P();
+	   }
+	   else{
+	       driverBusy = false;
+	   }
+	  
 	    //Will have to get the next thing from the queue
 	}
     }

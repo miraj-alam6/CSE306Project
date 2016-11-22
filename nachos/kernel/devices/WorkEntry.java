@@ -3,17 +3,17 @@ package nachos.kernel.devices;
 import nachos.kernel.threads.Semaphore;
 
 public class WorkEntry {
-	private int numSectors; //number of sectors to read
+	private int sectorNum; //number of sectors to read
 	private int index; // the index to read/write from
 	private boolean willRead; //if true it reads, if false it will write
 	private byte[] kernelBuffer;
 	private Semaphore workSem;
-	public int getNumSectors() {
-	    return numSectors;
+	public int getSectorNum() {
+	    return sectorNum;
 	}
 
-	public void setNumSectors(int numSectors) {
-	    this.numSectors = numSectors;
+	public void setNumSectors(int sectorNum) {
+	    this.sectorNum = sectorNum;
 	}
 
 	public boolean getWillRead() {
