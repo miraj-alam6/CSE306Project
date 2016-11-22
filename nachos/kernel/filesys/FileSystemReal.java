@@ -10,8 +10,11 @@
 
 package nachos.kernel.filesys;
 
+import java.util.ArrayList;
+
 import nachos.Debug;
 import nachos.kernel.devices.DiskDriver;
+import nachos.kernel.threads.Lock;
 
 /**
  * This class manages the overall operation of the file system.
@@ -118,6 +121,12 @@ class FileSystemReal extends FileSystem {
   /** "Root" directory -- list of file names, represented as a file. */
   private final OpenFile directoryFile;
 
+  
+  private ArrayList<FileHeader> FileHeaderTable = new ArrayList<FileHeader>();
+  private ArrayList<Directory> directoryTable = new ArrayList<Directory>();
+  private ArrayList<BitMap> bitmapTable = new ArrayList<BitMap>();
+  private Lock lock;
+  
   /**
    * Initialize the file system.  If format = true, the disk has
    * nothing on it, and we need to initialize the disk to contain
@@ -137,6 +146,9 @@ class FileSystemReal extends FileSystem {
     diskSectorSize = diskDriver.getSectorSize();
     FreeMapFileSize = (numDiskSectors / BitMap.BitsInByte);
     DirectoryFileSize = (DirectoryEntry.sizeOf() * NumDirEntries);
+    
+    //LOCK does not work fully properly
+    lock = new Lock("header locks");
     
     //This happens if FORMAT_DISK is true, AKA -f was provided
     if (format) {
@@ -206,6 +218,7 @@ class FileSystemReal extends FileSystem {
    * @param index Offset in the buffer at which to place the data.
    */
   void readSector(int sectorNumber, byte[] data, int index) {
+
       diskDriver.readSector(sectorNumber, data, index);
   }
   
@@ -257,12 +270,19 @@ class FileSystemReal extends FileSystem {
 
     Debug.printf('f', "Creating file %s, size %d\n", name, 
 		 new Long(initialSize));
-
     directory = new Directory(NumDirEntries, this);
-    directory.fetchFrom(directoryFile);
 
+    //LOCK does not work fully properly
+    lock.acquire();
+    
+    directory.fetchFrom(directoryFile);
+    
     if (directory.find(name) != -1)
-      success = false;			// file is already in directory
+    {
+      success = false;	// file is already in directory
+      //LOCK does not work fully properly
+      lock.release();
+    }
     else {	
       freeMap = new BitMap(numDiskSectors);
       freeMap.fetchFrom(freeMapFile);
@@ -274,7 +294,9 @@ class FileSystemReal extends FileSystem {
       else {
 	hdr = new FileHeader(this);
 	if (!hdr.allocate(freeMap, (int)initialSize))
+	{
 	  success = false;	// no space on disk for data
+	}
 	else {	
 	  success = true;
 	  // everthing worked, flush all changes back to disk
@@ -283,6 +305,8 @@ class FileSystemReal extends FileSystem {
 	  freeMap.writeBack(freeMapFile);
 	}
       }
+      //LOCK does not work fully properly
+      lock.release();
     }
     return success;
   }
@@ -300,11 +324,16 @@ class FileSystemReal extends FileSystem {
     OpenFile openFile = null;
     int sector;
 
+    
     Debug.printf('f', "Opening file %s\n", name);
+    //LOCK does not work fully properly
+    lock.acquire();
     directory.fetchFrom(directoryFile);
     sector = directory.find(name); 
     if (sector >= 0) 		
       openFile = new OpenFileReal(sector, this);// name was found in directory 
+    //LOCK does not work fully properly
+    lock.release();
     return openFile;			        // return null if not found
   }
 
@@ -326,6 +355,9 @@ class FileSystemReal extends FileSystem {
     FileHeader fileHdr;
     int sector;
     
+    //LOCK does not work fully properly
+    lock.acquire();
+    
     directory = new Directory(NumDirEntries, this);
     directory.fetchFrom(directoryFile);
     sector = directory.find(name);
@@ -343,7 +375,9 @@ class FileSystemReal extends FileSystem {
     directory.remove(name);
 
     freeMap.writeBack(freeMapFile);		// flush to disk
-    directory.writeBack(directoryFile);        // flush to disk
+    directory.writeBack(directoryFile); // flush to disk
+    //LOCK does not work fully properly
+    lock.release();
     return true;
   } 
 
@@ -353,8 +387,12 @@ class FileSystemReal extends FileSystem {
   public void list() {
     Directory directory = new Directory(NumDirEntries, this);
 
+    //LOCK does not work fully properly
+    lock.acquire();
     directory.fetchFrom(directoryFile);
     directory.list();
+    //LOCK does not work fully properly
+    lock.release();
   }
 
   /**
