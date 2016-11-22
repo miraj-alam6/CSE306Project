@@ -106,7 +106,7 @@ public class DiskDriver {
 	
 	
 	//New work entry
-	WorkEntry entry = addWorkEntry(sectorNumber,index,data);
+	WorkEntry entry = addWorkEntry(sectorNumber,index,data, true);
 	
 	//check if disk is active basically
 	if(isBusy == false)
@@ -136,7 +136,7 @@ public class DiskDriver {
     public void writeSector(int sectorNumber, byte[] data, int index) {
 	Debug.ASSERT(0 <= sectorNumber && sectorNumber < getNumSectors());
 	
-	WorkEntry entry = addWorkEntry(sectorNumber,index,data);
+	WorkEntry entry = addWorkEntry(sectorNumber,index,data, false);
 	//Debug.println('z', "asdfxcvnxcvnxvcfa" + sectorNumber);
 	if(isBusy == false)
 	{
@@ -155,11 +155,11 @@ public class DiskDriver {
     }
 
     
-    public WorkEntry addWorkEntry(int secNum, int index,byte[] buf){
+    public WorkEntry addWorkEntry(int secNum, int index,byte[] buf, boolean willRead){
 	WorkEntry wE = new WorkEntry();
 	wE.setNumSectors(secNum);
 	wE.setIndex(index);
-	//wE.setWillRead(willRead);
+	wE.setWillRead(willRead);
 	wE.setKernelBuffer(buf);
 	Semaphore s = new Semaphore("Work Entry sem",0);
 	wE.setWorkSem(s);
@@ -183,8 +183,10 @@ public class DiskDriver {
 	    int currentTrack = (curr.getSectorNum()%disk.geometry.NumTracks)/disk.geometry.NumTracks;
 	    currentTrack += 1;
 	    int currentCylinder = currentTrack;	
+	    
 	    semaphore.V();
-	    isBusy = false;
+	    
+	    
 
 	    if(workQueue.isEmpty() == false)
 	    {
@@ -210,10 +212,26 @@ public class DiskDriver {
 		WorkEntry next = workQueue.get(0);
 		semaphore = next.getWorkSem();
 		
+		if(semaphore!= null){
+        		if(next.getWillRead()){
+        		    disk.readRequest(next.getSectorNum(), 
+        			    next.getKernelBuffer(), 
+        			    next.getIndex());
+        		}
+        		else{
+        		    disk.writeRequest(next.getSectorNum(), 
+        			    next.getKernelBuffer(), 
+        			    next.getIndex());
+        		}
+        		
 		//Not sure if need this right now
 		//semaphore.V();
+		}
 	    }
-	    
+	    else{
+		
+		isBusy = false;
+	    }  
 	}
     }
 
