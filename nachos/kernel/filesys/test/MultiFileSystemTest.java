@@ -250,10 +250,10 @@ public class MultiFileSystemTest implements Runnable {
 			
 			Debug.println('+', "file_" + fileNumber);
 			if(fileNumber == 0){
-			    copy("test/halt", "file_" + fileNumber);    
+			    copy("test/halt.c", "file_" + fileNumber);    
 			}
 			else{
-			    copy("test/halt.c", "file_" + fileNumber);
+			    copy("test/halt", "file_" + fileNumber);
 			}
 			
 			
@@ -348,6 +348,18 @@ public class MultiFileSystemTest implements Runnable {
 	    Nachos.scheduler.readyToRun(thread1);
 	    NachosThread thread2 = new NachosThread("MultiFilesystemTest2", new MultiFileSystemTest(jobCount++));
 	    Nachos.scheduler.readyToRun(thread2);
+	    NachosThread thread3 = new NachosThread("MultiFilesystemTest3", new MultiFileSystemTest(jobCount++));
+	    Nachos.scheduler.readyToRun(thread3);
+	    NachosThread thread4 = new NachosThread("MultiFilesystemTest4", new MultiFileSystemTest(jobCount++));
+	    Nachos.scheduler.readyToRun(thread4);
+	    NachosThread thread5 = new NachosThread("MultiFilesystemTest5", new MultiFileSystemTest(jobCount++));
+	    Nachos.scheduler.readyToRun(thread5);
+	    NachosThread thread6 = new NachosThread("MultiFilesystemTest6", new MultiFileSystemTest(jobCount++));
+	    Nachos.scheduler.readyToRun(thread6);
+	    NachosThread thread7 = new NachosThread("MultiFilesystemTest7", new MultiFileSystemTest(jobCount++));
+	    Nachos.scheduler.readyToRun(thread7);
+	    NachosThread thread8 = new NachosThread("MultiFilesystemTest8", new MultiFileSystemTest(jobCount++));
+	    Nachos.scheduler.readyToRun(thread8);
 	}
 	else{
 	    NachosThread thread1 = new NachosThread("MultiFilesystemTest1", new MultiFileSystemTest(jobCount++));

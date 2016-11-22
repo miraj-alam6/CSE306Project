@@ -1,5 +1,6 @@
 package nachos.kernel.devices;
 
+import nachos.kernel.Nachos;
 import nachos.kernel.threads.Semaphore;
 
 public class WorkEntry {
@@ -8,6 +9,7 @@ public class WorkEntry {
 	private boolean willRead; //if true it reads, if false it will write
 	private byte[] kernelBuffer;
 	private Semaphore workSem;
+	private int diskPosition;
 	public int getSectorNum() {
 	    return sectorNum;
 	}
@@ -48,6 +50,14 @@ public class WorkEntry {
 	    this.workSem = workSem;
 	}
 	
-	
+	//Make sure you call this after setting sectorNum & index,
+	//or else this won't work
+	public void calculateDiskPosition(){
+	    diskPosition = sectorNum * Nachos.diskDriver.getDisk().geometry.SectorSize
+		    + index;
+	}
+	public int getDiskPosition(){
+	    return diskPosition;
+	}
 	
 }

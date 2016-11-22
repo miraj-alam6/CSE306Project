@@ -214,6 +214,10 @@ public class Options {
     public boolean STALLINGS_TEST;
 
     public boolean MULTI_FILESYS_TEST = false;
+
+    public boolean DISK_FCFS = false;
+    
+    public boolean DISK_CSCAN = false;
     
     public Options(String[] args) {
 	argList = Arrays.asList(args);
@@ -443,10 +447,24 @@ public class Options {
 			FILESYS_STUB = false;
 			FILESYS_REAL = true;
 		    }
-		 })
+		 }),
 		
-		
-		
+		new Spec("-dsfcfs",  // disk scheduling first come first serve
+			 new Class[] { },
+			 null,
+			 new Options.Action() {
+			    public void processOption(String flag, Object[] params) {
+				DISK_FCFS = true;
+			    }
+			 }),
+		new Spec("-dscscan",  // disk scheduling first come first serve
+			 new Class[] { },
+			 null,
+			 new Options.Action() {
+			    public void processOption(String flag, Object[] params) {
+				DISK_CSCAN = true;
+			    }
+			 })
 		
 	});
     }

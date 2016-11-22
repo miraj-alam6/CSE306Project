@@ -25,6 +25,7 @@ import nachos.machine.Machine;
 import nachos.machine.Disk;
 import nachos.machine.InterruptHandler;
 import nachos.kernel.threads.Semaphore;
+import nachos.kernel.Nachos;
 import nachos.kernel.threads.Lock;
 
 
@@ -61,6 +62,8 @@ public class DiskDriver {
 
     private boolean isBusy;
     
+    //Gonna use this for getNextWorkEntryToRun in CSCAN scheduling
+    private int headPosition;
     /**
      * Initialize the synchronous interface to the physical disk, in turn
      * initializing the physical disk.
@@ -72,6 +75,7 @@ public class DiskDriver {
 	lock = new Lock("synch disk lock");
 	disk = Machine.getDisk(unit);
 	disk.setHandler(new DiskIntHandler());
+	
     }
 
     /**
@@ -83,6 +87,10 @@ public class DiskDriver {
 	return disk.geometry.NumSectors;
     }
 
+    public Disk getDisk(){
+	
+	return disk;
+    }
     /**
      * Get the sector size of the disk, in bytes.
      * 
@@ -154,7 +162,7 @@ public class DiskDriver {
 	}
     }
 
-    
+   
     public WorkEntry addWorkEntry(int secNum, int index,byte[] buf, boolean willRead){
 	WorkEntry wE = new WorkEntry();
 	wE.setNumSectors(secNum);
@@ -163,8 +171,65 @@ public class DiskDriver {
 	wE.setKernelBuffer(buf);
 	Semaphore s = new Semaphore("Work Entry sem",0);
 	wE.setWorkSem(s);
-	workQueue.add(wE);
+	//Make sure you make the following function call only ever if
+	//the entry had its sector number and index set first
+	wE.calculateDiskPosition();
+	//The way you add it into the queue differs between the two
+	//scheduling ways
+	if(Nachos.options.DISK_CSCAN){
+	    int i;
+	    for(i = 0; i < workQueue.size(); i ++){
+		if(workQueue.get(i).getDiskPosition() > 
+		wE.getDiskPosition()){
+		    break;
+		    
+		}
+	    }
+	    workQueue.add(i, wE);
+	}
+	//If you're not DISK_CSCAN then do DISK_FCFS by simply adding it
+	//to the end of the list
+	else{
+	    workQueue.add(wE);
+	}
 	return wE;
+    }
+    
+    
+    //Which entry this returns will differ based on which scheudling
+    //policy one is using
+    public WorkEntry getNextWorkEntryToRun(){
+	if(Nachos.options.DISK_CSCAN){
+	    int i;
+	    for(i = 0 ; i < workQueue.size(); i ++){
+		if(workQueue.get(i).getDiskPosition() >= headPosition ){
+		    break;
+		}
+	    }
+	    if(i < workQueue.size()){
+		return workQueue.get(i);
+	    }
+	    else{
+		//if we couldn't find anything, but
+		//workQueue is not empty, that means the
+		//head should go back to the beginning
+		if(workQueue.size() > 0){
+		    headPosition = 0;
+		    return workQueue.get(0);
+		}
+		//I don't think this will ever be reached
+		//given what we did in the interrupt handler
+		else{
+		    return null;
+		}
+	    }
+	    
+	}
+	//this is FCFS case now
+	else{
+	    return workQueue.get(0);
+	}
+	
     }
     
     /**
@@ -183,7 +248,10 @@ public class DiskDriver {
 	    int currentTrack = (curr.getSectorNum()%disk.geometry.NumTracks)/disk.geometry.NumTracks;
 	    currentTrack += 1;
 	    int currentCylinder = currentTrack;	
-	    
+	    //This debugging message shows that WorkQueue is actually being
+	    //utilized, for its size becomes greater than 1, and specifically
+	    //becomes the amount of threads that are concurrently running.
+	    Debug.println('z', "WorkQueue Size: " + workQueue.size());
 	    semaphore.V();
 	    
 	    
@@ -209,7 +277,10 @@ public class DiskDriver {
 			}
 		    }
 		}
-		WorkEntry next = workQueue.get(0);
+		//WorkEntry next = workQueue.get(0);
+		WorkEntry next = getNextWorkEntryToRun(); //this should
+		//be robust enough a function that it returns things
+		//differently for the two cases.
 		semaphore = next.getWorkSem();
 		
 		if(semaphore!= null){
