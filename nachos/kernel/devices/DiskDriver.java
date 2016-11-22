@@ -62,6 +62,8 @@ public class DiskDriver {
 
     private boolean isBusy;
     
+    private int currentIndex = 0;
+    
     //Gonna use this for getNextWorkEntryToRun in CSCAN scheduling
     private int headPosition;
     /**
@@ -185,7 +187,17 @@ public class DiskDriver {
 		    
 		}
 	    }
+	    
+	    // TODO: Band-aid fix or not?
+	    if(currentIndex >= i && workQueue.size() > 0){
+		currentIndex++;
+	    }
+	    Debug.println('+', "This is not working " + i);
 	    workQueue.add(i, wE);
+	    
+	    //if you add it will cause bunch of shifts, which may
+	    //change the currentIndex
+	    
 	}
 	//If you're not DISK_CSCAN then do DISK_FCFS by simply adding it
 	//to the end of the list
@@ -200,6 +212,7 @@ public class DiskDriver {
     //policy one is using
     public WorkEntry getNextWorkEntryToRun(){
 	if(Nachos.options.DISK_CSCAN){
+	    //Debug.println('+', "Akon, Eminem");
 	    int i;
 	    for(i = 0 ; i < workQueue.size(); i ++){
 		if(workQueue.get(i).getDiskPosition() >= headPosition ){
@@ -207,6 +220,8 @@ public class DiskDriver {
 		}
 	    }
 	    if(i < workQueue.size()){
+		currentIndex = i;
+		Debug.println('+', "Another one " + i);
 		return workQueue.get(i);
 	    }
 	    else{
@@ -215,6 +230,7 @@ public class DiskDriver {
 		//head should go back to the beginning
 		if(workQueue.size() > 0){
 		    headPosition = 0;
+		    currentIndex = 0;
 		    return workQueue.get(0);
 		}
 		//I don't think this will ever be reached
@@ -227,6 +243,7 @@ public class DiskDriver {
 	}
 	//this is FCFS case now
 	else{
+	    currentIndex = 0;
 	    return workQueue.get(0);
 	}
 	
@@ -242,12 +259,13 @@ public class DiskDriver {
 	 */
 	public void handleInterrupt() {
 	    
-	    semaphore = workQueue.get(0).getWorkSem();
-	    WorkEntry curr = workQueue.get(0);
-	    int currentSect = curr.getSectorNum();
-	    int currentTrack = (curr.getSectorNum()%disk.geometry.NumTracks)/disk.geometry.NumTracks;
-	    currentTrack += 1;
-	    int currentCylinder = currentTrack;	
+	    semaphore = workQueue.get(currentIndex).getWorkSem();
+	    WorkEntry curr = workQueue.get(currentIndex);
+	    headPosition = curr.getDiskPosition();
+	    //int currentSect = curr.getSectorNum();
+	    //int currentTrack = (curr.getSectorNum()%disk.geometry.NumTracks)/disk.geometry.NumTracks;
+	    //currentTrack += 1;
+	    //int currentCylinder = currentTrack;	
 	    //This debugging message shows that WorkQueue is actually being
 	    //utilized, for its size becomes greater than 1, and specifically
 	    //becomes the amount of threads that are concurrently running.
@@ -258,12 +276,13 @@ public class DiskDriver {
 
 	    if(workQueue.isEmpty() == false)
 	    {
-		workQueue.remove(0);
+		workQueue.remove(currentIndex);
 	    }
 	    
 	    if(workQueue.isEmpty() == false)
 	    {
 		int min = 0;
+		/*
 		for(int i = 0; i < workQueue.size(); i++)
 		{
 		    WorkEntry temp = workQueue.get(0);
@@ -276,7 +295,7 @@ public class DiskDriver {
 			    //Debug.println('+', "asfasdfadfasdfasdfasdfafaedfadasdfasdf" + min);
 			}
 		    }
-		}
+		}*/
 		//WorkEntry next = workQueue.get(0);
 		WorkEntry next = getNextWorkEntryToRun(); //this should
 		//be robust enough a function that it returns things
