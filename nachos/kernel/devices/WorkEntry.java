@@ -4,7 +4,7 @@ import nachos.kernel.Nachos;
 import nachos.kernel.threads.Semaphore;
 
 public class WorkEntry {
-	private int sectorNum; //number of sectors to read
+	private int sectorNum; //the sector number
 	private int index; // the index to read/write from
 	private boolean willRead; //if true it reads, if false it will write
 	private byte[] kernelBuffer;

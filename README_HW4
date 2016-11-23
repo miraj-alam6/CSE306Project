@@ -30,6 +30,8 @@ And then does either a read or write request based on what type the job is.
 Once this request completes, the interrupt handler occurs again and it starts
 over.
 
+Filesystem synchronization was attemption in FileSystemReal, it seems to be
+working in the things that we described in Section 2 of this README
 
 For the FCFS heuristic, the first
 element of the WorkQueue arraylist is used as the next process. 
@@ -57,11 +59,11 @@ Both FCFS and CSCAN work, but CSCAN does not seem to be faster as was intended.
 
 
 Do these run configurations in a row
--mfst -dscfs -f -cptest -d z OR -mfst -dscfs -f -cptest 
+-mfst -dsfcfs -f -cptest           OR     -mfst -dsfcfs -f -cptest -d z 
 -mfst -l -D 
 
 And then do these two run configurations in a row
--mfst -dscscan -f -cptest -d z or -mfst -dscfs -f -cptest
+-mfst -dscscan -f -cptest     	   OR     -mfst -dscscan -f -cptest -d z
 -mfst -l -D
 The -d z adds extra debugging output that demonstrate how the indices
 are correctly different for the next process.

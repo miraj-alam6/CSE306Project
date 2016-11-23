@@ -112,7 +112,7 @@ public class DiskDriver {
      */
     public void readSector(int sectorNumber, byte[] data, int index) {
 	Debug.ASSERT(0 <= sectorNumber && sectorNumber < getNumSectors());
-	 //Debug.println('z', "asdfasdfasdfasdfadsfa" + sectorNumber);
+	
 	
 	
 	//New work entry
@@ -147,7 +147,7 @@ public class DiskDriver {
 	Debug.ASSERT(0 <= sectorNumber && sectorNumber < getNumSectors());
 	
 	WorkEntry entry = addWorkEntry(sectorNumber,index,data, false);
-	//Debug.println('z', "asdfxcvnxcvnxvcfa" + sectorNumber);
+	
 	if(isBusy == false)
 	{
 	lock.acquire();			// only one disk I/O at a time
@@ -192,7 +192,7 @@ public class DiskDriver {
 	    if(currentIndex >= i && workQueue.size() > 0){
 		currentIndex++;
 	    }
-	    //Debug.println('+', "This is not working " + i);
+
 	    workQueue.add(i, wE);
 	    
 	    //if you add it will cause bunch of shifts, which may
@@ -212,7 +212,7 @@ public class DiskDriver {
     //policy one is using
     public WorkEntry getNextWorkEntryToRun(){
 	if(Nachos.options.DISK_CSCAN){
-	    //Debug.println('+', "Akon, Eminem");
+
 	    int i;
 	    for(i = 0 ; i < workQueue.size(); i ++){
 		if(workQueue.get(i).getDiskPosition() >= headPosition ){
@@ -258,19 +258,17 @@ public class DiskDriver {
 	 */
 	public void handleInterrupt() {
 	   
+	    //This debugging message shows that WorkQueue is actually being
+	    //utilized, for its size becomes greater than 1, and specifically
+	    //becomes the amount of threads that are concurrently running.
+
 	    Debug.println('z', "Index is different in CSCAN and FCFS:" +
 	    currentIndex);
 	    semaphore = workQueue.get(currentIndex).getWorkSem();
 	    WorkEntry curr = workQueue.get(currentIndex);
 	    headPosition = curr.getDiskPosition();
-	    //int currentSect = curr.getSectorNum();
-	    //int currentTrack = (curr.getSectorNum()%disk.geometry.NumTracks)/disk.geometry.NumTracks;
-	    //currentTrack += 1;
-	    //int currentCylinder = currentTrack;	
-	    //This debugging message shows that WorkQueue is actually being
-	    //utilized, for its size becomes greater than 1, and specifically
-	    //becomes the amount of threads that are concurrently running.
-	   // Debug.println('z', "WorkQueue Size: " + workQueue.size());
+
+	  
 	    semaphore.V();
 	    
 	    
@@ -282,21 +280,7 @@ public class DiskDriver {
 	    
 	    if(workQueue.isEmpty() == false)
 	    {
-		int min = 0;
-		/*
-		for(int i = 0; i < workQueue.size(); i++)
-		{
-		    WorkEntry temp = workQueue.get(0);
-			
-		    if((temp.getSectorNum()-currentSect) >= 0)
-		    {
-			if((temp.getSectorNum()-currentSect) < min)
-			{
-			    min = (temp.getSectorNum()-currentSect);
-			    //Debug.println('+', "asfasdfadfasdfasdfasdfafaedfadasdfasdf" + min);
-			}
-		    }
-		}*/
+		
 		//WorkEntry next = workQueue.get(0);
 		WorkEntry next = getNextWorkEntryToRun(); //this should
 		//be robust enough a function that it returns things
@@ -315,8 +299,6 @@ public class DiskDriver {
         			    next.getIndex());
         		}
         		
-		//Not sure if need this right now
-		//semaphore.V();
 		}
 	    }
 	    else{

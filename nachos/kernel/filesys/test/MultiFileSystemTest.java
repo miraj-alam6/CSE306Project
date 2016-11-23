@@ -80,7 +80,6 @@ public class MultiFileSystemTest implements Runnable {
 	}
 
 	openFile = Nachos.fileSystem.open(to);
-	Debug.println('+', "Whyyy become null?"+openFile);
 	Debug.ASSERT(openFile != null);
 
 	// Copy the data in TransferSize chunks
