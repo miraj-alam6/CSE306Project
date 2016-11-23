@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import nachos.Debug;
 import nachos.kernel.devices.DiskDriver;
 import nachos.kernel.threads.Lock;
+import nachos.kernel.threads.SpinLock;
 
 /**
  * This class manages the overall operation of the file system.
@@ -121,10 +122,9 @@ class FileSystemReal extends FileSystem {
   /** "Root" directory -- list of file names, represented as a file. */
   private final OpenFile directoryFile;
 
+  ArrayList<FileHeader> inUse = new ArrayList<FileHeader>();
   
-  private ArrayList<FileHeader> FileHeaderTable = new ArrayList<FileHeader>();
-  private ArrayList<Directory> directoryTable = new ArrayList<Directory>();
-  private ArrayList<BitMap> bitmapTable = new ArrayList<BitMap>();
+  private SpinLock splock;
   private Lock lock;
   
   /**
@@ -148,7 +148,8 @@ class FileSystemReal extends FileSystem {
     DirectoryFileSize = (DirectoryEntry.sizeOf() * NumDirEntries);
     
     //LOCK does not work fully properly
-    lock = new Lock("header locks");
+    splock = new SpinLock("header locks");
+    lock = new Lock("asdas");
     
     //This happens if FORMAT_DISK is true, AKA -f was provided
     if (format) {
@@ -273,8 +274,8 @@ class FileSystemReal extends FileSystem {
     directory = new Directory(NumDirEntries, this);
 
     //LOCK does not work fully properly
+    splock.acquire();
     lock.acquire();
-    
     directory.fetchFrom(directoryFile);
     
     if (directory.find(name) != -1)
@@ -282,6 +283,7 @@ class FileSystemReal extends FileSystem {
       success = false;	// file is already in directory
       //LOCK does not work fully properly
       lock.release();
+      splock.release();
     }
     else {	
       freeMap = new BitMap(numDiskSectors);
@@ -307,6 +309,7 @@ class FileSystemReal extends FileSystem {
       }
       //LOCK does not work fully properly
       lock.release();
+      splock.release();
     }
     return success;
   }
@@ -327,6 +330,7 @@ class FileSystemReal extends FileSystem {
     
     Debug.printf('f', "Opening file %s\n", name);
     //LOCK does not work fully properly
+    splock.acquire();
     lock.acquire();
     directory.fetchFrom(directoryFile);
     sector = directory.find(name); 
@@ -334,6 +338,7 @@ class FileSystemReal extends FileSystem {
       openFile = new OpenFileReal(sector, this);// name was found in directory 
     //LOCK does not work fully properly
     lock.release();
+    splock.release();
     return openFile;			        // return null if not found
   }
 
@@ -356,6 +361,7 @@ class FileSystemReal extends FileSystem {
     int sector;
     
     //LOCK does not work fully properly
+    splock.acquire();
     lock.acquire();
     
     directory = new Directory(NumDirEntries, this);
@@ -378,6 +384,7 @@ class FileSystemReal extends FileSystem {
     directory.writeBack(directoryFile); // flush to disk
     //LOCK does not work fully properly
     lock.release();
+    splock.release();
     return true;
   } 
 
@@ -388,11 +395,13 @@ class FileSystemReal extends FileSystem {
     Directory directory = new Directory(NumDirEntries, this);
 
     //LOCK does not work fully properly
+    splock.acquire();
     lock.acquire();
     directory.fetchFrom(directoryFile);
     directory.list();
     //LOCK does not work fully properly
     lock.release();
+    splock.release();
   }
 
   /**
