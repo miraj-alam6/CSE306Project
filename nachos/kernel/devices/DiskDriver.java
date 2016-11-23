@@ -192,7 +192,7 @@ public class DiskDriver {
 	    if(currentIndex >= i && workQueue.size() > 0){
 		currentIndex++;
 	    }
-	    Debug.println('+', "This is not working " + i);
+	    //Debug.println('+', "This is not working " + i);
 	    workQueue.add(i, wE);
 	    
 	    //if you add it will cause bunch of shifts, which may
@@ -221,7 +221,7 @@ public class DiskDriver {
 	    }
 	    if(i < workQueue.size()){
 		currentIndex = i;
-		Debug.println('+', "Another one " + i);
+		//Debug.println('+', "Another one " + i);
 		return workQueue.get(i);
 	    }
 	    else{
@@ -258,7 +258,7 @@ public class DiskDriver {
 	 * the request that just finished.
 	 */
 	public void handleInterrupt() {
-	    
+	   
 	    semaphore = workQueue.get(currentIndex).getWorkSem();
 	    WorkEntry curr = workQueue.get(currentIndex);
 	    headPosition = curr.getDiskPosition();
@@ -269,7 +269,7 @@ public class DiskDriver {
 	    //This debugging message shows that WorkQueue is actually being
 	    //utilized, for its size becomes greater than 1, and specifically
 	    //becomes the amount of threads that are concurrently running.
-	    Debug.println('z', "WorkQueue Size: " + workQueue.size());
+	   // Debug.println('z', "WorkQueue Size: " + workQueue.size());
 	    semaphore.V();
 	    
 	    

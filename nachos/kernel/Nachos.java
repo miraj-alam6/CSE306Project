@@ -52,6 +52,7 @@ import nachos.kernel.userprog.test.StallingsTest;
 import nachos.kernel.userprog.test.ConsoleProgTest;
 import nachos.kernel.filesys.test.FileSystemTest;
 import nachos.kernel.filesys.test.MultiFileSystemTest;
+import nachos.kernel.filesys.test.ReadSectorTest;
 
 import java.util.*;
 /**
@@ -177,6 +178,9 @@ public class Nachos implements Runnable {
 	
 	if(options.STALLINGS_TEST)
 	    StallingsTest.start();
+	
+	if(options.READ_SECTOR_TEST)
+	    ReadSectorTest.start();
 	
 	// Terminate the first thread, its job is done.
 	// Alternatively, you could give this thread the responsibility

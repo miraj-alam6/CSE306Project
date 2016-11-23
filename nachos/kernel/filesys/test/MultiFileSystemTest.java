@@ -290,7 +290,7 @@ public class MultiFileSystemTest implements Runnable {
      * Entry point for the FileSystem test.
      */
     public static void start() {
-	Debug.println('+', "Doing filesystem test");
+	Debug.println('+', "Doing multifilesystem test");
 	Nachos.options.processOptions
 	(new Options.Spec[] {
 		new Options.Spec

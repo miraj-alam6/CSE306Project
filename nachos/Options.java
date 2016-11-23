@@ -149,7 +149,7 @@ public class Options {
     public boolean RR_SCHEDULING = false;
     public boolean HRRN_SCHEDULING = false;
     public boolean FBS_SCHEDULING = false;
-    
+    public boolean READ_SECTOR_TEST = false;
     
     /**
      * Are we going to be using per-CPU time-slicing timers?
@@ -437,13 +437,24 @@ public class Options {
 				FILESYS_REAL = true;
 			    }
 			 }),
-		new Spec("-mfst",  // File system test: turn on file system test
+		new Spec("-mfst",  //Multi File system test: turn on file system test
 			  //and use file system real
 		 new Class[] { },
 		 null,
 		 new Options.Action() {
 		    public void processOption(String flag, Object[] params) {
 			MULTI_FILESYS_TEST  = true;
+			FILESYS_STUB = false;
+			FILESYS_REAL = true;
+		    }
+		 }),
+		
+		new Spec("-rst",  // Read sector test
+		 new Class[] { },
+		 null,
+		 new Options.Action() {
+		    public void processOption(String flag, Object[] params) {
+			READ_SECTOR_TEST  = true;
 			FILESYS_STUB = false;
 			FILESYS_REAL = true;
 		    }
