@@ -221,7 +221,6 @@ public class DiskDriver {
 	    }
 	    if(i < workQueue.size()){
 		currentIndex = i;
-		//Debug.println('+', "Another one " + i);
 		return workQueue.get(i);
 	    }
 	    else{
@@ -259,6 +258,8 @@ public class DiskDriver {
 	 */
 	public void handleInterrupt() {
 	   
+	    Debug.println('z', "Index is different in CSCAN and FCFS:" +
+	    currentIndex);
 	    semaphore = workQueue.get(currentIndex).getWorkSem();
 	    WorkEntry curr = workQueue.get(currentIndex);
 	    headPosition = curr.getDiskPosition();
