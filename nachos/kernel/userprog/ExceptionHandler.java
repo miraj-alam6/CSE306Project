@@ -116,8 +116,33 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		    CPU.readRegister(MIPS.NextPCReg)+4);
 	    return;
 	}
-	
+	//Dealing with address error exception
+	if(which == 5){
+	   Debug.println('+', "Address error exception");
+	   ((UserThread)NachosThread.currentThread()).space.extendPageTable();
+	   
+	   //TODO: need to either go to next instruction or do the
+	   //same instruction again?
+	   CPU.writeRegister(MIPS.PrevPCReg,
+		    CPU.readRegister(MIPS.PCReg));
+	    CPU.writeRegister(MIPS.PCReg,
+		    CPU.readRegister(MIPS.NextPCReg));
+	    //CPU.writeRegister(MIPS.NextPCReg,
+	//	    CPU.readRegister(MIPS.NextPCReg)+4);
+	    //I don't get page fault exception, if I do this
+	   return;
+	}
 
+	//Dealing with page fault exception
+	if(which == 2){
+		   Debug.println('+', "Page fault exception");
+		   ((UserThread)NachosThread.currentThread()).space.extendPageTable();
+		
+		   //need to do return here, once implemented
+		}
+	
+	
+	//Take out the Debug.ASSERT so that program doesn't crash
 	System.out.println("Unexpected user mode exception " + which +
 		", " + type);
 	Debug.ASSERT(false);

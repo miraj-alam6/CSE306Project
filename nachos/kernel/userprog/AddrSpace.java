@@ -52,7 +52,8 @@ public class AddrSpace {
 
   /** Default size of the user stack area -- increase this as necessary! */
   private static final int UserStackSize = 1024;
-
+  private static final int TableExtensionIncrement = 2;
+  private int ExtendedStackSize = 1024;
   private NoffHeader noffH;
   private int spaceID;
   /**
@@ -398,6 +399,28 @@ public class AddrSpace {
     CPU.setPageTable(pageTable);
   }
 
+  // for HW # 5
+  public void extendPageTable(){
+      TranslationEntry[] newPageTable;
+      newPageTable = new TranslationEntry[pageTable.length 
+                                          + TableExtensionIncrement];
+      int i;
+      for(i = 0; i < pageTable.length; i++){
+	  newPageTable[i] = pageTable[i];
+      }
+      
+      for(;i < newPageTable.length ; i++ ){
+	  newPageTable[i] = new TranslationEntry();
+	  newPageTable[i].virtualPage = i;
+	  newPageTable[i].valid = false;
+	  pageTable = newPageTable;
+      }
+  }
+  
+  public void onDemandPhysicalPage(){
+    
+      
+  }
   /**
    * Utility method for rounding up to a multiple of CPU.PageSize;
    */
