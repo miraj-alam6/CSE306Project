@@ -137,22 +137,37 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 	   
 	   //TODO: need to either go to next instruction or do the
 	   //same instruction again?
-//	   CPU.writeRegister(MIPS.PrevPCReg,
-//		    CPU.readRegister(MIPS.BadVAddrReg));
+	   CPU.writeRegister(MIPS.PrevPCReg,
+		    CPU.readRegister(MIPS.BadVAddrReg));
 	   Debug.println('+', "BAD ADDRESS IS " + CPU.readRegister(MIPS.BadVAddrReg));
 	    CPU.writeRegister(MIPS.PCReg,
 		    CPU.readRegister(MIPS.BadVAddrReg));
-	    CPU.writeRegister(MIPS.NextPCReg,
-		    CPU.readRegister(MIPS.NextPCReg) + 4);
+	   // CPU.writeRegister(MIPS.NextPCReg,
+	//	    CPU.readRegister(MIPS.BadVAddrReg));
 	    //I don't get page fault exception, if I do this
+
+	   
+/* 
+	   CPU.writeRegister(MIPS.PrevPCReg,
+		    CPU.readRegister(MIPS.PCReg));
+	    CPU.writeRegister(MIPS.PCReg,
+		    CPU.readRegister(MIPS.BadVAddrReg));
+	    CPU.writeRegister(MIPS.NextPCReg,
+		    CPU.readRegister(MIPS.NextPCReg)-4);
+	   /* */
 	   return;
 	}
 
 	//Dealing with page fault exception
 	if(which == 2){
 		   Debug.println('+', "Page fault exception");
-		   ((UserThread)NachosThread.currentThread()).space.extendPageTable();
+		   ((UserThread)NachosThread.currentThread()).space.onDemandPhysicalPage();
 		
+//		    CPU.writeRegister(MIPS.PCReg,
+//			    CPU.readRegister(MIPS.BadVAddrReg));
+		    CPU.writeRegister(MIPS.NextPCReg,
+			    CPU.readRegister(MIPS.BadVAddrReg));
+		    return;
 		   //need to do return here, once implemented
 		}
 	

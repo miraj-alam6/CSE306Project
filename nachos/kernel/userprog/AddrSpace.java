@@ -437,6 +437,7 @@ public class AddrSpace {
 	  
       }
       pageTable = newPageTable;
+      CPU.setPageTable(pageTable);
   }
   
   public void onDemandPhysicalPage(){
