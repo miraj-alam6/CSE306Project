@@ -56,6 +56,11 @@ public class AddrSpace {
   private int ExtendedStackSize = 1024;
   private NoffHeader noffH;
   private int spaceID;
+  
+  public TranslationEntry[] getPageTable(){
+      return pageTable;
+  }
+  
   /**
    * Create a new address space.
    */
@@ -405,6 +410,7 @@ public class AddrSpace {
       newPageTable = new TranslationEntry[pageTable.length 
                                           + TableExtensionIncrement];
       int i;
+     
       for(i = 0; i < pageTable.length; i++){
 	  newPageTable[i] = pageTable[i];
       }
@@ -412,14 +418,38 @@ public class AddrSpace {
       for(;i < newPageTable.length ; i++ ){
 	  newPageTable[i] = new TranslationEntry();
 	  newPageTable[i].virtualPage = i;
+	  /* Should not be doing this part here I think. But how would I
+	   * get it on demand? Doesn't work if I do this 
+	  
+	  newPageTable[i].physicalPage = Nachos.pMM.allocatePMP(i,spaceID);
+	  //Do I keep at least the previous line here, or is that also to
+	  //be in onDemandPhysicalPage
+	  for(int j = 0; j < Machine.PageSize; j++){
+	      Machine.mainMemory[j] = 0;
+	  }
+	 
+	  /**/
 	  newPageTable[i].valid = false;
-	  pageTable = newPageTable;
+	  newPageTable[i].physicalPage = -1; //will be replaced on page fault exception
+	  newPageTable[i].use = false;
+	  newPageTable[i].dirty = false;
+	  newPageTable[i].readOnly = false;
+	  
       }
+      pageTable = newPageTable;
   }
   
   public void onDemandPhysicalPage(){
-    
-      
+      //
+     int index = (int)(
+	     CPU.readRegister(MIPS.BadVAddrReg) / Machine.PageSize);
+     pageTable[index].valid = true;
+     pageTable[index].physicalPage = Nachos.pMM.allocatePMP(index,spaceID);
+     //Do I keep at least the previous line here, or is that also to
+     //be in onDemandPhysicalPage
+     for(int j = 0; j < Machine.PageSize; j++){
+	 Machine.mainMemory[index *Machine.PageSize + j] = 0;
+     }
   }
   /**
    * Utility method for rounding up to a multiple of CPU.PageSize;

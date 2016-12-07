@@ -119,16 +119,31 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 	//Dealing with address error exception
 	if(which == 5){
 	   Debug.println('+', "Address error exception");
+
+	   
+	   Debug.println('+', "WHYYYY " +  
+	   ((UserThread)NachosThread.currentThread()).space.getPageTable().length);
+	   
+	   
+	   
+	   //Do not erase this
 	   ((UserThread)NachosThread.currentThread()).space.extendPageTable();
+	   
+	   
+	   
+	   Debug.println('+', "WHYYYY " +  
+		   ((UserThread)NachosThread.currentThread()).space.getPageTable().length);
+	   
 	   
 	   //TODO: need to either go to next instruction or do the
 	   //same instruction again?
-	   CPU.writeRegister(MIPS.PrevPCReg,
-		    CPU.readRegister(MIPS.PCReg));
+//	   CPU.writeRegister(MIPS.PrevPCReg,
+//		    CPU.readRegister(MIPS.BadVAddrReg));
+	   Debug.println('+', "BAD ADDRESS IS " + CPU.readRegister(MIPS.BadVAddrReg));
 	    CPU.writeRegister(MIPS.PCReg,
-		    CPU.readRegister(MIPS.NextPCReg));
-	    //CPU.writeRegister(MIPS.NextPCReg,
-	//	    CPU.readRegister(MIPS.NextPCReg)+4);
+		    CPU.readRegister(MIPS.BadVAddrReg));
+	    CPU.writeRegister(MIPS.NextPCReg,
+		    CPU.readRegister(MIPS.NextPCReg) + 4);
 	    //I don't get page fault exception, if I do this
 	   return;
 	}
