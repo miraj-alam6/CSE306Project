@@ -14,21 +14,55 @@ struct memory_region {
 void *malloc(unsigned int size);
 {
 	//Check if size is less than or equal to 0 because this is invalid size request
+	if(size <= 0)
+	{
+		return NULL;
+	}
 	
-	//Check if the heap has been started, If not extend heap_limit set firstfree to this then split the block if it's too big
-	//return allocated memory data
-	//set firstfree to the other part of the split block
+	//Check if the heap has been started, If not extend heap_limit set firstfree to this 
+	if(heap_limit == heap_start)
+	{
+		//extend heap limit
+		firstfree = (struct memory_region *)heap_start;
+        firstfree->next = NULL;
+        firstfree->size = heap_limit - heap_start;	
+	}
 	
-	//else
+		
 	//Find a free block that is big enough to complete the malloc
+	struct memory_region *temp = firstfree;
+	
+	while(temp != NULL)
+	{
+		if(temp->size >= size)
+		{
+			break;
+		}
+		else
+		{
+			temp = temp->next;
+		}
+	}
+	
+	
 	//If no free block big enough-> extend the heap_limit first
+	if(temp == NULL)
+	{
+		//extend heap_limit
+		//set temp to this freeblock 
+	}
 	
 	//if block is big enough and bigger than what we need -> split the block into a free region and allocated region
+	if(temp->size > size)
+	{
 	//update free list
 	//if block used is firstfree have to update firstfree
-	
+	}
+	else if(temp->size == size)
+	{
 	//else if block is just the right size we need then allocate it and update freelist
 	//if block used is firstfree have to update firstfree
+	}
 }
 
 void free(void *ptr)
