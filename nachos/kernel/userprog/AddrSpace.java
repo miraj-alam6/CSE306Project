@@ -430,7 +430,7 @@ public class AddrSpace {
 	 
 	  /**/
 	  newPageTable[i].valid = false;
-	  newPageTable[i].physicalPage = -1; //will be replaced on page fault exception
+	  //newPageTable[i].physicalPage = -1; //will be replaced on page fault exception
 	  newPageTable[i].use = false;
 	  newPageTable[i].dirty = false;
 	  newPageTable[i].readOnly = false;

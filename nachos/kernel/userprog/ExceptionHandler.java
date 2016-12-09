@@ -117,12 +117,12 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 	    return;
 	}
 	//Dealing with address error exception
-	if(which == 5){
+	if(which == MachineException.AddressErrorException){
 	   Debug.println('+', "Address error exception");
 
 	   
-	   Debug.println('+', "WHYYYY " +  
-	   ((UserThread)NachosThread.currentThread()).space.getPageTable().length);
+//	   Debug.println('+', "tableLength " +  
+//	   ((UserThread)NachosThread.currentThread()).space.getPageTable().length);
 	   
 	   
 	   
@@ -131,8 +131,8 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 	   
 	   
 	   
-	   Debug.println('+', "WHYYYY " +  
-		   ((UserThread)NachosThread.currentThread()).space.getPageTable().length);
+//	   Debug.println('+', "tableLength " +  
+//		   ((UserThread)NachosThread.currentThread()).space.getPageTable().length);
 	   
 	   
 	   //TODO: need to either go to next instruction or do the
@@ -140,8 +140,10 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 	 //  CPU.writeRegister(MIPS.PrevPCReg,
 	//	    CPU.readRegister(MIPS.BadVAddrReg));
 	   Debug.println('+', "BAD ADDRESS IS " + CPU.readRegister(MIPS.BadVAddrReg));
-	    CPU.writeRegister(MIPS.PCReg,
-		    CPU.readRegister(MIPS.BadVAddrReg));
+	 
+	   //This jumps into heap, makes no sense to do
+	   //CPU.writeRegister(MIPS.PCReg,
+		//    CPU.readRegister(MIPS.BadVAddrReg));
 	   // CPU.writeRegister(MIPS.NextPCReg,
 	//	    CPU.readRegister(MIPS.BadVAddrReg));
 	    //I don't get page fault exception, if I do this
@@ -159,17 +161,17 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 	}
 
 	//Dealing with page fault exception
-	if(which == 2){
+	if(which == MachineException.PageFaultException){
 		   Debug.println('+', "Page fault exception");
 		   ((UserThread)NachosThread.currentThread()).space.onDemandPhysicalPage();
 		
-		    CPU.writeRegister(MIPS.PCReg,
-			    CPU.readRegister(MIPS.BadVAddrReg));
+		  //  CPU.writeRegister(MIPS.PCReg,
+			//    CPU.readRegister(MIPS.BadVAddrReg));
 //		    CPU.writeRegister(MIPS.NextPCReg,
 //			    CPU.readRegister(MIPS.BadVAddrReg));
 		    return;
 		   //need to do return here, once implemented
-		}
+	}
 	
 	
 	//Take out the Debug.ASSERT so that program doesn't crash
