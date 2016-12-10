@@ -1,4 +1,4 @@
-#define NULL ( (void *) 0)
+#include "malloc2.h"
 
 extern void *heap_start;
 extern void *heap_limit;
