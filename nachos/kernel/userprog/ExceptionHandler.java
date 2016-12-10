@@ -119,44 +119,12 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 	//Dealing with address error exception
 	if(which == MachineException.AddressErrorException){
 	   Debug.println('+', "Address error exception");
-
-	   
-//	   Debug.println('+', "tableLength " +  
-//	   ((UserThread)NachosThread.currentThread()).space.getPageTable().length);
-	   
-	   
 	   
 	   //Do not erase this
 	   ((UserThread)NachosThread.currentThread()).space.extendPageTable();
 	   
-	   
-	   
-//	   Debug.println('+', "tableLength " +  
-//		   ((UserThread)NachosThread.currentThread()).space.getPageTable().length);
-	   
-	   
-	   //TODO: need to either go to next instruction or do the
-	   //same instruction again?
-	 //  CPU.writeRegister(MIPS.PrevPCReg,
-	//	    CPU.readRegister(MIPS.BadVAddrReg));
-	   Debug.println('+', "BAD ADDRESS IS " + CPU.readRegister(MIPS.BadVAddrReg));
+//	   Debug.println('+', "BAD ADDRESS IS " + CPU.readRegister(MIPS.BadVAddrReg));
 	 
-	   //This jumps into heap, makes no sense to do
-	   //CPU.writeRegister(MIPS.PCReg,
-		//    CPU.readRegister(MIPS.BadVAddrReg));
-	   // CPU.writeRegister(MIPS.NextPCReg,
-	//	    CPU.readRegister(MIPS.BadVAddrReg));
-	    //I don't get page fault exception, if I do this
-
-	   
-/* 
-	   CPU.writeRegister(MIPS.PrevPCReg,
-		    CPU.readRegister(MIPS.PCReg));
-	    CPU.writeRegister(MIPS.PCReg,
-		    CPU.readRegister(MIPS.BadVAddrReg));
-	    CPU.writeRegister(MIPS.NextPCReg,
-		    CPU.readRegister(MIPS.NextPCReg)-4);
-	   /* */
 	   return;
 	}
 
@@ -165,10 +133,7 @@ public class ExceptionHandler implements nachos.machine.ExceptionHandler {
 		   Debug.println('+', "Page fault exception");
 		   ((UserThread)NachosThread.currentThread()).space.onDemandPhysicalPage();
 		
-		  //  CPU.writeRegister(MIPS.PCReg,
-			//    CPU.readRegister(MIPS.BadVAddrReg));
-//		    CPU.writeRegister(MIPS.NextPCReg,
-//			    CPU.readRegister(MIPS.BadVAddrReg));
+
 		    return;
 		   //need to do return here, once implemented
 	}
