@@ -1,5 +1,5 @@
 #include "syscall.h"
-#include "malloc2.h"
+#include "malloc.h"
 extern void *heap_start;
 extern void *heap_limit;
 

@@ -1,10 +1,12 @@
-#ifndef __malloc.h
-#define __malloc.h
-#endif
-struct memory_region {
-           struct memory_region *next;
-           int size;
-		   char data[0];  /* The data starts here and continues on. */
-        };        
+#define NULL ( (void *) 0)
+extern void *heap_start;
+extern void *heap_limit;
+
+static struct memory_region *firstfree;
+
+struct memory_region;
 void *malloc(unsigned int size);
-void free(void *ptr);
+
+void joinRegions(struct memory_region *prev, struct memory_region *curr, struct memory_region *next);
+	
+void free (void *target);
