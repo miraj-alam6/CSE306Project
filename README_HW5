@@ -1,0 +1,117 @@
+Miraj Alam, Kwun Chan
+
+Quicklist of files that were dealt with
+Under nachos.kernel.userprog
+ExceptionHandler
+AddrSpace
+
+Quicklist of test programs
+hw5test1
+hw5test_malloc
+
+
+README Section 1: Overview:
+
+In this project, we made automatic extension of a user address space 
+using the heap, and we completed the functions malloc and free.
+
+Therefore, we did parts 1 and 2.
+
+We did not do part 3: paging and replacement. 
+
+Part 1: On-demand Memory Allocation
+The exception handler has been modified to identify two different exceptions for this assignment:
+AddressErrorException and PageFaultException.
+
+When it sees an AddressErrorException it will extend the page table using a function called
+extendPageTable() in the AddrSpace class. This function makes a bigger page table than the one
+that is currently there, copies in all the entries from the smaller table into its corresponding
+entries in the bigger page table. And the new space in the page table is initialized into new
+entries where valid is set to false, so that page fault exceptions will occur in the virtual
+addresses in the new pages.
+
+Once the PageFaultException occurs, it will call the function onDemandPhysicalPage(), which will
+look at which page table entry the bad address belong to and allocate memory for that page. Thus
+the memory is only allocated on demand if the address was accessed. 
+
+The way to test this is to put these run configurations in eclipse:
+-xc test/hw5test1
+or
+-x test/hw5test1
+
+If you use -x instead of -xc, it will cause the console to immediately close after printing
+the message. Please look at the code in hw5test1.c to see how the code expects to use the
+heap and thus causes the automatic increase of the page table.
+
+Part 2: Malloc
+Please look at the code in malloc.c and hw5test_malloc.c for this part of the assignment.
+malloc and free is implemented by simply maintaing a linked list of free regions.
+
+malloc: works by looking for the first free region that has a size bigger than what was asked
+for in malloc. If it can't find a free region, it will extend the last free region such that it
+becomes big enough to fit. 
+
+Once the free region is found, the free region is split such that a new memory region is created for
+the malloced part, and a pointer to its data section is retured to the user. And the free region 
+that remains will be smaller and is connected to the rest of the free list.
+
+free: works by taking a given address, and creating a new free region based on the memory region
+that is associated with that address, and then this memory region is inserted into the
+free list in the proper place such that the addresses of all of them are in ascending order.
+After inserting this region, it will coalesce by checking if the memory region before it leads
+right into it, as well as the memory region after it, and thus will cause the regions to
+merge and become bigger if the conditions are met.
+
+coalescing is achieved through a function called joinRegions(), which takes 3 parameters:
+prev, curr, next. curr is the entry that was just added, prev is the entry before curr, and
+next is the entry after curr. If prev is null than that means the new free region has been
+added to the front of the list. If next is null then that means the new free region has been
+added to the end of the list.
+
+The way to test this is to put these run configurations in eclipse:
+-xc test/hw5test_malloc
+or
+-x test/hw5test_malloc
+
+
+Part 3: Paging and Replacing
+Not implemented
+
+
+
+
+README Section 2: How to compile and test:
+Part 1: Dynamic Memory Allocation
+The way to test this is to put these run configurations in eclipse:
+-xc test/hw5test1
+or
+-x test/hw5test1
+
+
+Part 2: Malloc/Free
+The way to test this is to put these run configurations in eclipse:
+-xc test/hw5test_malloc
+or
+-x test/hw5test_malloc
+
+
+
+Part 3: Not implemented
+
+README Section 3: Our Assumptions
+
+We are assuming that for whatever tests you run, you will be using a Makefile to link
+the malloc code much like how we did for hw5test_malloc, this is what we did in the Makefile:
+hw5test_malloc.s: hw5test_malloc.c
+	$(CC) $(SFLAGS) hw5test_malloc.c
+hw5test_malloc.o: hw5test_malloc.c
+	$(CC) $(CFLAGS) hw5test_malloc.c
+hw5test_malloc: hw5test_malloc.o malloc.o start.o
+	$(LD) $(LDFLAGS) start.o hw5test_malloc.o malloc.o -o hw5test_malloc.coff
+	rm hw5test_malloc.o
+	$(COFF2NOFF) hw5test_malloc.coff hw5test_malloc
+	rm hw5test_malloc.coff
+
+Please follow a similar way of modifying the Makefile for any test programs that you make that 
+use malloc.
+

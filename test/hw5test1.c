@@ -1,16 +1,19 @@
 #include "syscall.h"
 
+extern void *heap_start;
+extern void *heap_limit;
+
+
 int main(int n)
-{	/*Why does count being 285 to 286 freeze it*/
-/*289 is limit where stack becomes too big*/
-	int count = 288;
-	int hugeArray[count];
-	int i;
-	PredictCPU(200);
+{	
+
+	((char *)heap_start)[0] = 'a';
+	((char *)heap_start)[1] = 'b';
+	((char *)heap_start)[2] = 'c';
+	((char *)heap_start)[3] = 'd';
 	
-	for (i = 0; i < count; i++) {
-		hugeArray[i] = i;
-	}
+	
+	Write(heap_start, 4, 1);	
 	Exit(0);
 }
 	
